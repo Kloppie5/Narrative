@@ -1,9 +1,11 @@
 ﻿using System;
+using MemoryManager;
 
 namespace Narrative {
     class Program {
         static void Main ( String[] args ) {
-            Console.WriteLine("Hello World!");
+            MonsterHunterWorldMemoryManager mm = new MonsterHunterWorldMemoryManager();
+            Console.ReadLine();
         }
     }
 }
