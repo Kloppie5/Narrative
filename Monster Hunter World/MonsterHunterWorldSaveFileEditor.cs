@@ -193,12 +193,8 @@ namespace MonsterHunterWorld {
             Byte[] data = File.ReadAllBytes(filename);
             Array.Copy(data, 0, this.data, start, 0x209AC0);
         }
-        public void diff_characters ( String filename1, String filename2, UInt64 line_length = 32 ) {
-            Byte[] data1 = File.ReadAllBytes(filename1);
-            Byte[] data2 = File.ReadAllBytes(filename2);
-            UInt64 end = 0x209AC0;
-
-            for ( UInt64 i = 0 ; i < end ; i += line_length ) {
+        public void diff_bytes ( Byte[] data1, Byte[] data2, UInt64 start, UInt64 end, UInt64 line_length = 32 ) {
+            for ( UInt64 i = start ; i < end ; i += line_length ) {
                 Boolean line_diff = false;
                 List<Action> act_1_hex = new List<Action>();
                 List<Action> act_1_char = new List<Action>();
@@ -243,6 +239,129 @@ namespace MonsterHunterWorld {
                     Console.WriteLine();
                 }
             }
+        }
+        public void diff_characters ( String filename1, String filename2, UInt64 line_length = 32 ) {
+            Console.WriteLine($"Diffing {filename1} and {filename2}");
+            Byte[] data1 = File.ReadAllBytes(filename1);
+            Byte[] data2 = File.ReadAllBytes(filename2);
+            diff_bytes(data1, data2, 0, 0x2098C0, line_length);
+        }
+        public void smart_diff_characters ( String filename1, String filename2, UInt64 line_length = 32 ) {
+            Console.WriteLine($"Diffing {filename1} and {filename2}");
+            Byte[] data1 = File.ReadAllBytes(filename1);
+            Byte[] data2 = File.ReadAllBytes(filename2);
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x000000, 0x000004, line_length);
+            Console.WriteLine($"  Unknown signature thing");
+
+            Console.WriteLine($"  Hunter Appearance <0x7C> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x0000DC, 0x0002B2, line_length);
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Guildcard <0x1E6B> IGNORED");
+            Console.WriteLine($"  Guildcards 100*<0x1E6B> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x0C02E9, 0x0F3510, line_length);
+            // 20 slots of something, same length as guildcards, so maybe a buffer for received guildcards?
+            // multiple giant tables
+            // << small monster kills
+            // many slots of something else
+            // padding
+            // large float holding structure
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Item Loadouts 80*<0x4A0> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x10A710, 0x116098, line_length);
+            // completely empty
+            // followed by a bit increment till 77 followed by FF, possibly something like progress tracking <done on complete save>
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Item Pouch 24*<0x8> IGNORED");
+            Console.WriteLine($"  Ammo Pouch 16*<0x8> IGNORED");
+            Console.WriteLine($"  Material Pouch 24*<0x8> IGNORED");
+            Console.WriteLine($"  Special Pouch 12*<0x8> IGNORED");
+            Console.WriteLine($"  Item Box 200*<0x8> IGNORED");
+            Console.WriteLine($"  Ammo Box 200*<0x8> IGNORED");
+            Console.WriteLine($"  Material Box 1250*<0x8> IGNORED");
+            Console.WriteLine($"  Decoration Box 500*<0x8> IGNORED");
+            Console.WriteLine($"  Equipment Box 2500*<0x7E> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1674A0, 0x176FA4, line_length);
+            // Some differences
+            Console.WriteLine($"  -1 Equipment 510*<0x7E>");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x176FA4, 0x19D6E0, line_length);
+            Console.WriteLine($"  Different Equipment somewhere 1250*<0x7E>");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x19D6E0, 0x1A8D48, line_length);
+            // Weapon notice flags
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  NPC Conversations 2048*<0x8> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1ACD48, 0x1AD5DF, line_length);
+            // Palico name is in here, so probably palico tool levels and xp
+            // Quest notics flags
+
+            // 1AD228:1 Notice flag; The Great Glutton
+			// 1AD227:40 Notice flag; Bird-Brained Bandit
+			// 1AD227:10 Notice flag; A Thicket of Thugs
+			// 1AD227:8 Notice flag; Butting Heads with Nature
+			// 1AD227:4 Notice flag; The Great Jagras Hunt
+			// 1AD227:2 Notice flag; A Kestadon Kerfuffle
+			// 1AD227:1 Notice flag; Jagras of the Great Forest
+
+			// 1AD249:4 Notice flag; Learning the Clutch
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Investigations 400*<0x2A> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1B177F, 0x1B21D1, line_length);
+            // Map notice flags
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1B21D1, 0x1B60D1, line_length);
+            // Only real difference is some flag per object and some data at the end
+            Console.WriteLine($"  UNKNOWN 128*<0x7E>");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1B60D1, 0x1B6955, line_length);
+            // Seems like more flags
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Equipment Layouts 224*<0x2A4> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1DB8D5, 0x1E4315, line_length);
+            // No difference; maybe something I never touched upon
+            Console.WriteLine($"  UNKNOWN 112*<0x13C>");
+
+            Console.WriteLine($"  Room Configurations 24*<0x128> IGNORED");
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1E5ED5, 0x1E7082, line_length);
+            // Strange names, some from guildcards, some unknown
+            // looks like 12 slots of maybe guildcard linked palico helpers you can find?
+            // Guildcard titles and medals notics flags
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1E7082, 0x1EA202, line_length);
+            // Some shoutout texts, so probably gestures poses etc.
+            Console.WriteLine($"  UNKNOWN 96*<0x84>");
+
+            Console.ReadLine();
+            diff_bytes(data1, data2, 0x1EA202, 0x2098C0, line_length);
+            // very empty with the occasional structure
+            Console.WriteLine($"  UNKNOWN");
+
+            Console.WriteLine($"  Hash IGNORED");
+
+            Console.ReadLine();
         }
 
         public void hex_dump ( Byte[] bytes, UInt64 start = 0, UInt64 end = 0, UInt64 line_length = 32, Func<UInt64, ConsoleColor> color_func = null ) {

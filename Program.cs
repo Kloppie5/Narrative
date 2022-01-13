@@ -14,11 +14,16 @@ namespace Narrative {
             mhwsfe.DecryptCharacters();
             // mhwsfe.dump_character(2);
             String path = Directory.GetCurrentDirectory();
-            String path1 = Path.Combine(path, "saves", $"character_p00_empty.sav");
-            String path2 = Path.Combine(path, "saves", $"character_p01_default.sav");
-            mhwsfe.diff_characters(path1, path2);
+            /**
+            String[] files = Directory.GetFiles(Path.Combine(path, "saves"), "*.sav");
+            for ( int i = 0 ; i < files.Length - 1 ; ++i ) {
+                mhwsfe.diff_characters(files[i], files[i + 1]);
+                Console.ReadLine();
+            }
+            */
             // mhwsfe.load_character(2, path);
-            // mhwsfe.save_character(2, path);
+            // mhwsfe.save_character(0, Path.Combine(path, "saves", "character_0.backup"));
+            mhwsfe.smart_diff_characters(Path.Combine(path, "saves", "character_0.backup"), Path.Combine(path, "saves", "character_1.backup"));
         }
     }
 }
