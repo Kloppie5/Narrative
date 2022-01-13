@@ -14,8 +14,11 @@ namespace Narrative {
             mhwsfe.DecryptCharacters();
             // mhwsfe.dump_character(2);
             String path = Directory.GetCurrentDirectory();
-            path = Path.Combine(path, "saves", $"character_p25_mjurder.sav");
-            mhwsfe.save_character(2, path);
+            String path1 = Path.Combine(path, "saves", $"character_p00_empty.sav");
+            String path2 = Path.Combine(path, "saves", $"character_p01_default.sav");
+            mhwsfe.diff_characters(path1, path2);
+            // mhwsfe.load_character(2, path);
+            // mhwsfe.save_character(2, path);
         }
     }
 }

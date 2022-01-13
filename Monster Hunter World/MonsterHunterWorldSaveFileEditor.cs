@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 namespace MonsterHunterWorld {
 
@@ -185,6 +187,63 @@ namespace MonsterHunterWorld {
 
             File.WriteAllBytes(filename, data);
         }
+        public void load_character ( int character, String filename ) {
+            Int32 start = 0x3010D8 + character * 0x209AC0;
+
+            Byte[] data = File.ReadAllBytes(filename);
+            Array.Copy(data, 0, this.data, start, 0x209AC0);
+        }
+        public void diff_characters ( String filename1, String filename2, UInt64 line_length = 32 ) {
+            Byte[] data1 = File.ReadAllBytes(filename1);
+            Byte[] data2 = File.ReadAllBytes(filename2);
+            UInt64 end = 0x209AC0;
+
+            for ( UInt64 i = 0 ; i < end ; i += line_length ) {
+                Boolean line_diff = false;
+                List<Action> act_1_hex = new List<Action>();
+                List<Action> act_1_char = new List<Action>();
+                List<Action> act_2_hex = new List<Action>();
+                List<Action> act_2_char = new List<Action>();
+
+                for ( UInt64 j = 0 ; j < line_length ; ++j ) {
+                    UInt64 pos = i + j;
+                    Byte c1 = data1[pos];
+                    Byte c2 = data2[pos];
+                    Boolean diff = c1 != c2;
+                    if ( c1 != c2 )
+                        diff = true;
+
+                    act_1_hex.Add(() => {Console.ForegroundColor = diff ? ConsoleColor.Red : ConsoleColor.White;});
+                    act_1_hex.Add(() => {Console.Write(pos < end ? c1.ToString("X2").Replace("0", "-") : "  ");});
+                    act_1_char.Add(() => {Console.ForegroundColor = diff ? ConsoleColor.Red : ConsoleColor.White;});
+                    act_1_char.Add(() => {Console.Write(pos < end && c1 >= 32 && c1 <= 126 ? (Char) c1 : '.');});
+                    act_2_hex.Add(() => {Console.ForegroundColor = diff ? ConsoleColor.Red : ConsoleColor.White;});
+                    act_2_hex.Add(() => {Console.Write(pos < end ? c2.ToString("X2").Replace("0", "-") : "  ");});
+                    act_2_char.Add(() => {Console.ForegroundColor = diff ? ConsoleColor.Red : ConsoleColor.White;});
+                    act_2_char.Add(() => {Console.Write(pos < end && c2 >= 32 && c2 <= 126 ? (Char) c2 : '.');});
+
+                    if ( diff )
+                        line_diff = true;
+                }
+
+                if ( line_diff ) {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($"{i:X6}: ");
+                    act_1_hex.ForEach(cmd => cmd());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($" | ");
+                    act_2_hex.ForEach(cmd => cmd());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($" || ");
+                    act_1_char.ForEach(cmd => cmd());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write($" | ");
+                    act_2_char.ForEach(cmd => cmd());
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine();
+                }
+            }
+        }
 
         public void hex_dump ( Byte[] bytes, UInt64 start = 0, UInt64 end = 0, UInt64 line_length = 32, Func<UInt64, ConsoleColor> color_func = null ) {
             if (end == 0)
@@ -205,7 +264,7 @@ namespace MonsterHunterWorld {
                 }
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write("  ");
-                for ( UInt64 j = 0; j < line_length && i + j < end; j++ ) {
+                for ( UInt64 j = 0; j < line_length && i + j < end; ++j ) {
                     Console.ForegroundColor = color_func(i + j);
                     Console.Write(
                         bytes[i + j] >= 32 && bytes[i + j] <= 126 ?
