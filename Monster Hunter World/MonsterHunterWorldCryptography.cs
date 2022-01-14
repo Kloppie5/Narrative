@@ -205,7 +205,7 @@ namespace MonsterHunterWorld {
 	}
 
     public static class CharacterEncryption {
-		public static void DecryptCharacter ( Byte[] save, UInt32 offset ) {
+		public static void DecryptCharacter ( Byte[] save, UInt32 offset = 0 ) {
 			RijndaelManaged aes = new RijndaelManaged() {
 				Mode = CipherMode.ECB,
 				Padding = PaddingMode.None
@@ -313,7 +313,7 @@ namespace MonsterHunterWorld {
 				roundOffset = offset + roundThreshold;
 			}
 		}
-        public static void EncryptCharacter ( Byte[] save, UInt32 offset ) {
+        public static void EncryptCharacter ( Byte[] save, UInt32 offset = 0 ) {
             RijndaelManaged aes = new RijndaelManaged() {
 				Mode = CipherMode.ECB,
 				Padding = PaddingMode.None
