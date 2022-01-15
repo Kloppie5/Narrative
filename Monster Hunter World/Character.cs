@@ -15,8 +15,10 @@ namespace MonsterHunterWorld {
         UInt32 HRXP; // [0x54 - 0x58]
         UInt32 MRXP; // [0x58 - 0x5C]
         UInt32 playtime; // [0x5C - 0x60]
-        HunterAppearance hunterAppearance; // [0x60 - 0xDC] <0x7C>
-        Byte[] UNKNOWN_0000DC_0002B2; // [0xDC - 0x2B2]
+        Byte[] UNKNOWN_000060_000064; // [0x60 - 0x64]
+        HunterAppearance hunterAppearance; // [0x64 - 0x108] <0xA4>
+        Byte[] UNKNOWN_000108_000286; // [0x108 - 0x286]
+        PalicoAppearance palicoAppearance; // [0x286 - 0x2B2] <0x2C>
         Guildcard guildcard; // [0x2B2 - 0x211D] <0x1E6B>
         Guildcard[] guildcards; // [0x211D - 0xC02E9] 100*<0x1E6B>
         Byte[] guildcardIndices; // [0xC02E9 - 0xC03B1] 100*<0x2>
@@ -71,9 +73,12 @@ namespace MonsterHunterWorld {
             HRXP = BitConverter.ToUInt32(data, 0x54);
             MRXP = BitConverter.ToUInt32(data, 0x58);
             playtime = BitConverter.ToUInt32(data, 0x5C);
-            hunterAppearance = new HunterAppearance(data, 0x60);
-            UNKNOWN_0000DC_0002B2 = new Byte[0x2B2];
-            Array.Copy(data, 0xDC, UNKNOWN_0000DC_0002B2, 0x0, 0x2B2);
+            UNKNOWN_000060_000064 = new Byte[0x4];
+            Array.Copy(data, 0x60, UNKNOWN_000060_000064, 0x0, 0x4);
+            hunterAppearance = new HunterAppearance(data, 0x64);
+            UNKNOWN_000108_000286 = new Byte[0x84];
+            Array.Copy(data, 0x108, UNKNOWN_000108_000286, 0x0, 0x84);
+            palicoAppearance = new PalicoAppearance(data, 0x286);
             guildcard = new Guildcard(data, 0x2B2);
             guildcards = new Guildcard[100];
             for ( int i = 0; i < 100; ++i )
@@ -194,17 +199,24 @@ namespace MonsterHunterWorld {
             Console.WriteLine($"  HR XP [{0x54:X} - {0x58:X}] = {HRXP}");
             Console.WriteLine($"  MR XP [{0x58:X} - {0x5C:X}] = {MRXP}");
             Console.WriteLine($"  Playtime [{0x5C:X} - {0x60:X}] = {playtime}");
-            Console.WriteLine($"  Hunter Appearance [{0x60:X} - {0xDC:X}] <0x7C>");
+            Console.WriteLine($"  UNKNOWN [{0x60:X} - {0x64:X}] = {BitConverter.ToString(UNKNOWN_000060_000064)}");
+            Console.WriteLine($"  Hunter Appearance [{0x60:X} - {0x108:X}] <0xA8>");
             if ( verbose )
                 hunterAppearance.Dump();
             if ( halting )
                 Console.ReadLine();
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"  UNKNOWN [{0x0000DC:X} - {0x0002B2:X}]");
+            Console.WriteLine($"  UNKNOWN [{0x000108:X} - {0x000286:X}]");
             Console.ForegroundColor = ConsoleColor.White;
             if ( verbose )
-                Logger.hex_dump(UNKNOWN_0000DC_0002B2);
+                Logger.hex_dump(UNKNOWN_000108_000286);
+            if ( halting )
+                Console.ReadLine();
+
+            Console.WriteLine($"  Palico Appearance [{0x000286:X} - {0x0002B2:X}] <0x2C>");
+            if ( verbose )
+                palicoAppearance.Dump();
             if ( halting )
                 Console.ReadLine();
 
