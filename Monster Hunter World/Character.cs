@@ -15,39 +15,39 @@ namespace MonsterHunterWorld {
         UInt32 HRXP; // [0x54 - 0x58]
         UInt32 MRXP; // [0x58 - 0x5C]
         UInt32 playtime; // [0x5C - 0x60]
-        Byte[] hunterAppearance; // [0x60 - 0xDC] <0x7C>
+        HunterAppearance hunterAppearance; // [0x60 - 0xDC] <0x7C>
         Byte[] UNKNOWN_0000DC_0002B2; // [0xDC - 0x2B2]
-        Byte[] guildcard; // [0x2B2 - 0x211D] <0x1E6B>
-        Byte[] guildcards; // [0x211D - 0xC02E9] 100*<0x1E6B>
+        Guildcard guildcard; // [0x2B2 - 0x211D] <0x1E6B>
+        Guildcard[] guildcards; // [0x211D - 0xC02E9] 100*<0x1E6B>
         Byte[] guildcardIndices; // [0xC02E9 - 0xC03B1] 100*<0x2>
         Byte[] UNKNOWN_0C03B1_0F3510; // [0xC03B1 - 0x0F3510]
-        Byte[] itemLoadouts; // [0x0F3510 - 0x10A710] 80*<0x4A0>
-        Byte[] itemLoadoutIndices; // [0x10A710 - 0x10A760] 80
-        Byte[] UNKNOWN_10A760_116098; // [0x10A760 - 0x116098]
-        Byte[] itemPouch; // [0x116098 - 0x116158] 24*<0x8>
-        Byte[] ammoPouch; // [0x116158 - 0x1161D8] 16*<0x8>
-        Byte[] materialPouch; // [0x1161D8 - 0x116298] 24*<0x8>
-        Byte[] specialPouch; // [0x116298 - 0x116300] 13*<0x8>
-        Byte[] itemBox; // [0x116300 - 0x116940] 200*<0x8>
-        Byte[] ammoBox; // [0x116940 - 0x116F80] 200*<0x8>
-        Byte[] materialBox; // [0x116F80 - 0x119690] 1250*<0x8>
-        Byte[] decorationBox; // [0x119690 - 0x11A630] 500*<0x8>
-        Byte[] equipmentBox; // [0x11A630 - 0x1674A8] 2500*<0x7E>
-        Byte[] invalidEquipment; // [0x1674A8 - 0x176FAC] 510*<0x7E>
-        Byte[] emptyEquipment; // [0x176FAC - 0x19D6E8] 1250*<0x7E>
+        ItemLoadout[] itemLoadouts; // [0x0F3510 - 0x116010] 120*<0x4A0>
+        Byte[] itemLoadoutIndices; // [0x116010 - 0x116088] 120
+        Byte[] UNKNOWN_116088_116098; // [0x116088 - 0x116098]
+        InventorySlot<ItemID>[] itemPouch; // [0x116098 - 0x116158] 24*<0x8>
+        InventorySlot<ItemID>[] ammoPouch; // [0x116158 - 0x1161D8] 16*<0x8>
+        InventorySlot<ItemID>[] materialPouch; // [0x1161D8 - 0x116298] 24*<0x8>
+        InventorySlot<ItemID>[] specialPouch; // [0x116298 - 0x116300] 13*<0x8>
+        InventorySlot<ItemID>[] itemBox; // [0x116300 - 0x116940] 200*<0x8>
+        InventorySlot<ItemID>[] ammoBox; // [0x116940 - 0x116F80] 200*<0x8>
+        InventorySlot<ItemID>[] materialBox; // [0x116F80 - 0x119690] 1250*<0x8>
+        InventorySlot<DecorationID>[] decorationBox; // [0x119690 - 0x11A630] 500*<0x8>
+        Equipment[] equipmentBox; // [0x11A630 - 0x1674A8] 2500*<0x7E>
+        Equipment[] invalidEquipment; // [0x1674A8 - 0x176FAC] 510*<0x7E>
+        Equipment[] emptyEquipment; // [0x176FAC - 0x19D6E8] 1250*<0x7E>
         Byte[] equipmentBoxIndices; // [0x19D6E8 - 0x19FDF8] 2500*<0x4>
         Byte[] EMPTY_19FDF8_1A05C8; // [0x19FDF8 - 0x1A05C8] 2500*<0x4>
         Byte[] emptyEquipmentIndices; // [0x1A05C8 - 0x1A194C] 1250*<0x4>
         Byte[] UNKNOWN_1A194C_1A8D48; // [0x1A194C - 0x1A8D48]
         Byte[] NPCConversations; // [0x1A8D48 - 0x1ACD48] 2048*<0x8>
         Byte[] UNKNOWN_1ACD48_1AD5DF; // [0x1ACD48 - 0x1AD5DF]
-        Byte[] investigations; // [0x1AD5DF - 0x1B177F] 400*<0x2A>
+        Investigation[] investigations; // [0x1AD5DF - 0x1B177F] 400*<0x2A>
         Byte[] UNKNOWN_1B177F_1B21B1; // [0x1B177F - 0x1B21B1]
         Byte[] UNKNOWN_1B21B1_1B60B1; // [0x1B21B1 - 0x1B60B1] 128*<0x7E>
         Byte[] UNKNOWN_1B60B1_1B6955; // [0x1B60B1 - 0x1B6955]
-        Byte[] equipmentLayouts; // [0x1B6955 - 0x1DB8D5] 224*<0x2A4>
+        EquipmentLayout[] equipmentLayouts; // [0x1B6955 - 0x1DB8D5] 224*<0x2A4>
         Byte[] UNKNOWN_1DB8D5_1E4315; // [0x1DB8D5 - 0x1E4315] 112*<0x13C>
-        Byte[] roomConfigurations; // [0x1E4315 - 0x1E5ED5] 24*<0x128>
+        RoomConfiguration[] roomConfigurations; // [0x1E4315 - 0x1E5ED5] 24*<0x128>
         Byte[] UNKNOWN_1E5ED5_2098C0; // [0x1E5ED5 - 0x2098C0]
         Byte[] hash; // [0x2098C0 - 0x209AC0]
 
@@ -71,59 +71,57 @@ namespace MonsterHunterWorld {
             HRXP = BitConverter.ToUInt32(data, 0x54);
             MRXP = BitConverter.ToUInt32(data, 0x58);
             playtime = BitConverter.ToUInt32(data, 0x5C);
-            hunterAppearance = new Byte[0x7C];
-            Array.Copy(data, 0x60, hunterAppearance, 0x0, 0x7C);
+            hunterAppearance = new HunterAppearance(data, 0x60);
             UNKNOWN_0000DC_0002B2 = new Byte[0x2B2];
             Array.Copy(data, 0xDC, UNKNOWN_0000DC_0002B2, 0x0, 0x2B2);
-            guildcard = new Byte[0x1E6B];
-            Array.Copy(data, 0x2B2, guildcard, 0x0, 0x1E6B);
-            guildcards = new Byte[100 * 0x1E6B];
+            guildcard = new Guildcard(data, 0x2B2);
+            guildcards = new Guildcard[100];
             for ( int i = 0; i < 100; ++i )
-                Array.Copy(data, 0x211D + (i * 0x1E6B), guildcards, (i * 0x1E6B), 0x1E6B);
+                guildcards[i] = new Guildcard(data, 0x211D + (i * 0x1E6B));
             guildcardIndices = new Byte[0x2 * 100];
             Array.Copy(data, 0xC02E9, guildcardIndices, 0x0, 0x2 * 100);
             UNKNOWN_0C03B1_0F3510 = new Byte[0x0F3510 - 0xC03B1];
             Array.Copy(data, 0xC03B1, UNKNOWN_0C03B1_0F3510, 0x0, 0x0F3510 - 0xC03B1);
-            itemLoadouts = new Byte[80 * 0x4A0];
-            for ( int i = 0; i < 80; ++i )
-                Array.Copy(data, 0x0F3510 + (i * 0x4A0), itemLoadouts, (i * 0x4A0), 0x4A0);
-            itemLoadoutIndices = new Byte[0x2 * 80];
-            Array.Copy(data, 0x10A710, itemLoadoutIndices, 0x0, 0x2 * 80);
-            UNKNOWN_10A760_116098 = new Byte[0x116098 - 0x10A760];
-            Array.Copy(data, 0x10A760, UNKNOWN_10A760_116098, 0x0, 0x116098 - 0x10A760);
-            itemPouch = new Byte[24 * 0x8];
+            itemLoadouts = new ItemLoadout[120];
+            for ( int i = 0; i < 120; ++i )
+                itemLoadouts[i] = new ItemLoadout(data, 0x0F3510 + (i * 0x4A0));
+            itemLoadoutIndices = new Byte[120];
+            Array.Copy(data, 0x116010, itemLoadoutIndices, 0x0, 120);
+            UNKNOWN_116088_116098 = new Byte[0x8];
+            Array.Copy(data, 0x116108, UNKNOWN_116088_116098, 0x0, 0x8);
+            itemPouch = new InventorySlot<ItemID>[24];
             for ( int i = 0; i < 24; ++i )
-                Array.Copy(data, 0x116098 + (i * 0x8), itemPouch, (i * 0x8), 0x8);
-            ammoPouch = new Byte[16 * 0x8];
+                itemPouch[i] = new InventorySlot<ItemID>(data, 0x116098 + (i * 0x8));
+            ammoPouch = new InventorySlot<ItemID>[16];
             for ( int i = 0; i < 16; ++i )
-                Array.Copy(data, 0x116158 + (i * 0x8), ammoPouch, (i * 0x8), 0x8);
-            materialPouch = new Byte[24 * 0x8];
+                ammoPouch[i] = new InventorySlot<ItemID>(data, 0x116158 + (i * 0x8));
+            materialPouch = new InventorySlot<ItemID>[24];
             for ( int i = 0; i < 24; ++i )
-                Array.Copy(data, 0x1161D8 + (i * 0x8), materialPouch, (i * 0x8), 0x8);
-            specialPouch = new Byte[13 * 0x8];
+                materialPouch[i] = new InventorySlot<ItemID>(data, 0x1161D8 + (i * 0x8));
+            specialPouch = new InventorySlot<ItemID>[13];
             for ( int i = 0; i < 13; ++i )
-                Array.Copy(data, 0x116298 + (i * 0x8), specialPouch, (i * 0x8), 0x8);
-            itemBox = new Byte[200 * 0x8];
+                specialPouch[i] = new InventorySlot<ItemID>(data, 0x116298 + (i * 0x8));
+            itemBox = new InventorySlot<ItemID>[200];
             for ( int i = 0; i < 200; ++i )
-                Array.Copy(data, 0x116300 + (i * 0x8), itemBox, (i * 0x8), 0x8);
-            ammoBox = new Byte[200 * 0x8];
+                itemBox[i] = new InventorySlot<ItemID>(data, 0x116300 + (i * 0x8));
+            ammoBox = new InventorySlot<ItemID>[200];
             for ( int i = 0; i < 200; ++i )
-                Array.Copy(data, 0x116940 + (i * 0x8), ammoBox, (i * 0x8), 0x8);
-            materialBox = new Byte[1250 * 0x8];
+                ammoBox[i] = new InventorySlot<ItemID>(data, 0x116940 + (i * 0x8));
+            materialBox = new InventorySlot<ItemID>[1250];
             for ( int i = 0; i < 1250; ++i )
-                Array.Copy(data, 0x116F80 + (i * 0x8), materialBox, (i * 0x8), 0x8);
-            decorationBox = new Byte[500 * 0x8];
+                materialBox[i] = new InventorySlot<ItemID>(data, 0x116F80 + (i * 0x8));
+            decorationBox = new InventorySlot<DecorationID>[500];
             for ( int i = 0; i < 500; ++i )
-                Array.Copy(data, 0x119690 + (i * 0x8), decorationBox, (i * 0x8), 0x8);
-            equipmentBox = new Byte[2500 * 0x7E];
+                decorationBox[i] = new InventorySlot<DecorationID>(data, 0x1175C0 + (i * 0x8));
+            equipmentBox = new Equipment[2500];
             for ( int i = 0; i < 2500; ++i )
-                Array.Copy(data, 0x11A630 + (i * 0x7E), equipmentBox, (i * 0x7E), 0x7E);
-            invalidEquipment = new Byte[510 * 0x7E];
+                equipmentBox[i] = new Equipment(data, 0x11A630 + (i * 0x7E));
+            invalidEquipment = new Equipment[510];
             for ( int i = 0; i < 510; ++i )
-                Array.Copy(data, 0x1674A8 + (i * 0x7E), invalidEquipment, (i * 0x7E), 0x7E);
-            emptyEquipment = new Byte[1250 * 0x7E];
+                invalidEquipment[i] = new Equipment(data, 0x1674A8 + (i * 0x7E));
+            emptyEquipment = new Equipment[1250];
             for ( int i = 0; i < 1250; ++i )
-                Array.Copy(data, 0x176FAC + (i * 0x7E), emptyEquipment, (i * 0x7E), 0x7E);
+                emptyEquipment[i] = new Equipment(data, 0x176FAC + (i * 0x7E));
             equipmentBoxIndices = new Byte[2500 * 0x4];
             Array.Copy(data, 0x19D6E8, equipmentBoxIndices, 0x0, 0x4 * 2500);
             EMPTY_19FDF8_1A05C8 = new Byte[0x1A05C8 - 0x19FDF8];
@@ -136,22 +134,23 @@ namespace MonsterHunterWorld {
             Array.Copy(data, 0x1A8D48, NPCConversations, 0x0, 0x1ACD48 - 0x1A8D48);
             UNKNOWN_1ACD48_1AD5DF = new Byte[0x1AD5DF - 0x1ACD48];
             Array.Copy(data, 0x1ACD48, UNKNOWN_1ACD48_1AD5DF, 0x0, 0x1AD5DF - 0x1ACD48);
-            investigations = new Byte[400 * 0x2A];
+            investigations = new Investigation[400];
             for ( int i = 0; i < 400; ++i )
-                Array.Copy(data, 0x1AD5DF + (i * 0x2A), investigations, (i * 0x2A), 0x2A);
+                investigations[i] = new Investigation(data, 0x1AD5DF + (i * 0x2A));
             UNKNOWN_1B177F_1B21B1 = new Byte[0x1B21B1 - 0x1B177F];
             Array.Copy(data, 0x1B177F, UNKNOWN_1B177F_1B21B1, 0x0, 0x1B21B1 - 0x1B177F);
             UNKNOWN_1B21B1_1B60B1 = new Byte[0x1B60B1 - 0x1B21B1];
             Array.Copy(data, 0x1B21B1, UNKNOWN_1B21B1_1B60B1, 0x0, 0x1B60B1 - 0x1B21B1);
             UNKNOWN_1B60B1_1B6955 = new Byte[0x1B6955 - 0x1B60B1];
             Array.Copy(data, 0x1B60B1, UNKNOWN_1B60B1_1B6955, 0x0, 0x1B6955 - 0x1B60B1);
-            equipmentLayouts = new Byte[224 * 0x2A4];
+            equipmentLayouts = new EquipmentLayout[224];
             for ( int i = 0; i < 224; ++i )
-                Array.Copy(data, 0x1B6955 + (i * 0x2A4), equipmentLayouts, (i * 0x2A4), 0x2A4);
+                equipmentLayouts[i] = new EquipmentLayout(data, 0x1B6955 + (i * 0x2A4));
             UNKNOWN_1DB8D5_1E4315 = new Byte[0x1E4315 - 0x1DB8D5];
             Array.Copy(data, 0x1DB8D5, UNKNOWN_1DB8D5_1E4315, 0x0, 0x1E4315 - 0x1DB8D5);
-            roomConfigurations = new Byte[0x1E5ED5 - 0x1E4315];
-            Array.Copy(data, 0x1E4315, roomConfigurations, 0x0, 0x1E5ED5 - 0x1E4315);
+            roomConfigurations = new RoomConfiguration[24];
+            for ( int i = 0; i < 24; ++i )
+                roomConfigurations[i] = new RoomConfiguration(data, 0x1E4315 + (i * 0x128));
             UNKNOWN_1E5ED5_2098C0 = new Byte[0x2098C0 - 0x1E5ED5];
             Array.Copy(data, 0x1E5ED5, UNKNOWN_1E5ED5_2098C0, 0x0, 0x2098C0 - 0x1E5ED5);
             hash = new Byte[0x209AC0 - 0x2098C0];
@@ -197,7 +196,7 @@ namespace MonsterHunterWorld {
             Console.WriteLine($"  Playtime [{0x5C:X} - {0x60:X}] = {playtime}");
             Console.WriteLine($"  Hunter Appearance [{0x60:X} - {0xDC:X}] <0x7C>");
             if ( verbose )
-                Logger.hex_dump(hunterAppearance);
+                hunterAppearance.Dump();
             if ( halting )
                 Console.ReadLine();
 
@@ -211,12 +210,13 @@ namespace MonsterHunterWorld {
 
             Console.WriteLine($"  Guildcard [{0x0002B2:X} - {0x00211D:X}] <0x1E6B>");
             if ( verbose )
-                Logger.hex_dump(guildcard);
+                guildcard.Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Guildcards [{0x00211D:X} - {0x0C02E9:X}] | 100*<0x1E6B>");
             if ( verbose )
-                Logger.hex_dump(guildcards);
+                for ( int i = 0; i < 100; ++i )
+                    guildcards[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Guildcard indices [{0x0C02E9:X} - {0x0C03B1:X}] | 100*<0x2>");
@@ -229,7 +229,7 @@ namespace MonsterHunterWorld {
             Console.WriteLine($"  UNKNOWN [{0x0C03B1:X} - {0x0F3510:X}]");
             Console.ForegroundColor = ConsoleColor.White;
             if ( verbose )
-                Logger.hex_dump(UNKNOWN_0C03B1_0F3510);
+                // Logger.hex_dump(UNKNOWN_0C03B1_0F3510);
             if ( halting )
                 Console.ReadLine();
             /*
@@ -240,22 +240,23 @@ namespace MonsterHunterWorld {
             // padding
             // large float holding structure
             */
-            Console.WriteLine($"  Item Loadouts [{0x0F3510:X} - {0x10A710:X}] | 80*<0x4A0>");
+            Console.WriteLine($"  Item Loadouts [{0x0F3510:X} - {0x116010:X}] | 120*<0x4A0>");
             if ( verbose )
-                Logger.hex_dump(itemLoadouts);
+                for ( int i = 0; i < 120; ++i )
+                    itemLoadouts[i].Dump();
             if ( halting )
                 Console.ReadLine();
-            Console.WriteLine($"  Item Loadout indices [{0x10A710:X} - {0x10A760:X}] | 80*<0x1>");
+            Console.WriteLine($"  Item Loadout indices [{0x116010:X} - {0x116088:X}] | 120*<0x1>");
             if ( verbose )
                 Logger.hex_dump(itemLoadoutIndices);
             if ( halting )
                 Console.ReadLine();
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"  UNKNOWN [{0x10A760:X} - {0x116098:X}]");
+            Console.WriteLine($"  UNKNOWN [{0x116088:X} - {0x116098:X}]");
             Console.ForegroundColor = ConsoleColor.White;
             if ( verbose )
-                Logger.hex_dump(UNKNOWN_10A760_116098);
+                Logger.hex_dump(UNKNOWN_116088_116098);
             if ( halting )
                 Console.ReadLine();
             /*
@@ -265,57 +266,68 @@ namespace MonsterHunterWorld {
             */
             Console.WriteLine($"  Item Pouch [{0x116098:X} - {0x116158:X}] | 24*<0x8>");
             if ( verbose )
-                Logger.hex_dump(itemPouch);
+                for ( int i = 0; i < 24; ++i )
+                    itemPouch[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Ammo Pouch [{0x116158:X} - {0x1161D8:X}] | 16*<0x8>");
             if ( verbose )
-                Logger.hex_dump(ammoPouch);
+                for ( int i = 0; i < 16; ++i )
+                    ammoPouch[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Material Pouch [{0x1161D8:X} - {0x116298:X}] | 24*<0x8>");
             if ( verbose )
-                Logger.hex_dump(materialPouch);
+                for ( int i = 0; i < 24; ++i )
+                    materialPouch[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Special Pouch [{0x116298:X} - {0x116300:X}] | 13*<0x8> << TODO CHECK");
             if ( verbose )
-                Logger.hex_dump(specialPouch);
+                for ( int i = 0; i < 13; ++i )
+                    specialPouch[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Item Box [{0x116300:X} - {0x116940:X}] | 200*<0x8>");
             if ( verbose )
-                Logger.hex_dump(itemBox);
+                for ( int i = 0; i < 200; ++i )
+                    itemBox[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Ammo Box [{0x116940:X} - {0x116F80:X}] | 200*<0x8>");
             if ( verbose )
-                Logger.hex_dump(ammoBox);
+                for ( int i = 0; i < 200; ++i )
+                    ammoBox[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Material Box [{0x116F80:X} - {0x119690:X}] | 1250*<0x8>");
             if ( verbose )
-                Logger.hex_dump(materialBox);
+                for ( int i = 0; i < 1250; ++i )
+                    materialBox[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Decoration Box [{0x119690:X} - {0x11A630:X}] | 500*<0x8>");
             if ( verbose )
-                Logger.hex_dump(decorationBox);
+                for ( int i = 0; i < 500; ++i )
+                    decorationBox[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Equipment Box [{0x11A630:X} - {0x1674A8:X}] | 2500*<0x7E>");
             if ( verbose )
-                Logger.hex_dump(equipmentBox);
+                for ( int i = 0; i < 2500; ++i )
+                    equipmentBox[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  -1 Equipment [{0x1674A8:X} - {0x176FAC:X}] | 510*<0x7E>");
             if ( verbose )
-                Logger.hex_dump(invalidEquipment);
+                for ( int i = 0; i < 510; ++i )
+                    invalidEquipment[i].Dump();
             if ( halting )
                 Console.ReadLine();
             Console.WriteLine($"  Empty Equipment [{0x176FAC:X} - {0x19D6E8:X}] | 1250*<0x7E>");
             if ( verbose )
-                Logger.hex_dump(emptyEquipment);
+                for ( int i = 0; i < 1250; ++i )
+                    emptyEquipment[i].Dump();
             if ( halting )
                 Console.ReadLine();
             /*
@@ -377,7 +389,8 @@ namespace MonsterHunterWorld {
             */
             Console.WriteLine($"  Investigations [{0x1AD5DF:X} - {0x1B177F:X}] | 400*<0x2A>");
             if ( verbose )
-                Logger.hex_dump(investigations);
+                for ( int i = 0; i < 400; ++i )
+                    investigations[i].Dump();
             if ( halting )
                 Console.ReadLine();
 
@@ -407,7 +420,8 @@ namespace MonsterHunterWorld {
                 Console.ReadLine();
             Console.WriteLine($"  Equipment Layouts [{0x1B6955:X} - {0x1DB8D5:X}] | 224*<0x2A4>");
             if ( verbose )
-                Logger.hex_dump(equipmentLayouts);
+                for ( int i = 0; i < 224; ++i )
+                    equipmentLayouts[i].Dump();
             if ( halting )
                 Console.ReadLine();
                 /*
@@ -451,7 +465,8 @@ namespace MonsterHunterWorld {
 
             Console.WriteLine($"  Room Configurations [{0x1E4315:X} - {0x1E5ED5:X}] | 24*<0x128>");
             if ( verbose )
-                Logger.hex_dump(roomConfigurations);
+                for ( int i = 0; i < 24; ++i )
+                    roomConfigurations[i].Dump();
             if ( halting )
                 Console.ReadLine();
 

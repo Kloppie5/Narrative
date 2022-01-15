@@ -1,11 +1,10 @@
 using System;
 
 namespace MonsterHunterWorld {
-
-    class ItemLoadout {
+    class HunterAppearance {
         Byte[] data;
 
-        public ItemLoadout ( Byte[] data, Int32 offset = 0 ) {
+        public HunterAppearance ( Byte[] data, Int32 offset = 0 ) {
             this.data = new Byte[0x7C];
             Array.Copy(data, offset, this.data, 0, 0x7C);
             Deserialize();
@@ -16,8 +15,8 @@ namespace MonsterHunterWorld {
         }
 
         public void Dump ( ) {
-            // TODO
+            Console.WriteLine("Hunter Appearance:");
+            Logger.hex_dump(data);
         }
-
     }
 }
