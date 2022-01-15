@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 
-using MonsterHunterWorld;
-
 namespace Narrative {
     class Program {
         static void Main ( String[] args ) {
@@ -26,7 +24,8 @@ namespace Narrative {
             // mhwsfe.load_character(2, path);
             // mhwsfe.save_character(0, Path.Combine(path, "saves", "character_0.backup"));
 
-            MonsterHunterWorldSaveFileEditor.smart_dump_character(Path.Combine(path, "saves", "character_0.backup"));
+            MonsterHunterWorld.Character c = new MonsterHunterWorld.Character(Path.Combine(path, "saves", "character_0.backup"));
+            c.Dump(verbose: true, halting: true);
 
             /*
             MonsterHunterWorldSaveFileEditor.smart_diff_characters(

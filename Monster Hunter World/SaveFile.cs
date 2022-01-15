@@ -41,19 +41,25 @@ namespace MonsterHunterWorld {
         // UInt64 charactersSize; // [0x3010D0 - 0x3010D8]
 
         // CharactersData [0x3010D8 - 0xAC30D8]
-        Character character1; // [0x3010D8 - 0x50AB98]
-        Character character2; // [0x50AB98 - 0x714658]
-        Character character3; // [0x714658 - 0x91E118]
+        public Character character1; // [0x3010D8 - 0x50AB98]
+        public Character character2; // [0x50AB98 - 0x714658]
+        public Character character3; // [0x714658 - 0x91E118]
         // Byte[] PADDING_91E118_AC30D8; // [0x91E118 - 0xAC30D8]
 
         // Byte[] PADDING_AC30D8_AC30E0; // [0xAC30D8 - 0xAC30E0]
 
         public SaveFile ( String path ) {
+            Console.WriteLine($"Loading save file from {path}");
             data = File.ReadAllBytes(path);
+            Console.WriteLine($"Loaded {data.Length} bytes");
             SaveFileEncryption.Decrypt(data);
+            Console.WriteLine($"Decrypted {data.Length} bytes");
             character1 = new Character(data, 0x3010D8);
+            Console.WriteLine($"Loaded character 1");
             character2 = new Character(data, 0x50AB98);
+            Console.WriteLine($"Loaded character 2");
             character3 = new Character(data, 0x714658);
+            Console.WriteLine($"Loaded character 3");
         }
 
         public void Dump ( Boolean verbose = false ) {
