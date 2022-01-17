@@ -77,24 +77,57 @@ namespace Narrative {
         [DllImport("psapi.dll")]
         public static extern Int32 GetModuleFileNameEx( IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, Int32 nSize );
 
-        public UInt64 GetModuleBaseAddress ( String name ) {
+        public UInt32 GetModuleBaseAddress ( String name ) {
             IntPtr[] modules = new IntPtr[1024];
             Int32 needed = 0;
             EnumProcessModulesEx(process.Handle, modules, 1024, ref needed, 0x3);
             for ( Int32 i = 0; i < needed / IntPtr.Size; i++ ) {
                 StringBuilder sb = new StringBuilder(1024);
                 GetModuleFileNameEx(process.Handle, modules[i], sb, 1024);
-                if ( sb.ToString().ToLower().Contains(name.ToLower()) )
-                    return (UInt64) modules[i];
+                if ( sb.ToString().Contains(name) )
+                    return (UInt32) modules[i];
             }
 
-			return 0;
-		}
+            return 0;
+        }
 
-        public UInt64 GetUnityRootDomain() {
-			UInt64 MonoBaseAddress = GetModuleBaseAddress("mono-2.0-bdwgc.dll");
-			return ReadAbsolute<UInt64>(MonoBaseAddress + 0x3A41AC); // <<< maaaaagic
-		}
+        public UInt32 GetUnityRootDomain() {
+            UInt32 MonoBaseAddress = GetModuleBaseAddress("mono-2.0-bdwgc.dll");
+            Console.WriteLine($"MonoBaseAddress: {MonoBaseAddress:X}");
+            UInt32 PESignatureOffset = ReadAbsolute<UInt32>(MonoBaseAddress + 0x3C);
+            UInt32 ExportedFunctionsOffset = ReadAbsolute<UInt32>(MonoBaseAddress + PESignatureOffset + 0x78);
+            UInt32 IMAGE_EXPORT_DIRECTORY_NumberOfFunctions = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x14);
+            UInt32 IMAGE_EXPORT_DIRECTORY_NumberOfNames = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x18);
+            UInt32 IMAGE_EXPORT_DIRECTORY_AddressOfFunctions = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x1C);
+            UInt32 IMAGE_EXPORT_DIRECTORY_AddressOfNames = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x20);
+
+            for ( UInt32 i = 0; i < IMAGE_EXPORT_DIRECTORY_NumberOfFunctions; ++i ) {
+                UInt32 FunctionNameOffset = ReadAbsolute<UInt32>(MonoBaseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfNames + i * 4);
+                String FunctionName = ReadAbsoluteUTF8String(MonoBaseAddress + FunctionNameOffset);
+                if ( FunctionName.Equals("mono_get_root_domain") ) {
+                    UInt32 FunctionOffset = ReadAbsolute<UInt32>(MonoBaseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 4);
+                    // mono-2.0-bdwgc.mono_get_root_domain - A1 AC41067A - mov eax, {RootDomain}
+                    UInt32 RootDomainPointer = ReadAbsolute<UInt32>(MonoBaseAddress + FunctionOffset + 0x1);
+                    return ReadAbsolute<UInt32>(RootDomainPointer);
+                }
+            }
+
+            return 0;
+        }
+
+        public UInt32 GetAssemblyInDomain ( UInt32 domain, String name ) {
+            UInt32 it = ReadAbsolute<UInt32>(domain + 0x6C);
+            while ( it != 0 ) {
+                UInt32 assembly = ReadAbsolute<UInt32>(it);
+                UInt32 assemblyNameAddress = ReadAbsolute<UInt32>(assembly + 0x08);
+                String assemblyName = ReadAbsoluteUTF8String(assemblyNameAddress);
+                if ( assemblyName.Equals(name) )
+                    return assembly;
+
+                it = ReadAbsolute<UInt32>(it + 0x4);
+            }
+            return 0;
+        }
 
         public List<UInt64> FindPatternAddresses( UInt64 start, UInt64 end, BytePattern pattern ) {
             List<UInt64> matchAddresses = new List<UInt64>();
@@ -203,6 +236,15 @@ namespace Narrative {
             }
 
             return result;
+        }
+        public String ReadAbsoluteUTF8String ( UInt64 address ) {
+            List<Byte> bytes = new List<Byte>();
+
+            Byte b;
+            while ( (b = ReadAbsolute<Byte>(address++)) != 0 )
+                bytes.Add(b);
+
+            return Encoding.UTF8.GetString(bytes.ToArray());
         }
         public String ReadString ( UInt64 address, UInt32 length ) {
             Byte[] Bytes = new Byte[length];

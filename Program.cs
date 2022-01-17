@@ -10,7 +10,10 @@ namespace Narrative {
 
             ProcessManager pm = new ProcessManager("cultistsimulator");
 
-            Console.WriteLine($"Found Unity Root Domain at {pm.GetUnityRootDomain():X8}");
+            UInt32 unityRootDomain = pm.GetUnityRootDomain();
+            Console.WriteLine($"Unity Root Domain: {unityRootDomain:X}");
+            UInt32 assembly = pm.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
+            Console.WriteLine($"Assembly: {assembly:X}");
 
         }
     }
