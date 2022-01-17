@@ -262,16 +262,19 @@ class Logger {
         Console.ReadLine();
     }
 
-    public static void hex_dump ( Byte[] bytes, UInt64 start = 0, UInt64 end = 0, UInt64 line_length = 32, Func<UInt64, ConsoleColor> color_func = null ) {
+    public static void hex_dump ( Byte[] bytes, Tuple<UInt32, UInt32> range, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
+        hex_dump(bytes, range.Item1, range.Item2, line_length, color_func);
+    }
+    public static void hex_dump ( Byte[] bytes, UInt32 start = 0, UInt32 end = 0, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
         if (end == 0)
-            end = (UInt64)bytes.Length;
+            end = (UInt32)bytes.Length;
 
         if (color_func == null)
             color_func = (_) => ConsoleColor.White;
 
-        for ( UInt64 i = start; i < end; i += line_length ) {
+        for ( UInt32 i = start; i < end; i += line_length ) {
             Console.Write($"{i:X6} | {i-start:X6} : ");
-            for ( UInt64 j = 0; j < line_length; j++ ) {
+            for ( UInt32 j = 0; j < line_length; j++ ) {
                 Console.ForegroundColor = color_func(i + j);
                 Console.Write(
                     i + j < end ?
@@ -281,7 +284,7 @@ class Logger {
             }
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("  ");
-            for ( UInt64 j = 0; j < line_length && i + j < end; ++j ) {
+            for ( UInt32 j = 0; j < line_length && i + j < end; ++j ) {
                 Console.ForegroundColor = color_func(i + j);
                 Console.Write(
                     bytes[i + j] >= 32 && bytes[i + j] <= 126 ?

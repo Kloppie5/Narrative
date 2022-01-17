@@ -25,7 +25,7 @@ namespace Narrative {
             // mhwsfe.save_character(0, Path.Combine(path, "saves", "character_0.backup"));
 
             MonsterHunterWorld.Character c = new MonsterHunterWorld.Character(Path.Combine(path, "saves", "character_0.backup"));
-            c.Dump(verbose: true, halting: true);
+            c.Dump();
 
             /*
             MonsterHunterWorldSaveFileEditor.smart_diff_characters(
