@@ -12,6 +12,7 @@ namespace MonsterHunterWorld {
         Byte[] data;
 
         Mapping mapping = new Mapping();
+        // [exe+0x02C95B27+r8*4]
         public void Init_Mapping ( ) {
             mapping.Add("UNKNOWN_000000_000004", 0x000000, 0x000004, 0x000048, 0x00004C);
             mapping.Add("name",                  0x000004, 0x000044, 0x000050, 0x000090); // 40
@@ -31,11 +32,10 @@ namespace MonsterHunterWorld {
             mapping.Add("palicoAppearance",      0x000286, 0x0002B2, 0x000198, 0x0001C4); // <0x2C>
             mapping.Add("guildcard",             0x0002B2, 0x00211D, 0x17FA20, 0x181AE0); // <0x1E6B>
             mapping.Add("guildcards",            0x00211D, 0x0C02E9, 0x181AE0, 0x24E5E0); // 100*<0x1E6B>
-            mapping.Add("guildcardIndices",      0x0C02E9, 0x0C03E9, 0x000000, 0x000000); // 100*<0x1>
-            mapping.Add("UNKNOWN_0C03E9_0C05B5", 0x0C03E9, 0x0C05B5, 0x000000, 0x000000);
+            mapping.Add("guildcardIndices",      0x0C02E9, 0x0C03B1, 0x000000, 0x000000); // 100*<0x2>
+            mapping.Add("UNKNOWN_0C03B1_0C05B5", 0x0C03B1, 0x0C05B5, 0x000000, 0x000000); //
             mapping.Add("guildcardBuffer",       0x0C05B5, 0x0E6611, 0x000000, 0x000000); // 20*<0x1E6B>
             mapping.Add("UNKNOWN_0E6611_0F3510", 0x0E6611, 0x0F3510, 0x000000, 0x000000);
-            // ~ [0x24E5E0] 200
             // ~ [0x24E6A8 // <0x78>]
             // ~ [0x251588]
             // ~ [0x2515A0] 20*<0x20C0> <<< 20 guildcards
@@ -237,9 +237,9 @@ namespace MonsterHunterWorld {
             // UNKNOWN_000285_000286
             // Padding or single flag
 
-            // UNKNOWN_0C03E9_0C05B5
-            Console.WriteLine($"UNKNOWN_0C03E9_0C05B5 [0C03E9 - 0C05B5]");
-            Logger.hex_dump(data, mapping.GetSaveTuple("UNKNOWN_0C03E9_0C05B5"));
+            // UNKNOWN_0C03B1_0C05B5
+            Console.WriteLine($"UNKNOWN_0C03B1_0C05B5 [0C03B1 - 0C05B5]");
+            Logger.hex_dump(data, mapping.GetSaveTuple("UNKNOWN_0C03B1_0C05B5"));
             Console.ReadLine();
 
             // UNKNOWN_0E6611_0F3510
