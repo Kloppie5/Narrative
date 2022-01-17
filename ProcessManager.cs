@@ -91,6 +91,32 @@ namespace Narrative {
             return 0;
         }
 
+        public List<UInt32> EnumImageClassCache ( UInt32 image ) {
+            List<UInt32> entries = new List<UInt32>();
+
+            UInt32 class_cache_size = ReadAbsolute<UInt32>(image + 0x360);
+            UInt32 class_cache_table = ReadAbsolute<UInt32>(image + 0x368);
+            for ( UInt32 i = 0 ; i < class_cache_size ; ++i ) {
+                UInt32 pointer = ReadAbsolute<UInt32>(class_cache_table + i * 4);
+                if ( pointer != 0 ) {
+                    UInt32 klass = ReadAbsolute<UInt32>(pointer);
+                    UInt32 nameAddress = ReadAbsolute<UInt32>(klass + 0x2C);
+                    String name = ReadAbsoluteUTF8String(nameAddress);
+                    UInt32 name_spaceAddress = ReadAbsolute<UInt32>(klass + 0x30);
+                    String name_space = ReadAbsoluteUTF8String(name_spaceAddress);
+                    UInt32 type_token = ReadAbsolute<UInt32>(klass + 0x34);
+                    UInt32 MonoClassFieldArray = ReadAbsolute<UInt32>(klass + 0x60);
+                    UInt32 MonoMethodArray = ReadAbsolute<UInt32>(klass + 0x64);
+                    UInt32 MonoClassRuntimeInfo = ReadAbsolute<UInt32>(klass + 0x84);
+                    UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
+                    Console.WriteLine($"Found class {type_token:X8}:\"{name_space}.{name}\" ({klass:X8}) with Vtable at {MonoVTable:X8}");
+                    entries.Add(klass);
+                    // pointer = Read<Int32>(pointer + 0xA8);
+                }
+            }
+            return entries;
+        }
+
         public UInt32 GetUnityRootDomain() {
             UInt32 MonoBaseAddress = GetModuleBaseAddress("mono-2.0-bdwgc.dll");
             Console.WriteLine($"MonoBaseAddress: {MonoBaseAddress:X}");
