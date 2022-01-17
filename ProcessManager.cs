@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MemoryManager {
+namespace Narrative {
     public class BytePattern {
         public String String { get; private set; }
         public Byte?[] Bytes { get; private set; }
@@ -27,15 +27,24 @@ namespace MemoryManager {
         }
     }
 
-    public class MemoryManager64 {
+    public class ProcessManager {
         Process process;
         public UInt64 BaseAddress => (UInt64) process.MainModule.BaseAddress;
 
-        public MemoryManager64 ( String processName ) {
+        public ProcessManager ( String processName ) {
             process = Process.GetProcessesByName(processName).First();
             Console.WriteLine($"Initialized MemoryReader for process {process.Id} ({processName})");
         }
 
+        public struct MEMORY_BASIC_INFORMATION32 {
+            public UInt32 BaseAddress;
+            public UInt32 AllocationBase;
+            public UInt32 AllocationProtect;
+            public UInt32 RegionSize;
+            public UInt32 State;
+            public UInt32 Protect;
+            public UInt32 Type;
+        }
         public struct MEMORY_BASIC_INFORMATION64 {
             public UInt64 BaseAddress;
             public UInt64 AllocationBase;
@@ -60,7 +69,32 @@ namespace MemoryManager {
         [DllImport("kernel32.dll")]
         public static extern Boolean WriteProcessMemory( IntPtr hProcess, IntPtr lpBaseAddress, Byte[] lpBuffer, Int32 dwSize, ref Int32 lpNumberOfBytesWritten );
         [DllImport("kernel32.dll")]
-        public static extern Int32 VirtualQueryEx( IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, UInt32 dwLength );
+        public static extern Int32 VirtualQueryEx32( IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION32 lpBuffer, UInt32 dwLength );
+        [DllImport("kernel32.dll")]
+        public static extern Int32 VirtualQueryEx64( IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION64 lpBuffer, UInt32 dwLength );
+        [DllImport("psapi.dll")]
+        public static extern Boolean EnumProcessModulesEx( IntPtr hProcess, [Out] IntPtr[] lphModule, Int32 cb, ref Int32 lpcbNeeded, UInt32 dwFilterFlag );
+        [DllImport("psapi.dll")]
+        public static extern Int32 GetModuleFileNameEx( IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, Int32 nSize );
+
+        public UInt64 GetModuleBaseAddress ( String name ) {
+            IntPtr[] modules = new IntPtr[1024];
+            Int32 needed = 0;
+            EnumProcessModulesEx(process.Handle, modules, 1024, ref needed, 0x3);
+            for ( Int32 i = 0; i < needed / IntPtr.Size; i++ ) {
+                StringBuilder sb = new StringBuilder(1024);
+                GetModuleFileNameEx(process.Handle, modules[i], sb, 1024);
+                if ( sb.ToString().ToLower().Contains(name.ToLower()) )
+                    return (UInt64) modules[i];
+            }
+
+			return 0;
+		}
+
+        public UInt64 GetUnityRootDomain() {
+			UInt64 MonoBaseAddress = GetModuleBaseAddress("mono-2.0-bdwgc.dll");
+			return ReadAbsolute<UInt64>(MonoBaseAddress + 0x3A41AC); // <<< maaaaagic
+		}
 
         public List<UInt64> FindPatternAddresses( UInt64 start, UInt64 end, BytePattern pattern ) {
             List<UInt64> matchAddresses = new List<UInt64>();
@@ -70,7 +104,7 @@ namespace MemoryManager {
             List<Byte[]> byteArrays = new List<Byte[]>();
 
             while ( currentAddress < end ) {
-                if ( VirtualQueryEx(process.Handle, (IntPtr) currentAddress, out MEMORY_BASIC_INFORMATION64 memoryRegion, (UInt32) Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION64))) > 0
+                if ( VirtualQueryEx64(process.Handle, (IntPtr) currentAddress, out MEMORY_BASIC_INFORMATION64 memoryRegion, (UInt32) Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION64))) > 0
                     && memoryRegion.RegionSize > 0
                     && memoryRegion.State == 0x1000 // MEM_COMMIT
                     && (memoryRegion.Protect & 0x20) > 0 ) { // PAGE_EXECUTE_READ

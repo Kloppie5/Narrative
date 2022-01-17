@@ -1,9 +1,9 @@
 using System;
 
-using MemoryManager;
+using Narrative;
 
 namespace MonsterHunterWorld {
-    public class MonsterHunterWorldMemoryManager : MemoryManager64 {
+    public class MonsterHunterWorldMemoryManager : ProcessManager {
         /**
         public static UInt64 QuestPointer = 0x506F240;
         public static UInt64 HunterBasePointer = 0x5073E80;
