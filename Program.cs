@@ -17,6 +17,11 @@ namespace Narrative {
 			UInt32 image = pm.ReadAbsolute<UInt32>(assembly + 0x44);
 			Console.WriteLine($"Image: {image:X8}");
             pm.EnumImageClassCache(image);
+/*
+
+            CSC.DBPTabletopManager(UnityRootDomain, image);
+            CSC.DBPSituationsCatalogue(UnityRootDomain, image);
+            */
         }
     }
 }

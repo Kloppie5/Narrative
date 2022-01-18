@@ -91,6 +91,29 @@ namespace Narrative {
             return 0;
         }
 
+        public UInt32 GetVTableOfClassInClassCache ( UInt32 image, String name ) {
+            UInt32 class_cache_size = ReadAbsolute<UInt32>(image + 0x360);
+            UInt32 class_cache_table = ReadAbsolute<UInt32>(image + 0x368);
+            for ( UInt32 i = 0 ; i < class_cache_size ; ++i ) {
+                UInt32 pointer = ReadAbsolute<UInt32>(class_cache_table + i * 4);
+                if ( pointer == 0 )
+                    continue;
+
+                UInt32 klass = ReadAbsolute<UInt32>(pointer);
+                UInt32 classnameAddress = ReadAbsolute<UInt32>(klass + 0x2C);
+                String classname = ReadAbsoluteUTF8String(classnameAddress);
+
+                if ( !classname.Equals(name) )
+                    continue;
+
+                UInt32 MonoClassRuntimeInfo = ReadAbsolute<UInt32>(klass + 0x84);
+                UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
+                return MonoVTable;
+                // pointer = Read<Int32>(pointer + 0xA8);
+            }
+            return 0;
+        }
+
         public List<UInt32> EnumImageClassCache ( UInt32 image ) {
             List<UInt32> entries = new List<UInt32>();
 
@@ -105,13 +128,23 @@ namespace Narrative {
                     UInt32 name_spaceAddress = ReadAbsolute<UInt32>(klass + 0x30);
                     String name_space = ReadAbsoluteUTF8String(name_spaceAddress);
                     UInt32 type_token = ReadAbsolute<UInt32>(klass + 0x34);
-                    UInt32 MonoClassFieldArray = ReadAbsolute<UInt32>(klass + 0x60);
+                    // Print all fields
+                    UInt32 fields = ReadAbsolute<UInt32>(klass + 0x60);
+                    UInt32 num_fields = ReadAbsolute<UInt32>(klass + 0xA4);
+                    for ( UInt32 j = 0 ; j < num_fields ; ++j ) {
+                        UInt32 field_type = ReadAbsolute<UInt32>(fields + j * 16);
+                        UInt32 field_nameAddress = ReadAbsolute<UInt32>(fields + j * 16 + 0x4);
+                        String field_name = ReadAbsoluteUTF8String(field_nameAddress);
+                        UInt32 field_parent = ReadAbsolute<UInt32>(fields + j * 16 + 0x8);
+                        UInt32 field_offset = ReadAbsolute<UInt32>(fields + j * 16 + 0xC);
+                        Console.WriteLine($"  {field_name} {field_type} {field_parent} {field_offset}");
+                    }
+
                     UInt32 MonoMethodArray = ReadAbsolute<UInt32>(klass + 0x64);
                     UInt32 MonoClassRuntimeInfo = ReadAbsolute<UInt32>(klass + 0x84);
                     UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
                     Console.WriteLine($"Found class {type_token:X8}:\"{name_space}.{name}\" ({klass:X8}) with Vtable at {MonoVTable:X8}");
                     entries.Add(klass);
-                    // pointer = Read<Int32>(pointer + 0xA8);
                 }
             }
             return entries;
@@ -127,18 +160,20 @@ namespace Narrative {
             UInt32 IMAGE_EXPORT_DIRECTORY_AddressOfFunctions = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x1C);
             UInt32 IMAGE_EXPORT_DIRECTORY_AddressOfNames = ReadAbsolute<UInt32>(MonoBaseAddress + ExportedFunctionsOffset + 0x20);
 
+            Dictionary<String, UInt32> exportedFunctions = new Dictionary<String, UInt32>();
             for ( UInt32 i = 0; i < IMAGE_EXPORT_DIRECTORY_NumberOfFunctions; ++i ) {
                 UInt32 FunctionNameOffset = ReadAbsolute<UInt32>(MonoBaseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfNames + i * 4);
                 String FunctionName = ReadAbsoluteUTF8String(MonoBaseAddress + FunctionNameOffset);
-                if ( FunctionName.Equals("mono_get_root_domain") ) {
-                    UInt32 FunctionOffset = ReadAbsolute<UInt32>(MonoBaseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 4);
-                    // mono-2.0-bdwgc.mono_get_root_domain - A1 AC41067A - mov eax, {RootDomain}
-                    UInt32 RootDomainPointer = ReadAbsolute<UInt32>(MonoBaseAddress + FunctionOffset + 0x1);
-                    return ReadAbsolute<UInt32>(RootDomainPointer);
-                }
+                UInt32 FunctionOffset = ReadAbsolute<UInt32>(MonoBaseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 4);
+                exportedFunctions.Add(FunctionName, FunctionOffset);
             }
 
-            return 0;
+            // TODO: split into two functions
+
+            UInt32 GetRootDomainOffset = exportedFunctions["mono_get_root_domain"];
+            // mono-2.0-bdwgc.mono_get_root_domain - A1 AC41067A - mov eax, {RootDomain}
+            UInt32 RootDomainPointer = ReadAbsolute<UInt32>(MonoBaseAddress + GetRootDomainOffset + 0x1);
+            return ReadAbsolute<UInt32>(RootDomainPointer);
         }
 
         public UInt32 GetAssemblyInDomain ( UInt32 domain, String name ) {
@@ -155,7 +190,7 @@ namespace Narrative {
             return 0;
         }
 
-        public List<UInt64> FindPatternAddresses( UInt64 start, UInt64 end, BytePattern pattern ) {
+        public List<UInt64> FindPatternAddresses64( UInt64 start, UInt64 end, BytePattern pattern ) {
             List<UInt64> matchAddresses = new List<UInt64>();
 
             UInt64 currentAddress = start;
@@ -233,6 +268,91 @@ namespace Narrative {
 
                     foreach ( var matchIndex in matchedIndices ) {
                         matchAddresses.Add(regionStartAddress + (UInt64) matchIndex);
+                    }
+                }
+                currentAddress = memoryRegion.BaseAddress + memoryRegion.RegionSize;
+            }
+
+            return matchAddresses;
+        }
+        public List<UInt32> FindPatternAddresses32( UInt32 start, UInt32 end, BytePattern pattern ) {
+            List<UInt32> matchAddresses = new List<UInt32>();
+
+            UInt32 currentAddress = start;
+
+            List<Byte[]> byteArrays = new List<Byte[]>();
+
+            while ( currentAddress < end ) {
+                if ( VirtualQueryEx32(process.Handle, (IntPtr) currentAddress, out MEMORY_BASIC_INFORMATION32 memoryRegion, (UInt32) Marshal.SizeOf(typeof(MEMORY_BASIC_INFORMATION32))) > 0
+                    && memoryRegion.RegionSize > 0
+                    && memoryRegion.State == 0x1000 // MEM_COMMIT
+                    && (memoryRegion.Protect & 0x20) > 0 ) { // PAGE_EXECUTE_READ
+
+                    var regionStartAddress = memoryRegion.BaseAddress;
+                    if ( start > regionStartAddress )
+                        regionStartAddress = start;
+
+                    var regionEndAddress = memoryRegion.BaseAddress + memoryRegion.RegionSize;
+                    if ( end < regionEndAddress )
+                        regionEndAddress = end;
+
+                    UInt32 regionBytesToRead = regionEndAddress - regionStartAddress;
+                    Byte[] regionBytes = new Byte[regionBytesToRead];
+
+                    Int32 lpNumberOfBytesRead = 0;
+                    ReadProcessMemory(process.Handle, (IntPtr) regionStartAddress, regionBytes, regionBytes.Length, ref lpNumberOfBytesRead);
+
+                    byteArrays.Add(regionBytes);
+
+                    if ( regionBytes.Length == 0 || pattern.Bytes.Length == 0 || regionBytes.Length < pattern.Bytes.Length )
+                        continue;
+
+                    List<Int32> matchedIndices = new List<Int32>();
+                    Int32[] longestPrefixSuffices = new Int32[pattern.Bytes.Length];
+
+
+                    Int32 length = 0;
+                    Int32 patternIndex = 1;
+                    longestPrefixSuffices[0] = 0;
+                    while ( patternIndex < pattern.Bytes.Length ) {
+                        if ( pattern.Bytes[patternIndex] == pattern.Bytes[length] ) {
+                            length++;
+                            longestPrefixSuffices[patternIndex] = length;
+                            patternIndex++;
+                        } else {
+                            if ( length == 0 ) {
+                                longestPrefixSuffices[patternIndex] = 0;
+                                patternIndex++;
+                            } else
+                                length = longestPrefixSuffices[length - 1];
+                        }
+                    }
+
+                    Int32 textIndex = 0;
+                    patternIndex = 0;
+
+                    while ( textIndex < regionBytes.Length ) {
+                        if ( !pattern.Bytes[patternIndex].HasValue
+                            || regionBytes[textIndex] == pattern.Bytes[patternIndex] ) {
+                            textIndex++;
+                            patternIndex++;
+                        }
+
+                        if ( patternIndex == pattern.Bytes.Length ) {
+                            matchedIndices.Add(textIndex - patternIndex);
+                            patternIndex = longestPrefixSuffices[patternIndex - 1];
+                        } else if ( textIndex < regionBytes.Length
+                                && (pattern.Bytes[patternIndex].HasValue
+                                && regionBytes[textIndex] != pattern.Bytes[patternIndex]) ) {
+                            if ( patternIndex != 0 )
+                                patternIndex = longestPrefixSuffices[patternIndex - 1];
+                            else
+                                textIndex++;
+                        }
+                    }
+
+                    foreach ( var matchIndex in matchedIndices ) {
+                        matchAddresses.Add(regionStartAddress + (UInt32) matchIndex);
                     }
                 }
                 currentAddress = memoryRegion.BaseAddress + memoryRegion.RegionSize;
