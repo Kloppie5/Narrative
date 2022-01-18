@@ -272,18 +272,20 @@ namespace Narrative {
 
             return null;
         }
-        public void Write<T> ( UInt64 address, T t ) where T : struct {
-            Int32 size = Marshal.SizeOf(t);
+        public void WriteRelative<T> ( UInt64 offset, T value ) where T : struct {
+            WriteAbsolute<T> ( BaseAddress + offset, value );
+        }
+        public void WriteAbsolute<T> ( UInt64 address, T value ) where T : struct {
+            Int32 size = Marshal.SizeOf(value);
             Byte[] Bytes = new Byte[size];
 
             IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(t, ptr, true);
+            Marshal.StructureToPtr(value, ptr, true);
             Marshal.Copy(ptr, Bytes, 0, size);
             Marshal.FreeHGlobal(ptr);
 
             Int32 lpNumberOfBytesWritten = 0;
             WriteProcessMemory(process.Handle, (IntPtr) address, Bytes, Bytes.Length, ref lpNumberOfBytesWritten);
-
         }
     }
 }
