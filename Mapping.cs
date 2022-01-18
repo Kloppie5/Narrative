@@ -1,35 +1,41 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Narrative {
+    class Mapping<T> : IEnumerable<KeyValuePair<String, List<AddressRange<T>>>> {
 
-    using MappingType = Dictionary<String,
-        Tuple<Tuple<UInt32, UInt32>,
-        Tuple<UInt32, UInt32>
-    > >;
-    class Mapping {
+        Dictionary<String, List<AddressRange<T>>> dict;
+        public IEnumerator<KeyValuePair<String, List<AddressRange<T>>>> GetEnumerator ( ) {
+            return dict.GetEnumerator();
+        }
+        IEnumerator IEnumerable.GetEnumerator ( ) {
+            return dict.GetEnumerator();
+        }
 
-        MappingType dict;
         public Mapping ( ) {
-            dict = new MappingType();
+            dict = new Dictionary<String, List<AddressRange<T>>>();
         }
 
-        public void Add ( String key, UInt32 savefile_offset, UInt32 savefile_size, UInt32 memory_offset, UInt32 memory_size ) {
-            dict.Add(
-              key, new Tuple<Tuple<UInt32, UInt32>,Tuple<UInt32, UInt32>>(new Tuple<UInt32, UInt32>(
-              savefile_offset,
-              savefile_size), new Tuple<UInt32, UInt32>(
-              memory_offset,
-              memory_size))
-            );
+        public void Add ( String key, params AddressRange<T>[] addressranges ) {
+            if ( !dict.ContainsKey(key) )
+                dict.Add(key, new List<AddressRange<T>>());
+            dict[key].AddRange(addressranges);
         }
 
-        public MappingType Access() {
-            return dict;
+        public AddressRange<T>[] Get ( String key ) {
+            if ( !dict.ContainsKey(key) )
+                return new AddressRange<T>[0];
+            return dict[key].ToArray();
         }
 
-        public Tuple<UInt32, UInt32> GetSaveTuple ( String key ) {
-            return dict[key].Item1;
+        public AddressRange<T> GetNamed ( String key, String name ) {
+            if ( !dict.ContainsKey(key) )
+                return null;
+            foreach ( var addressrange in dict[key] )
+                if ( addressrange.name == name )
+                    return addressrange;
+            return null;
         }
     }
 }

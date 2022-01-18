@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+using Narrative;
 class Logger {
 
     public static void diff_bytes ( Byte[] data1, Byte[] data2, UInt64 start, UInt64 end, UInt64 line_length = 32 ) {
@@ -262,8 +263,11 @@ class Logger {
         Console.ReadLine();
     }
 
-    public static void hex_dump ( Byte[] bytes, Tuple<UInt32, UInt32> range, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
-        hex_dump(bytes, range.Item1, range.Item2, line_length, color_func);
+    public static void hex_dump ( Byte[] bytes, AddressRange<UInt32> range, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
+        hex_dump(bytes, range.start, range.end, line_length, color_func);
+    }
+    public static void hex_dump ( Byte[] bytes, AddressRange<UInt64> range, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
+        hex_dump(bytes, (UInt32) range.start, (UInt32) range.end, line_length, color_func);
     }
     public static void hex_dump ( Byte[] bytes, UInt32 start = 0, UInt32 end = 0, UInt32 line_length = 32, Func<UInt32, ConsoleColor> color_func = null ) {
         if (end == 0)
