@@ -300,12 +300,35 @@ namespace Narrative {
 
             return null;
         }
-        public void WriteRelative<T> ( UInt64 offset, T value ) where T : struct {
-            WriteAbsolute<T> ( BaseAddress + offset, value );
+        public void WriteRelative<T> ( UInt32 offset, T value, params Int32[] offsets ) where T : struct {
+            WriteAbsolute<T> ( (UInt32) BaseAddress + offset, value, offsets );
         }
-        public void WriteAbsolute<T> ( UInt64 address, T value ) where T : struct {
+        public void WriteRelative<T> ( UInt64 offset, T value, params Int64[] offsets ) where T : struct {
+            WriteAbsolute<T> ( BaseAddress + offset, value, offsets );
+        }
+        public void WriteAbsolute<T> ( UInt32 address, T value, params Int32[] offsets ) where T : struct {
             Int32 size = Marshal.SizeOf(value);
             Byte[] Bytes = new Byte[size];
+
+            // Console.WriteLine($"Writing ({typeof(T).Name}) {value} to {address:X}, {string.Join(", ", offsets)}");
+            foreach ( Int32 offset in offsets )
+                address = ReadAbsolute<UInt32>(address) + (UInt32) offset;
+
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(value, ptr, true);
+            Marshal.Copy(ptr, Bytes, 0, size);
+            Marshal.FreeHGlobal(ptr);
+
+            Int32 lpNumberOfBytesWritten = 0;
+            WriteProcessMemory(process.Handle, (IntPtr) address, Bytes, Bytes.Length, ref lpNumberOfBytesWritten);
+        }
+        public void WriteAbsolute<T> ( UInt64 address, T value, params Int64[] offsets ) where T : struct {
+            Int32 size = Marshal.SizeOf(value);
+            Byte[] Bytes = new Byte[size];
+
+            // Console.WriteLine($"Writing ({typeof(T).Name}) {value} to {address:X}, {string.Join(", ", offsets)}");
+            foreach ( Int64 offset in offsets )
+                address = ReadAbsolute<UInt64>(address) + (UInt64) offset;
 
             IntPtr ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(value, ptr, true);

@@ -227,15 +227,15 @@ namespace CryptOfTheNecroDancer {
             mapping.Add("EntityList",           new AddressRange<UInt32>("Memory", 0x4358D0, 0x4358D4));
             mapping.Add("DeadEntityList",       new AddressRange<UInt32>("Memory", 0x4358DC, 0x4358E0));
 
-            mapping.Add("DarknessShrineActive", new AddressRange<UInt32>("Memory", 0x4358E4, 0x4358E5));
-            mapping.Add("PaceShrineActive",     new AddressRange<UInt32>("Memory", 0x4358E5, 0x4358E6));
-            mapping.Add("ChestList",            new AddressRange<UInt32>("Memory", 0x435938, 0x43593C));
-            mapping.Add("SpaceShrineActive",    new AddressRange<UInt32>("Memory", 0x43596E, 0x43596F));
-            mapping.Add("BossShrineActive",     new AddressRange<UInt32>("Memory", 0x43596F, 0x435970));
-            mapping.Add("NumDiamonds",          new AddressRange<UInt32>("Memory", 0x435970, 0x435974));
-            mapping.Add("PickupList",           new AddressRange<UInt32>("Memory", 0x435978, 0x43597C));
-            mapping.Add("TrapList",             new AddressRange<UInt32>("Memory", 0x43597C, 0x435980));
-            mapping.Add("EnemyList",            new AddressRange<UInt32>("Memory", 0x4359E0, 0x4359E4));
+            mapping.Add("DarknessShrineActive", new AddressRange<UInt32>("Memory", 0x4358E4));
+            mapping.Add("PaceShrineActive",     new AddressRange<UInt32>("Memory", 0x4358E5));
+            mapping.Add("ChestList",            new AddressRange<UInt32>("Memory", 0x435938));
+            mapping.Add("SpaceShrineActive",    new AddressRange<UInt32>("Memory", 0x43596E));
+            mapping.Add("BossShrineActive",     new AddressRange<UInt32>("Memory", 0x43596F));
+            mapping.Add("NumDiamonds",          new AddressRange<UInt32>("Memory", 0x435970));
+            mapping.Add("PickupList",           new AddressRange<UInt32>("Memory", 0x435978));
+            mapping.Add("TrapList",             new AddressRange<UInt32>("Memory", 0x43597C));
+            mapping.Add("EnemyList",            new AddressRange<UInt32>("Memory", 0x4359E0));
 
             mapping.Add("Flawless",             new AddressRange<UInt32>("Memory", 0x435A13, 0x435A14));
             mapping.Add("SpecialRoomEntranceY", new AddressRange<UInt32>("Memory", 0x435A18, 0x435A1C));
@@ -272,57 +272,20 @@ namespace CryptOfTheNecroDancer {
         }
 
         public void Cheat ( ) {
-            // WriteRelative<Byte>(mapping.GetNamed("EnemiesVisible", "Memory").start, 0x1); // nope
-            UInt32 GameAddress = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start);
-            UInt32 Player1Address = ReadAbsolute<UInt32>(GameAddress + 0x14);
-            UInt32 Player1Bombs = ReadAbsolute<UInt32>(Player1Address + 0x214);
-            Console.WriteLine("Player 1 Bombs: " + Player1Bombs);
-            WriteAbsolute<UInt32>(Player1Address + 0x214, 10);
+            WriteRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 10, 0x14, 0x214);
+            MarkAllEnemiesAsVisible();
         }
 
-        public void ProcessRenderableObjectList ( ) {
-            UInt32 RenderableObjectList = ReadRelative<UInt32>(mapping.GetNamed("RenderableObjectList", "Memory").start);
-            Console.WriteLine($"RenderableObjectList: {RenderableObjectList:X}");
-            UInt32 head = ReadAbsolute<UInt32>(RenderableObjectList + 0x10);
-            Dictionary<UInt32, List<UInt32>> RenderableObjects = new Dictionary<UInt32, List<UInt32>>();
+        public void MarkAllEnemiesAsVisible ( ) {
             for (
-              UInt32 current = ReadAbsolute<UInt32>(head + 0x10), entity ;
+              UInt32 current = ReadRelative<UInt32>(mapping.GetNamed("EnemyList", "Memory").start, 0x10, 0x10), entity ;
               ( entity = ReadAbsolute<UInt32>(current + 0x18) ) != 0 ;
               current = ReadAbsolute<UInt32>(current + 0x10)
             ) {
-                UInt32 VTable = ReadAbsolute<UInt32>(entity);
-                Int32 unknown_10 = ReadAbsolute<Int32>(entity + 0x10);
-                Int32 X = ReadAbsolute<Int32>(entity + 0x14);
-                Int32 Y = ReadAbsolute<Int32>(entity + 0x18);
-                Int32 unknown_1C = ReadAbsolute<Int32>(entity + 0x1C);
-                // Int32 unknown_20 = ReadAbsolute<Int32>(entity + 0x20); // X ?
-                // Int32 unknown_24 = ReadAbsolute<Int32>(entity + 0x24); // Y ? Maybe difference between "physical" and "displayed" location
-                Int32 unknown_28 = ReadAbsolute<Int32>(entity + 0x28);
-                Int32 unknown_2C = ReadAbsolute<Int32>(entity + 0x2C);
-                Int32 unknown_30 = ReadAbsolute<Int32>(entity + 0x30);
-                Int32 unknown_34 = ReadAbsolute<Int32>(entity + 0x34);
-                Int32 unknown_38 = ReadAbsolute<Int32>(entity + 0x38);
-                Int32 unknown_3C = ReadAbsolute<Int32>(entity + 0x3C);
-                Int32 unknown_40 = ReadAbsolute<Int32>(entity + 0x40);
-                Int32 unknown_44 = ReadAbsolute<Int32>(entity + 0x44);
-                Single unknown_48 = ReadAbsolute<Single>(entity + 0x48);
-                Int32 unknown_4C = ReadAbsolute<Int32>(entity + 0x4C);
-                Int32 unknown_50 = ReadAbsolute<Int32>(entity + 0x50);
-                Single unknown_54 = ReadAbsolute<Single>(entity + 0x54);
-
-                RenderableObjects.TryGetValue(VTable, out List<UInt32> list);
-                if (list == null) {
-                    list = new List<UInt32>();
-                    RenderableObjects.Add(VTable, list);
-                } else {
-                    list.Add(entity);
-                }
-
-                if ( unknown_10 != 0)
-                  Console.WriteLine($"{{{VTable:X}}} type entity at {current:X} ({X}, {Y}) {unknown_10:X8} | {unknown_1C:X8} {unknown_28:X8} {unknown_2C:X8} {unknown_30:X8} {unknown_34:X8} {unknown_38:X8} {unknown_3C:X8} {unknown_40:X8} {unknown_44:X8} ({unknown_48}) {unknown_4C:X8} {unknown_50:X8} ({unknown_54})");
-            }
-            foreach (KeyValuePair<UInt32, List<UInt32>> kvp in RenderableObjects) {
-                Console.WriteLine($"{kvp.Key:X} : {kvp.Value.Count}");
+                Int32 enemyX = ReadAbsolute<Int32>(entity + 0x14);
+                Int32 enemyY = ReadAbsolute<Int32>(entity + 0x18);
+                Console.WriteLine($"Entity at ({enemyX}, {enemyY})");
+                WriteAbsolute<Byte>(entity + 0x7C, 0x1);
             }
         }
 
@@ -468,12 +431,12 @@ namespace CryptOfTheNecroDancer {
             Console.WriteLine($"MapSeed: {mapSeed}");
 
             while ( true ) {
-              ProcessRenderableObjectList();
-              Int32 player_x = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x14);
-              Int32 player_y = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x18);
-              UInt32 player_bombs = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x214);
-              Console.WriteLine($"Player is at ({player_x}, {player_y}) with {player_bombs} bombs");
-              Thread.Sleep(1000);
+                Int32 player_x = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x14);
+                Int32 player_y = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x18);
+                UInt32 player_id = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x11C);
+                UInt32 player_bombs = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x214);
+                Console.WriteLine($"Player is at ({player_x}, {player_y}) id={player_id} with {player_bombs} bombs");
+                Thread.Sleep(1000);
             }
         }
     }
