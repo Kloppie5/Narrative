@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 using Narrative;
 
@@ -28,6 +30,7 @@ namespace CryptOfTheNecroDancer {
             // > 433EDC Array<Single> mapLightValues
 
             // 433EE0 String GAMEDATA_VERSION
+            mapping.Add("GAMEDATA_VERSION", new AddressRange<UInt32>("Memory", 0x433EE0));
 
             // Player variables:
             // > 433EE4 Array<Int32> AltHeadWidths
@@ -44,10 +47,10 @@ namespace CryptOfTheNecroDancer {
             // > 433F08 String customPlayList
 
             // Input variables:
-            // > 433F0C Array<Boolean> stickLeft
-            // > 433F10 Array<Boolean> stickRight
-            // > 433F14 Array<Boolean> stickUp
-            // > 433F18 Array<Boolean> stickDown
+            mapping.Add("stickLeft",  new AddressRange<UInt32>("Memory", 0x433F0C)); // Array<Boolean>
+            mapping.Add("stickRight", new AddressRange<UInt32>("Memory", 0x433F10)); // Array<Boolean>
+            mapping.Add("stickUp",    new AddressRange<UInt32>("Memory", 0x433F14)); // Array<Boolean>
+            mapping.Add("stickDown",  new AddressRange<UInt32>("Memory", 0x433F18)); // Array<Boolean>
             // > 433F1C Array<Single> lastJoyX
             // > 433F20 Array<Single> lastJoyY
             // > 433F24 Array<Boolean> stickLeft2
@@ -56,7 +59,7 @@ namespace CryptOfTheNecroDancer {
             // > 433F30 Array<Boolean> stickDown2
             // > 433F34 Array<Single> lastJoyX2
             // > 433F38 Array<Single> lastJoyY2
-            // > 433F3C Array<Int32> movementBuffer
+            mapping.Add("movementBuffer", new AddressRange<UInt32>("Memory", 0x433F3C)); // Array<Int32>
             // > 433F40 Array<Int32> movementBufferFrame
             // > 433F44 Array<Int32> offbeatMovementBuffer
             // > 433F48 Array<Int32> offbeatMovementBufferFrame
@@ -65,10 +68,10 @@ namespace CryptOfTheNecroDancer {
             // > 433F54 Array<Int32> lastBeatMissed
             // > 433F58 Array<Int32> punishmentBeatToSkip
             // > 433F5C Array<Int32> punishmentBeatToSkipQueue
-            // > 433F60 Array<Boolean> keysHitLastFrame
+            mapping.Add("keysHitLastFrame", new AddressRange<UInt32>("Memory", 0x433F60)); // Array<Boolean>
             // > 433F64 Array<Boolean> keysHit2FramesAgo
 
-            // 433F68 Array<Player> bb_controller_game_players
+            mapping.Add("bb_controller_game_players", new AddressRange<UInt32>("Memory", 0x433F68)); // Array<Player>
 
             // Item variables:
             // > 433F6C String lastChestItemClass1
@@ -107,7 +110,6 @@ namespace CryptOfTheNecroDancer {
             // 43557C Boolean showingBossIntro
             // 4355C8 List bombList
             // 4355CC List arrowList
-            // 4355D8 KingConga
             // 4355DC List allBatteries << Conductor boss
             // 43560C Map spellCoolKills
             // 435614 List currentSaleChests
@@ -143,9 +145,9 @@ namespace CryptOfTheNecroDancer {
             // 435704 Player noReturnShrinePlayer
             // 435708 Boolean noReturnShrineActive
             // 435709 Boolean warShrineActive
-            // 43570A Boolean bb_controller_game_DEBUG_ALL_TILES_VISIBLE
+            mapping.Add("bb_controller_game_DEBUG_ALL_TILES_VISIBLE", new AddressRange<UInt32>("Memory", 0x43570A)); // Bool
             // 435769 Boolean bb_necrodancergame_CHRISTMAS_MODE
-            // 43576A Boolean showMinimap
+            mapping.Add("showMinimap", new AddressRange<UInt32>("Memory", 0x43576A)); // Bool
             // 43576C Boolean bb_necrodancergame_DEBUG_STOP_ENEMY_MOVEMENT
             // 43576D Boolean riskShrineActive
             // 435770 Player lastActor
@@ -156,18 +158,19 @@ namespace CryptOfTheNecroDancer {
             // 43579C Int32 shopkeeperStartY
             // 43589A Boolean anyPlayerHaveNazarCharmCached
             // 43589B Boolean anyPlayerHaveWallsTorchCached
-            // 4358A8 Conductor theConductor
 
-            // 4358C4 Nightmare nightmare
             // 4358C8 Boolean anyPlayerHaveForesightTorchCached
             // 4358C9 Boolean anyPlayerHaveGlassTorchCached
             // 4358CA Boolean anyPlayerHaveCircletCached
 
             // 4358E0 Int32 bb_controller_game_totalPlaytimeMilliseconds
 
+            // 4355D8 KingConga
+            // 4358A8 Conductor theConductor
+            // 4358C4 Nightmare nightmare
             // 4359DC Necrodancer necrodancer
-
             // 435A14 Shriner shriner
+
 
             // 435A8A Boolean seenLeprechaun
             // 435AA0 IntMap tiles
@@ -181,14 +184,25 @@ namespace CryptOfTheNecroDancer {
             // 435BB0 List familiarList <<< again?
 
 
-            // 435BF0 Int32 bb_controller_game_player1
+            mapping.Add("bb_controller_game_player1", new AddressRange<UInt32>("Memory", 0x435BF0)); // UInt32
             // 435C0C Int32 bb_controller_game_currentZone
             // 435C10 String bb_controller_game_currentLevel
+
+            // 435C20 UInt32 something
+            // + 0x18 give management
+
+            /*
+            ECX = object
+            EAX = vtable
+            call EAX + 0xc8
+            mov EAX [object + 18]
+            mov EAX [eax + esi*4 + 14]
+            */
 
             // 433DE4
             // 433DEC
             // 0x433F68 Game
-            // ] 0x14 Player 1
+            // ] 0x14 + i * 0x4: Player
             // ] ] 0x14 Position X
             // ] ] 0x18 Position Y
             // ] ] 0x11C Character ID
@@ -199,7 +213,6 @@ namespace CryptOfTheNecroDancer {
             // ] ] ] 0x24 Heatlh Current
             // ] ] 0x19C Kills
             // ] ] 0x214 Bombs
-            // ] 0x18 Player 2
 
             mapping.Add("SongTime",             new AddressRange<UInt32>("Memory", 0x435808, 0x43580C));
             mapping.Add("PlayerTime",           new AddressRange<UInt32>("Memory", 0x435810, 0x435814));
@@ -251,11 +264,88 @@ namespace CryptOfTheNecroDancer {
 
             Cheat();
 
-            PrintEntityList();
+
+            //UInt32 keyNumber = 37; // 37 = Left Arrow
+            //WriteAbsolute<Byte>(mapping.GetNamed("keysHitLastFrame", "Memory").start + 0x14 + keyNumber, 0x1);
+
+            // PrintEntityList();
         }
 
         public void Cheat ( ) {
             // WriteRelative<Byte>(mapping.GetNamed("EnemiesVisible", "Memory").start, 0x1); // nope
+            UInt32 GameAddress = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start);
+            UInt32 Player1Address = ReadAbsolute<UInt32>(GameAddress + 0x14);
+            UInt32 Player1Bombs = ReadAbsolute<UInt32>(Player1Address + 0x214);
+            Console.WriteLine("Player 1 Bombs: " + Player1Bombs);
+            WriteAbsolute<UInt32>(Player1Address + 0x214, 10);
+        }
+
+        public void ProcessRenderableObjectList ( ) {
+            UInt32 RenderableObjectList = ReadRelative<UInt32>(mapping.GetNamed("RenderableObjectList", "Memory").start);
+            Console.WriteLine($"RenderableObjectList: {RenderableObjectList:X}");
+            UInt32 head = ReadAbsolute<UInt32>(RenderableObjectList + 0x10);
+            Dictionary<UInt32, List<UInt32>> RenderableObjects = new Dictionary<UInt32, List<UInt32>>();
+            for (
+              UInt32 current = ReadAbsolute<UInt32>(head + 0x10), entity ;
+              ( entity = ReadAbsolute<UInt32>(current + 0x18) ) != 0 ;
+              current = ReadAbsolute<UInt32>(current + 0x10)
+            ) {
+                UInt32 VTable = ReadAbsolute<UInt32>(entity);
+                Int32 unknown_10 = ReadAbsolute<Int32>(entity + 0x10);
+                Int32 X = ReadAbsolute<Int32>(entity + 0x14);
+                Int32 Y = ReadAbsolute<Int32>(entity + 0x18);
+                Int32 unknown_1C = ReadAbsolute<Int32>(entity + 0x1C);
+                // Int32 unknown_20 = ReadAbsolute<Int32>(entity + 0x20); // X ?
+                // Int32 unknown_24 = ReadAbsolute<Int32>(entity + 0x24); // Y ? Maybe difference between "physical" and "displayed" location
+                Int32 unknown_28 = ReadAbsolute<Int32>(entity + 0x28);
+                Int32 unknown_2C = ReadAbsolute<Int32>(entity + 0x2C);
+                Int32 unknown_30 = ReadAbsolute<Int32>(entity + 0x30);
+                Int32 unknown_34 = ReadAbsolute<Int32>(entity + 0x34);
+                Int32 unknown_38 = ReadAbsolute<Int32>(entity + 0x38);
+                Int32 unknown_3C = ReadAbsolute<Int32>(entity + 0x3C);
+                Int32 unknown_40 = ReadAbsolute<Int32>(entity + 0x40);
+                Int32 unknown_44 = ReadAbsolute<Int32>(entity + 0x44);
+                Single unknown_48 = ReadAbsolute<Single>(entity + 0x48);
+                Int32 unknown_4C = ReadAbsolute<Int32>(entity + 0x4C);
+                Int32 unknown_50 = ReadAbsolute<Int32>(entity + 0x50);
+                Single unknown_54 = ReadAbsolute<Single>(entity + 0x54);
+
+                RenderableObjects.TryGetValue(VTable, out List<UInt32> list);
+                if (list == null) {
+                    list = new List<UInt32>();
+                    RenderableObjects.Add(VTable, list);
+                } else {
+                    list.Add(entity);
+                }
+
+                if ( unknown_10 != 0)
+                  Console.WriteLine($"{{{VTable:X}}} type entity at {current:X} ({X}, {Y}) {unknown_10:X8} | {unknown_1C:X8} {unknown_28:X8} {unknown_2C:X8} {unknown_30:X8} {unknown_34:X8} {unknown_38:X8} {unknown_3C:X8} {unknown_40:X8} {unknown_44:X8} ({unknown_48}) {unknown_4C:X8} {unknown_50:X8} ({unknown_54})");
+            }
+            foreach (KeyValuePair<UInt32, List<UInt32>> kvp in RenderableObjects) {
+                Console.WriteLine($"{kvp.Key:X} : {kvp.Value.Count}");
+            }
+        }
+
+        public void PrintBooleanArray (UInt32 address) {
+            Console.WriteLine($"Array address: {address:X}");
+            // 0x10: count = 4
+            UInt32 count = ReadAbsolute<UInt32>(address + 0x10);
+            Console.WriteLine($"Array count: {count}");
+            for (UInt32 i = 0; i < count; ++i) {
+                Byte b = ReadAbsolute<Byte>(address + 0x14 + i);
+                Console.WriteLine($"{i}: {b}");
+            }
+        }
+        public void PrintUInt32Array ( UInt32 address) {
+
+            Console.WriteLine($"Array address: {address:X}");
+            // 0x10: count = 4
+            UInt32 count = ReadAbsolute<UInt32>(address + 0x10);
+            Console.WriteLine($"Array count: {count}");
+            for (UInt32 i = 0; i < count; i++) {
+                UInt32 element = ReadAbsolute<UInt32>(address + 0x14 + (i * 4));
+                Console.WriteLine($"Array element {i}: {element:X}");
+            }
         }
 
         public void PrintEntityList ( ) {
@@ -267,11 +357,6 @@ namespace CryptOfTheNecroDancer {
 
             UInt32 current = ReadAbsolute<UInt32>(head + 0x10);
             for ( Int32 i = 0 ; i < entityCount+1000 ; ++i ) {
-              // 00 vftable
-              // 04 gc-L
-              // 08 gc-R
-              // 0C gc-C
-
               // 10 dll-L
               // 14 dll-R
               // 18 dll-C
@@ -294,11 +379,6 @@ namespace CryptOfTheNecroDancer {
 
             current = ReadAbsolute<UInt32>(head + 0x10);
             for ( Int32 i = 0 ; i < entityCount+1000 ; ++i ) {
-              // 00 vftable
-              // 04 gc-L
-              // 08 gc-R
-              // 0C gc-C
-
               // 10 dll-L
               // 14 dll-R
               // 18 dll-C
@@ -320,6 +400,34 @@ namespace CryptOfTheNecroDancer {
 
         }
 
+        public enum COMMAND {
+            INVALID = 0,
+            MOVE_LEFT = 1,
+            MOVE_UP = 2,
+            MOVE_RIGHT = 3,
+            MOVE_DOWN = 4,
+        }
+        public void SendCommand ( COMMAND command ) {
+            UInt32 something = ReadRelative<UInt32>(0x435C20); // TODO: figure out what this actually is
+            UInt32 inputArray = ReadAbsolute<UInt32>(something + 0x18); // Array<UInt32>
+            switch ( command ) {
+                case COMMAND.MOVE_LEFT:
+                    WriteAbsolute<UInt32>(inputArray + 0x14 + 0x4 * 37, 1);
+                    break;
+                case COMMAND.MOVE_UP:
+                    WriteAbsolute<UInt32>(inputArray + 0x14 + 0x4 * 38, 1);
+                    break;
+                case COMMAND.MOVE_RIGHT:
+                    WriteAbsolute<UInt32>(inputArray + 0x14 + 0x4 * 39, 1);
+                    break;
+                case COMMAND.MOVE_DOWN:
+                    WriteAbsolute<UInt32>(inputArray + 0x14 + 0x4 * 40, 1);
+                    break;
+                default:
+                    Console.WriteLine("Invalid command");
+                    break;
+            }
+        }
         public void Dump ( ) {
             Console.WriteLine("Dumping Crypt of the NecroDancer...");
 
@@ -358,6 +466,15 @@ namespace CryptOfTheNecroDancer {
             // MapSeed
             UInt32 mapSeed = ReadRelative<UInt32>(mapping.GetNamed("MapSeed", "Memory").start);
             Console.WriteLine($"MapSeed: {mapSeed}");
+
+            while ( true ) {
+              ProcessRenderableObjectList();
+              Int32 player_x = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x14);
+              Int32 player_y = ReadRelative<Int32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x18);
+              UInt32 player_bombs = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x214);
+              Console.WriteLine($"Player is at ({player_x}, {player_y}) with {player_bombs} bombs");
+              Thread.Sleep(1000);
+            }
         }
     }
 }

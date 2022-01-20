@@ -226,12 +226,39 @@ namespace Narrative {
 
             return matchAddresses;
         }
+
+        public T ReadRelative<T> ( UInt32 offset, params Int32[] offsets ) where T : struct {
+            return ReadAbsolute<T> ( (UInt32) BaseAddress + offset, offsets );
+        }
         public T ReadRelative<T> ( UInt64 offset, params Int64[] offsets ) where T : struct {
             return ReadAbsolute<T> ( BaseAddress + offset, offsets );
+        }
+
+        public T ReadAbsolute<T> ( UInt32 address, params Int32[] offsets ) where T : struct {
+            Byte[] Bytes = new Byte[Marshal.SizeOf(typeof(T))];
+
+            // Console.WriteLine($"Reading {typeof(T).Name} at {address:X}, {string.Join(", ", offsets)}");
+            foreach ( Int32 offset in offsets )
+                address = ReadAbsolute<UInt32>(address) + (UInt32) offset;
+
+            Int32 lpNumberOfBytesRead = 0;
+            ReadProcessMemory(process.Handle, (IntPtr) address, Bytes, Bytes.Length, ref lpNumberOfBytesRead);
+
+            T result;
+            GCHandle handle = GCHandle.Alloc(Bytes, GCHandleType.Pinned);
+
+            try {
+                result = (T) Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+            } finally {
+                handle.Free();
+            }
+
+            return result;
         }
         public T ReadAbsolute<T> ( UInt64 address, params Int64[] offsets ) where T : struct {
             Byte[] Bytes = new Byte[Marshal.SizeOf(typeof(T))];
 
+            // Console.WriteLine($"Reading {typeof(T).Name} at {address:X}, {string.Join(", ", offsets)}");
             foreach ( Int64 offset in offsets )
                 address = ReadAbsolute<UInt64>(address) + (UInt64) offset;
 
@@ -249,6 +276,7 @@ namespace Narrative {
 
             return result;
         }
+
         public String ReadAbsoluteUTF8String ( UInt64 address ) {
             List<Byte> bytes = new List<Byte>();
 
