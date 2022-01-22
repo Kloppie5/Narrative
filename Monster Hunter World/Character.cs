@@ -165,9 +165,9 @@ namespace MonsterHunterWorld {
             mapping.Add("UNKNOWN_1B177F_1B21B1", new AddressRange<UInt64>("Savefile", 0x1B177F, 0x1B21B1));
             mapping.Add("UNKNOWN_1B21B1_1B60B1", new AddressRange<UInt64>("Savefile", 0x1B21B1, 0x1B60B1), new AddressRange<UInt64>("Memory", 0x0E92E8)); // 128*<0x7E>
             mapping.Add("UNKNOWN_1B60B1_1B6955", new AddressRange<UInt64>("Savefile", 0x1B60B1, 0x1B6955)); // ~ [] <0x400>
-            mapping.Add("equipmentLayouts",      new AddressRange<UInt64>("Savefile", 0x1B6955, 0x1DB8D5), new AddressRange<UInt64>("Memory", 0x11E758)); // 224*<0x2A4>
-            mapping.Add("UNKNOWN_1DB8D5_1E4315", new AddressRange<UInt64>("Savefile", 0x1DB8D5, 0x1E4315), new AddressRange<UInt64>("Memory", 0x144158)); // 112*<0x13C>
-            mapping.Add("roomConfigurations",    new AddressRange<UInt64>("Savefile", 0x1E4315, 0x1E5ED5), new AddressRange<UInt64>("Memory", 0x14D0D8)); // 24*<0x128>
+            mapping.Add("equipmentLoadouts",     new AddressRange<UInt64>("Savefile", 0x1B6955, 0x1DB8D5), new AddressRange<UInt64>("Memory", 0x11E758)); // 224*<0x2A4>
+            mapping.Add("layeredArmorLoadouts",  new AddressRange<UInt64>("Savefile", 0x1DB8D5, 0x1E4315), new AddressRange<UInt64>("Memory", 0x144158)); // 112*<0x13C>
+            mapping.Add("palicoLoadouts",        new AddressRange<UInt64>("Savefile", 0x1E4315, 0x1E5ED5), new AddressRange<UInt64>("Memory", 0x14D0D8)); // 24*<0x128>
             mapping.Add("UNKNOWN_1E5ED5_2098C0", new AddressRange<UInt64>("Savefile", 0x1E5ED5, 0x2098C0));
             // ~ [0x103028] inventory
             // ~ [0x103068] inventory
