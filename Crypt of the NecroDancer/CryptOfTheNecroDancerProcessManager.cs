@@ -117,15 +117,17 @@ namespace CryptOfTheNecroDancer {
             // 43561D Boolean anyPlayerHaveRingOfShadowsCached
             // 43561E Boolean anyPlayerHaveCompassCached
             // 43561F Boolean anyPlayerHaveZoneMapCached
-            // 435628 Boolean anyPlayerHaveMonocleCached
+            mapping.Add("anyPlayerHaveMonocleCached", new AddressRange<UInt32>("Memory", 0x435628)); // Boolean
             // 435629 Boolean lastShrineVal
             // 43562A Boolean castingFireBall << Dragon
             // 43562B Boolean killingAllEnemies << WHAT?!
             // 43562C List pendingTilesList
             // 435630 List floorRecededList
             // 435634 List floorRisingList
-            // 435670 Single camera_y
-            // 435678 Single camera_x
+
+            mapping.Add("camera_y", new AddressRange<UInt32>("Memory", 0x435670)); // Single
+            mapping.Add("camera_x", new AddressRange<UInt32>("Memory", 0x435678)); // Single
+
             // 43569C Int32 lastGrooveLevel
             // 4356A0 Int32 lastGrooveColor
             // 4356AC List crateList
@@ -162,6 +164,7 @@ namespace CryptOfTheNecroDancer {
             // 4358C8 Boolean anyPlayerHaveForesightTorchCached
             // 4358C9 Boolean anyPlayerHaveGlassTorchCached
             // 4358CA Boolean anyPlayerHaveCircletCached
+            mapping.Add("anyPlayerHaveCircletCached", new AddressRange<UInt32>("Memory", 0x4358CA)); // Bool
 
             // 4358E0 Int32 bb_controller_game_totalPlaytimeMilliseconds
 
@@ -178,9 +181,11 @@ namespace CryptOfTheNecroDancer {
             // 435AEC wholeRunRNG
             // 435AF4 UInt32 randSeed
             // 435B40 Boolean shopkeeperDead
-            // 435B54 Int32 currentScaleYOff
-            // 435B58 Int32 currentScaleXOff
-            // 435B5C Single currentScaleFactor
+
+            mapping.Add("currentScaleYOff", new AddressRange<UInt32>("Memory", 0x435B54)); // Int32
+            mapping.Add("currentScaleXOff", new AddressRange<UInt32>("Memory", 0x435B58)); // Int32
+            mapping.Add("currentScaleFactor", new AddressRange<UInt32>("Memory", 0x435B5C)); // Single
+
             // 435BB0 List familiarList <<< again?
 
 
@@ -261,19 +266,25 @@ namespace CryptOfTheNecroDancer {
 
         public CryptOfTheNecroDancerProcessManager ( ) : base("Necrodancer") {
             Init_Mapping();
-
             Cheat();
-
-
-            //UInt32 keyNumber = 37; // 37 = Left Arrow
-            //WriteAbsolute<Byte>(mapping.GetNamed("keysHitLastFrame", "Memory").start + 0x14 + keyNumber, 0x1);
-
-            // PrintEntityList();
         }
 
         public void Cheat ( ) {
             WriteRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 10, 0x14, 0x214);
             MarkAllEnemiesAsVisible();
+        }
+
+        public void PrintCamera ( ) {
+            Single camera_y = ReadRelative<Single>(mapping.GetNamed("camera_y", "Memory").start);
+            Single camera_x = ReadRelative<Single>(mapping.GetNamed("camera_x", "Memory").start);
+
+            Int32 currentScaleYOff = ReadRelative<Int32>(mapping.GetNamed("currentScaleYOff", "Memory").start);
+            Int32 currentScaleXOff = ReadRelative<Int32>(mapping.GetNamed("currentScaleXOff", "Memory").start);
+            Single currentScaleFactor = ReadRelative<Single>(mapping.GetNamed("currentScaleFactor", "Memory").start);
+
+            Console.WriteLine($"Camera: {camera_x}, {camera_y}");
+            Console.WriteLine($"Scale: {currentScaleFactor}");
+            Console.WriteLine($"Scale Offset: {currentScaleXOff}, {currentScaleYOff}");
         }
 
         public void MarkAllEnemiesAsVisible ( ) {
@@ -436,7 +447,8 @@ namespace CryptOfTheNecroDancer {
                 UInt32 player_id = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x11C);
                 UInt32 player_bombs = ReadRelative<UInt32>(mapping.GetNamed("bb_controller_game_players", "Memory").start, 0x14, 0x214);
                 Console.WriteLine($"Player is at ({player_x}, {player_y}) id={player_id} with {player_bombs} bombs");
-                Thread.Sleep(1000);
+
+                PrintCamera();
             }
         }
     }
