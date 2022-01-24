@@ -34,11 +34,10 @@ namespace MonsterHunterWorld {
             mapping.Add("guildcards",            new AddressRange<UInt64>("Savefile", 0x00211D, 0x0C02E9), new AddressRange<UInt64>("Memory", 0x181AE0, 0x24E5E0)); // 100*<0x1E6B>
             mapping.Add("guildcardIndices",      new AddressRange<UInt64>("Savefile", 0x0C02E9, 0x0C03B1)); // 100*<0x2>
             mapping.Add("UNKNOWN_0C03B1_0C05B5", new AddressRange<UInt64>("Savefile", 0x0C03B1, 0x0C05B5)); //
-            mapping.Add("guildcardBuffer",       new AddressRange<UInt64>("Savefile", 0x0C05B5, 0x0E6611)); // 20*<0x1E6B>
-            mapping.Add("UNKNOWN_0E6611_0F3510", new AddressRange<UInt64>("Savefile", 0x0E6611, 0x0F3510));
             // ~ [0x24E6A8 // <0x78>]
             // ~ [0x251588]
-            // ~ [0x2515A0] 20*<0x20C0> <<< 20 guildcards
+            mapping.Add("guildcardBuffer",       new AddressRange<UInt64>("Savefile", 0x0C05B5, 0x0E6611)); // 20*<0x1E6B>
+            mapping.Add("UNKNOWN_0E6611_0E6815", new AddressRange<UInt64>("Savefile", 0x0E6611, 0x0E6815)); // 0x204
             // ~ [0x0002DC] <0x4>
             // ~ [0x0000A8] <0x4>
             // ~ [0x0002C8] <0x4>
@@ -49,18 +48,22 @@ namespace MonsterHunterWorld {
             // ~ [0x0F4E68]
             // ~ [0x0F4E80]
             // ~ [0x0F4E98]
-            // ~ [0x0F4EA8] <0x200>
-            // ~ [0x0F50A8] <0x200>
-            // ~ [0x0F52A8] <0x200>
-            // ~ [0x0F54A8] <0x200>
-            // ~ [0x0F56A8] <0x200>
-            // ~ [0x0F58A8] <0x200>
-            // ~ [0x0F64D8]
-            // ~ [0x0F5AA8] <0x200>
-            // ~ [0x0F5CA8] <0x200>
-            // ~ [0x0F5EA8] <0x200>
-            // ~ [0x0F60A8] <0x200>
-            // ~ [0x0F62A8] <0x200>
+            // Monster Field Guide
+            mapping.Add("monsterCaptures", new AddressRange<UInt64>("Savefile", 0x0E6815, 0x0E6A15)); // ~ [0x0F4EA8] <0x200>
+            mapping.Add("monsterSlain", new AddressRange<UInt64>("Savefile", 0x0E6A15, 0x0E6C15)); // ~ [0x0F50A8] <0x200>
+            mapping.Add("UNKNOWN_0E6C15_0E6E15", new AddressRange<UInt64>("Savefile", 0x0E6C15, 0x0E6E15)); // ~ [0x0F52A8] <0x200>
+            mapping.Add("UNKNOWN_0E6E15_0E7015", new AddressRange<UInt64>("Savefile", 0x0E6E15, 0x0E7015)); // ~ [0x0F54A8] <0x200>
+            mapping.Add("UNKNOWN_0E7015_0E7215", new AddressRange<UInt64>("Savefile", 0x0E7015, 0x0E7215)); // ~ [0x0F56A8] <0x200>
+            mapping.Add("UNKNOWN_0E7215_0E7415", new AddressRange<UInt64>("Savefile", 0x0E7215, 0x0E7415)); // ~ [0x0F58A8] <0x200>
+
+            mapping.Add("UNKNOWN_0E7415_0E7431", new AddressRange<UInt64>("Savefile", 0x0E7415, 0x0E7431)); // ~ [0x0F64D8] Assumed padding, but something is copied over
+
+            mapping.Add("monsterLargest", new AddressRange<UInt64>("Savefile", 0x07431, 0x0E7631)); // ~ [0x0F5AA8] <0x200>
+            mapping.Add("monsterSmallest", new AddressRange<UInt64>("Savefile", 0x0E7631, 0x0E7831)); // ~ [0x0F5CA8] <0x200>
+            mapping.Add("UNKNOWN_0E7831_0E7A31", new AddressRange<UInt64>("Savefile", 0x0E7831, 0x0E7A31)); // ~ [0x0F5EA8] <0x200> floats
+            mapping.Add("monsterResearchLevel", new AddressRange<UInt64>("Savefile", 0x0E7A31, 0x0E7C31)); // ~ [0x0F60A8] <0x200>
+            mapping.Add("UNKNOWN_0E7C31_0E7E31", new AddressRange<UInt64>("Savefile", 0x0E7C31, 0x0E7E31)); // ~ [0x0F62A8] <0x200> floats
+            mapping.Add("UNKNOWN_0E7E31_0F3510", new AddressRange<UInt64>("Savefile", 0x0E7E31, 0x0F3510));
             // ~ [0x0F64B0]
             // ~ [0x0F64C8]
             // ~ [0x0F6500] <0x80>
@@ -213,40 +216,13 @@ namespace MonsterHunterWorld {
         }
 
         public void Dump ( ) {
-            // UNKNOWN_000000_000004
-            // Some progress tracking
 
-            // UNKNOWN_000060_000064
-            Console.WriteLine($"UNKNOWN_000060_000064 [000060 - 000064]");
-            Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_000060_000064", "Savefile"));
+            UInt32 start = (UInt32) mapping.GetNamed("UNKNOWN_0E7E31_0F3510", "Savefile").start;
+            UInt32 offset = 0x242;
+            Logger.hex_dump(data, start + offset, start + offset + 0x200);
             Console.ReadLine();
 
-            // UNKNOWN_000108_00020C
-            Console.WriteLine($"UNKNOWN_000108_00020C [000108 - 00020C]");
-            Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_000108_00020C", "Savefile"));
-            Console.ReadLine();
-
-            // UNKNOWN_00020C_00020D
-            // Padding or single flag
-
-            // UNKNOWN_00020D_000285
-            Console.WriteLine($"UNKNOWN_00020D_000285 [00020D - 000285]");
-            Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_00020D_000285", "Savefile"));
-            Console.ReadLine();
-
-            // UNKNOWN_000285_000286
-            // Padding or single flag
-
-            // UNKNOWN_0C03B1_0C05B5
-            Console.WriteLine($"UNKNOWN_0C03B1_0C05B5 [0C03B1 - 0C05B5]");
-            Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_0C03B1_0C05B5", "Savefile"));
-            Console.ReadLine();
-
-            // UNKNOWN_0E6611_0F3510
-            Console.WriteLine($"UNKNOWN_0E6611_0F3510 [0E6611 - 0F3510]");
-            Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_0E6611_0F3510", "Savefile"));
-            Console.ReadLine();
-
+            /*
             // UNKNOWN_1A194C_1A8D48
             Console.WriteLine($"UNKNOWN_1A194C_1A8D48 [1A194C - 1A8D48]");
             Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_1A194C_1A8D48", "Savefile"));
@@ -284,6 +260,7 @@ namespace MonsterHunterWorld {
             Console.WriteLine($"UNKNOWN_1E5ED5_2098C0 [1E5ED5 - 2098C0]");
             Logger.hex_dump(data, mapping.GetNamed("UNKNOWN_1E5ED5_2098C0", "Savefile"));
             Console.ReadLine();
+            /**/
         }
     }
 }
