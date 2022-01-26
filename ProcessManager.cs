@@ -277,8 +277,14 @@ namespace Narrative {
             return result;
         }
 
-        public String ReadAbsoluteUTF8String ( UInt64 address ) {
+        public String ReadRelativeUTF8String ( UInt64 address, params Int64[] offsets ) {
+            return ReadAbsoluteUTF8String ( (UInt64) BaseAddress + address, offsets );
+        }
+        public String ReadAbsoluteUTF8String ( UInt64 address, params Int64[] offsets ) {
             List<Byte> bytes = new List<Byte>();
+
+            foreach ( Int64 offset in offsets )
+                address = ReadAbsolute<UInt64>(address) + (UInt64) offset;
 
             Byte b;
             while ( (b = ReadAbsolute<Byte>(address++)) != 0 )

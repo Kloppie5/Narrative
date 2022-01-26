@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Forms;
 
 using CryptOfTheNecroDancer;
 using CultistSimulator;
@@ -30,6 +31,13 @@ namespace Narrative {
                     break;
                 case "--mhw-memory-manager":
                     MonsterHunterWorldMemoryManager mhw = new MonsterHunterWorldMemoryManager ();
+                    break;
+                case "--mhw-overlay":
+                    Application.EnableVisualStyles();
+                    Application.SetCompatibleTextRenderingDefault(false);
+                    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                    Overlay overlay = new Overlay();
+                    Application.Run(overlay);
                     break;
                 case "--mhw-dumpsaves":
                     String path = Directory.GetCurrentDirectory();
