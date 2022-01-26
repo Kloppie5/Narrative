@@ -216,11 +216,24 @@ namespace MonsterHunterWorld {
         }
 
         public void Dump ( ) {
+            // Investigations
+            Console.WriteLine("Investigations:");
+            UInt32 start = (UInt32) mapping.GetNamed("investigations", "Savefile").start;
+            for ( UInt64 i = 0 ; i < 400 ; ++i ) {
+                Int32 monster_index_1 = BitConverter.ToInt32(data, (Int32) (start + 0xF + (i * 0x2A)));
+                Int32 monster_index_2 = BitConverter.ToInt32(data, (Int32) (start + 0x13 + (i * 0x2A)));
+                Int32 monster_index_3 = BitConverter.ToInt32(data, (Int32) (start + 0x17 + (i * 0x2A)));
+                Byte size_modifier = data[(Int32) (start + 0x21 + (i * 0x2A))];
+                if ( monster_index_1 == 14 || monster_index_2 == 14 || monster_index_3 == 14) {
+                    Console.WriteLine($"{i}: {size_modifier} {monster_index_1} {monster_index_2} {monster_index_3}");
+                }
+            }
 
-            UInt32 start = (UInt32) mapping.GetNamed("UNKNOWN_0E7E31_0F3510", "Savefile").start;
-            UInt32 offset = 0x242;
-            Logger.hex_dump(data, start + offset, start + offset + 0x200);
-            Console.ReadLine();
+
+            //UInt32 start = (UInt32) mapping.GetNamed("UNKNOWN_0E7E31_0F3510", "Savefile").start;
+            //UInt32 offset = 0x242;
+            //Logger.hex_dump(data, start + offset, start + offset + 0x200);
+            //Console.ReadLine();
 
             /*
             // UNKNOWN_1A194C_1A8D48

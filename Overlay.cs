@@ -47,7 +47,7 @@ namespace Narrative {
                 UInt16 MR              = manager.ReadRelative<UInt16>(0x5224BF8, 0x68, -0x22B7 + i * 0x1C0 + 0x29);
                 UInt32 playerDamage    = manager.ReadRelative<UInt32>(0x5224BF8, 0x258, 0x38, 0x450, 0x8, 0x48 + i * 0x2A0);
 
-                if ( playerDamage > 0 )
+                if ( playerDamage > 0 && totalDamage > 0 )
                     e.Graphics.DrawString(
                         $"{PartyMemberName} ({MR} | {HR}): {playerDamage} ({playerDamage * 100 / totalDamage}%)",
                         new Font("Consolas", 12),
@@ -145,14 +145,15 @@ namespace Narrative {
                 Single size = manager.ReadAbsolute<Single>(address + 0x188);
                 Single sizeModifier = manager.ReadAbsolute<Single>(address + 0x7730);
 
-                e.Graphics.DrawString(
-                    $"{name}:\n" +
-                    $"{HP}/{MAX_HP} ({HP * 100 / MAX_HP}%)\n" +
-                    $"{sizeModifier}|{size}",
-                    new Font("Consolas", 12),
-                    new SolidBrush(Color.White),
-                    700f + i * 200f, 100f,
-                    new StringFormat() { } );
+                if ( MAX_HP > 0 )
+                    e.Graphics.DrawString(
+                        $"{name}:\n" +
+                        $"{HP}/{MAX_HP} ({HP * 100 / MAX_HP}%)\n" +
+                        $"{sizeModifier}|{size}",
+                        new Font("Consolas", 12),
+                        new SolidBrush(Color.White),
+                        700f + i * 200f, 100f,
+                        new StringFormat() { } );
             }
         }
 
