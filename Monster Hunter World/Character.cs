@@ -63,7 +63,13 @@ namespace MonsterHunterWorld {
             mapping.Add("UNKNOWN_0E7831_0E7A31", new AddressRange<UInt64>("Savefile", 0x0E7831, 0x0E7A31)); // ~ [0x0F5EA8] <0x200> floats
             mapping.Add("monsterResearchLevel", new AddressRange<UInt64>("Savefile", 0x0E7A31, 0x0E7C31)); // ~ [0x0F60A8] <0x200>
             mapping.Add("UNKNOWN_0E7C31_0E7E31", new AddressRange<UInt64>("Savefile", 0x0E7C31, 0x0E7E31)); // ~ [0x0F62A8] <0x200> floats
-            mapping.Add("UNKNOWN_0E7E31_0F3510", new AddressRange<UInt64>("Savefile", 0x0E7E31, 0x0F3510));
+
+            mapping.Add("UNKNOWN_0E7E31_0E8073", new AddressRange<UInt64>("Savefile", 0x0E7E31, 0x0E8073)); // 0x242
+
+            mapping.Add("UNKNOWN_0E8073_0E8223", new AddressRange<UInt64>("Savefile", 0x0E8073, 0x0E8223)); // 0x1B0
+
+            mapping.Add("UNKNOWN_0E8223_0F3510", new AddressRange<UInt64>("Savefile", 0x0E8223, 0x0F3510));
+
             // ~ [0x0F64B0]
             // ~ [0x0F64C8]
             // ~ [0x0F6500] <0x80>
@@ -171,12 +177,14 @@ namespace MonsterHunterWorld {
             mapping.Add("equipmentLoadouts",     new AddressRange<UInt64>("Savefile", 0x1B6955, 0x1DB8D5), new AddressRange<UInt64>("Memory", 0x11E758)); // 224*<0x2A4>
             mapping.Add("layeredArmorLoadouts",  new AddressRange<UInt64>("Savefile", 0x1DB8D5, 0x1E4315), new AddressRange<UInt64>("Memory", 0x144158)); // 112*<0x13C>
             mapping.Add("palicoLoadouts",        new AddressRange<UInt64>("Savefile", 0x1E4315, 0x1E5ED5), new AddressRange<UInt64>("Memory", 0x14D0D8)); // 24*<0x128>
-            mapping.Add("UNKNOWN_1E5ED5_2098C0", new AddressRange<UInt64>("Savefile", 0x1E5ED5, 0x2098C0));
-            // ~ [0x103028] inventory
-            // ~ [0x103068] inventory
-            // ~ [0x1030B8] 50 slot inventory
 
-            // ~ [] 4*<0x540>
+            mapping.Add("cultivating",           new AddressRange<UInt64>("Savefile", 0x1E5ED5, 0x1E5EF5)); // ~ [0x103028] 4*<0x4+0x4>
+            mapping.Add("fertilizer",            new AddressRange<UInt64>("Savefile", 0x1E5EF5, 0x1E5F1D)); // ~ [0x103068] 5*<0x4+0x4>
+            mapping.Add("harvestBox",            new AddressRange<UInt64>("Savefile", 0x1E5F1D, 0x1E60AD)); // ~ [0x1030B8] 50*<0x4+0x4>
+
+            mapping.Add("UNKNOWN_1E60AD_2098C0", new AddressRange<UInt64>("Savefile", 0x1E60AD, 0x2098C0));
+
+            // ~ [] 4*<0x540> tailraider safari teams? why 4; current and 3 options?
 
             // ~ [] x*<0xF8>
 
@@ -216,24 +224,10 @@ namespace MonsterHunterWorld {
         }
 
         public void Dump ( ) {
-            // Investigations
-            Console.WriteLine("Investigations:");
-            UInt32 start = (UInt32) mapping.GetNamed("investigations", "Savefile").start;
-            for ( UInt64 i = 0 ; i < 400 ; ++i ) {
-                Int32 monster_index_1 = BitConverter.ToInt32(data, (Int32) (start + 0xF + (i * 0x2A)));
-                Int32 monster_index_2 = BitConverter.ToInt32(data, (Int32) (start + 0x13 + (i * 0x2A)));
-                Int32 monster_index_3 = BitConverter.ToInt32(data, (Int32) (start + 0x17 + (i * 0x2A)));
-                Byte size_modifier = data[(Int32) (start + 0x21 + (i * 0x2A))];
-                if ( monster_index_1 == 14 || monster_index_2 == 14 || monster_index_3 == 14) {
-                    Console.WriteLine($"{i}: {size_modifier} {monster_index_1} {monster_index_2} {monster_index_3}");
-                }
-            }
-
-
-            //UInt32 start = (UInt32) mapping.GetNamed("UNKNOWN_0E7E31_0F3510", "Savefile").start;
-            //UInt32 offset = 0x242;
-            //Logger.hex_dump(data, start + offset, start + offset + 0x200);
-            //Console.ReadLine();
+            UInt32 start = (UInt32) mapping.GetNamed("UNKNOWN_1E60AD_2098C0", "Savefile").start;
+            UInt32 offset = 0;
+            Logger.hex_dump(data, start + offset, start + offset + 0x200);
+            Console.ReadLine();
 
             /*
             // UNKNOWN_1A194C_1A8D48
