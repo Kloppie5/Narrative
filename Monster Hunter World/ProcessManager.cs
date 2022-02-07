@@ -1,9 +1,7 @@
 using System;
 
-using Narrative;
-
 namespace MonsterHunterWorld {
-    public class MonsterHunterWorldMemoryManager : ProcessManager {
+    public class ProcessManager : Narrative.ProcessManager {
         /**
         public static UInt64 QuestPointer = 0x506F240;
         public static UInt64 HunterBasePointer = 0x5073E80;
@@ -72,7 +70,7 @@ namespace MonsterHunterWorld {
 
             Int16 defenseboost = memoryManager.Read<Int16>(new RelativeMultiLevelPointer(0x5072498, 0xB72));
         */
-        public MonsterHunterWorldMemoryManager ( ) : base("MonsterHunterWorld") {
+        public ProcessManager ( ) : base("MonsterHunterWorld") {
             Console.WriteLine($"Initialized MonsterHunterWorldMemoryManager");
         }
 

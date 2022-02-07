@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 using CryptOfTheNecroDancer;
 using CultistSimulator;
+using GTFO;
 using MonsterHunterWorld;
 
 namespace Narrative {
@@ -29,14 +30,17 @@ namespace Narrative {
                     Console.WriteLine($"Image: {image:X8}");
                     cspm.EnumImageClassCache(image);
                     break;
+                case "--gtfo":
+                    GTFOProcessManager gpm = new GTFOProcessManager();
+                    break;
                 case "--mhw-memory-manager":
-                    MonsterHunterWorldMemoryManager mhw = new MonsterHunterWorldMemoryManager ();
+                    MonsterHunterWorld.ProcessManager mhw = new MonsterHunterWorld.ProcessManager ();
                     break;
                 case "--mhw-overlay":
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                    Overlay overlay = new Overlay();
+                    MonsterHunterWorld.Overlay overlay = new MonsterHunterWorld.Overlay();
                     Application.Run(overlay);
                     break;
                 case "--mhw-dumpsaves":

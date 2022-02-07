@@ -14,7 +14,7 @@ namespace Narrative {
             process = Process.GetProcessesByName(processName).First();
             Console.WriteLine($"Initialized MemoryReader for process {process.Id} ({processName})");
         }
-
+        #region Structs
         public struct MEMORY_BASIC_INFORMATION32 {
             public UInt32 BaseAddress;
             public UInt32 AllocationBase;
@@ -35,7 +35,8 @@ namespace Narrative {
             public UInt32 Type;
             public UInt32 __alignment2;
         }
-
+        #endregion
+        #region Imports
         [DllImport("user32.dll")]
         public static extern Boolean SetForegroundWindow( IntPtr hWnd );
         [DllImport("user32.dll")]
@@ -55,7 +56,61 @@ namespace Narrative {
         public static extern Boolean EnumProcessModulesEx( IntPtr hProcess, [Out] IntPtr[] lphModule, Int32 cb, ref Int32 lpcbNeeded, UInt32 dwFilterFlag );
         [DllImport("psapi.dll")]
         public static extern Int32 GetModuleFileNameEx( IntPtr hProcess, IntPtr hModule, [Out] StringBuilder lpBaseName, Int32 nSize );
+        #endregion
+        #region DLLs
+        public Dictionary<String, UInt64> GetModules64 ( ) {
+            Dictionary<String, UInt64> modules = new Dictionary<String, UInt64>();
+            IntPtr[] hModules = new IntPtr[1024];
+            Int32 needed = 0;
+            EnumProcessModulesEx(process.Handle, hModules, 1024, ref needed, 0x3);
+            for ( Int32 i = 0; i < needed / IntPtr.Size; i++ ) {
+                StringBuilder sb = new StringBuilder(1024);
+                GetModuleFileNameEx(process.Handle, hModules[i], sb, 1024);
+                if ( modules.ContainsKey(sb.ToString()) ) {
+                    continue;
+                }
+                modules.Add(sb.ToString(), (UInt64) hModules[i].ToInt64());
+            }
 
+            return modules;
+        }
+        public Dictionary<String, UInt64> GetExportedFunctions64 ( UInt64 baseAddress ) {
+            UInt16 MZ = ReadAbsolute<UInt16>(baseAddress);
+            if ( MZ != 0x5A4D ) {
+                Console.WriteLine("Invalid MZ signature");
+                return null;
+            }
+            UInt32 PESignatureOffset = ReadAbsolute<UInt32>(baseAddress + 0x3C);
+            UInt32 PE = ReadAbsolute<UInt32>(baseAddress + PESignatureOffset);
+            if ( PE != 0x00004550 ) {
+                Console.WriteLine("Invalid PE signature");
+                return null;
+            }
+            UInt64 OptionalHeaderAddress = baseAddress + PESignatureOffset + 0x18;
+            UInt16 magic = ReadAbsolute<UInt16>(OptionalHeaderAddress);
+            if ( magic != 0x020B ) {
+                Console.WriteLine("Invalid PE32+ magic");
+                return null;
+            }
+            UInt64 ExportedFunctionsOffset = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x70);
+
+            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x14);
+            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x18);
+            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x1C);
+            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x20);
+
+            Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
+            for ( UInt64 i = 0; i < IMAGE_EXPORT_DIRECTORY_NumberOfFunctions; ++i ) {
+                UInt64 FunctionNameOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfNames + i * 8);
+                String FunctionName = ReadAbsoluteUTF8String(baseAddress + FunctionNameOffset);
+                UInt64 FunctionOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 8);
+                exportedFunctions.Add(FunctionName, FunctionOffset);
+            }
+
+            return exportedFunctions;
+        }
+        #endregion
+        #region Memory Scanning
         public List<UInt64> FindPatternAddresses64( UInt64 start, UInt64 end, BytePattern pattern ) {
             List<UInt64> matchAddresses = new List<UInt64>();
 
@@ -226,7 +281,8 @@ namespace Narrative {
 
             return matchAddresses;
         }
-
+        #endregion
+        #region Memory Manipulation
         public T ReadRelative<T> ( UInt32 offset, params Int32[] offsets ) where T : struct {
             return ReadAbsolute<T> ( (UInt32) BaseAddress + offset, offsets );
         }
@@ -344,5 +400,6 @@ namespace Narrative {
             Int32 lpNumberOfBytesWritten = 0;
             WriteProcessMemory(process.Handle, (IntPtr) address, Bytes, Bytes.Length, ref lpNumberOfBytesWritten);
         }
+        #endregion
     }
 }
