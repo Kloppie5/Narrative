@@ -31,6 +31,7 @@ namespace Narrative {
             base.OnPaint(e);
 
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), 0, 0, Width - 1, Height - 1);
+            e.Graphics.DrawString(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new Font("Consolas", 12), new SolidBrush(Color.White), 0, 0);
         }
 
         protected override void OnLoad ( EventArgs e ) {

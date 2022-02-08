@@ -8,12 +8,34 @@ using System.Text;
 namespace Narrative {
     public class ProcessManager {
         protected Process process;
+
+        public String ProcessName;
         public UInt64 BaseAddress => (UInt64) process.MainModule.BaseAddress;
 
         public ProcessManager ( String processName ) {
-            process = Process.GetProcessesByName(processName).First();
-            Console.WriteLine($"Initialized MemoryReader for process {process.Id} ({processName})");
+            ProcessName = processName;
+            CheckConnected();
         }
+        public Boolean CheckConnected ( ) {
+            if ( process == null )
+                return TryConnect();
+
+            process.Refresh();
+            if ( process.HasExited ) {
+                process = null;
+                return TryConnect();
+            }
+            return true;
+        }
+        public Boolean TryConnect ( ) {
+            try {
+                process = Process.GetProcessesByName(ProcessName).First();
+                return true;
+            } catch ( Exception ) {
+                return false;
+            }
+        }
+
         #region Structs
         public struct MEMORY_BASIC_INFORMATION32 {
             public UInt32 BaseAddress;

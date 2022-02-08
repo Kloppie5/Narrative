@@ -139,9 +139,17 @@ namespace MonsterHunterWorld {
 
         protected override void OnPaint ( PaintEventArgs e ) {
             base.OnPaint(e);
+            if ( !manager.CheckConnected() )
+                return;
 
-            DamageWidget(e);
-            MonsterWidget(e);
+            e.Graphics.DrawString($"Process; {manager.ProcessName}", new Font("Consolas", 12), new SolidBrush(Color.White), 0, 12);
+
+            try {
+                DamageWidget(e);
+                MonsterWidget(e);
+            } catch ( Exception ) {
+                Console.WriteLine($"Lost process during paint event.");
+            }
         }
     }
 }
