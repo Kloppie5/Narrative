@@ -8,7 +8,7 @@ namespace MonsterHunterWorld {
         ProcessManager manager;
         public DamageWidget ( Overlay overlay, ProcessManager manager ) : base(
             overlay,
-            0, 400
+            0, 700
         ) {
             this.manager = manager;
 
@@ -23,7 +23,7 @@ namespace MonsterHunterWorld {
 
             UInt32 totalDamage = 0;
             for (Int64 j = 0; j < 4; ++j)
-                totalDamage += manager.ReadRelative<UInt32>(0x5224BF8, 0x258, 0x38, 0x450, 0x8, 0x48 + playerIndex * 0x2A0);
+                totalDamage += manager.ReadRelative<UInt32>(0x5224BF8, 0x258, 0x38, 0x450, 0x8, 0x48 + j * 0x2A0);
             if (totalDamage <= 0)
                 return "";
 

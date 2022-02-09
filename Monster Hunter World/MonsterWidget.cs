@@ -84,7 +84,7 @@ namespace MonsterHunterWorld {
         ProcessManager manager;
         public MonsterWidget ( Overlay overlay, ProcessManager manager ) : base(
             overlay,
-            0, 300
+            0, 500
         ) {
             this.manager = manager;
 
@@ -107,14 +107,14 @@ namespace MonsterHunterWorld {
             UInt64 HPComponent = manager.ReadAbsolute<UInt64>(address + 0x7670);
                 Single MAX_HP = manager.ReadAbsolute<Single>(HPComponent + 0x60);
                 Single HP = manager.ReadAbsolute<Single>(HPComponent + 0x64);
+            if ( MAX_HP == 0 )
+                return "";
+            Single HPPercentage = HP * 100 / MAX_HP;
 
             Single size = manager.ReadAbsolute<Single>(address + 0x188);
             Single sizeModifier = manager.ReadAbsolute<Single>(address + 0x7730);
 
-            if ( MAX_HP == 0 )
-                return "";
-
-            return $"{name} ({size} | {sizeModifier}) {HP}/{MAX_HP} ({HP * 100 / MAX_HP}%)";
+            return $"{name} ({size} | {sizeModifier}) {HP}/{MAX_HP} ({HPPercentage}%)";
         }
     }
 }
