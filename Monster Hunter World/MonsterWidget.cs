@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
+
+using Narrative;
 
 namespace MonsterHunterWorld {
 
-    class Overlay : Narrative.Overlay {
+    public class MonsterWidget : TextWidget {
 
         Dictionary<String, String> emTranslate = new Dictionary<String, String>() {
             { "em\\em001\\00\\mod\\em001_00", "Rathian" },
@@ -82,74 +82,39 @@ namespace MonsterHunterWorld {
         };
 
         ProcessManager manager;
+        public MonsterWidget ( Overlay overlay, ProcessManager manager ) : base(
+            overlay,
+            0, 300
+        ) {
+            this.manager = manager;
 
-        public Overlay() : base() {
-            manager = new ProcessManager();
+            AddLine(() => MonsterString(0));
+            AddLine(() => MonsterString(1));
+            AddLine(() => MonsterString(2));
         }
 
-        protected void DamageWidget ( PaintEventArgs e ) {
-            UInt32 totalDamage = 0;
-            for (Int64 i = 0; i < 4; i++)
-                totalDamage += manager.ReadRelative<UInt32>(0x5224BF8, 0x258, 0x38, 0x450, 0x8, 0x48 + i * 0x2A0);
+        public String MonsterString ( Int64 monsterIndex ) {
+            if (!manager.CheckConnected())
+                return "";
 
-            for (Int64 i = 0; i < 4; i++) {
-                String PartyMemberName = manager.ReadRelativeUTF8String(0x5224BF8, 0x68, -0x22B7 + i * 0x1C0);
-                UInt16 HR              = manager.ReadRelative<UInt16>(0x5224BF8, 0x68, -0x22B7 + i * 0x1C0 + 0x27);
-                UInt16 MR              = manager.ReadRelative<UInt16>(0x5224BF8, 0x68, -0x22B7 + i * 0x1C0 + 0x29);
-                UInt32 playerDamage    = manager.ReadRelative<UInt32>(0x5224BF8, 0x258, 0x38, 0x450, 0x8, 0x48 + i * 0x2A0);
+            UInt64 address = manager.ReadRelative<UInt64>(0x5074180, 0xE58 + monsterIndex * 0x50);
+            if ( address == 0 )
+                return "";
 
-                if ( playerDamage > 0 && totalDamage > 0 )
-                    e.Graphics.DrawString(
-                        $"{PartyMemberName} ({MR} | {HR}): {playerDamage} ({playerDamage * 100 / totalDamage}%)",
-                        new Font("Consolas", 12),
-                        new SolidBrush(Color.White),
-                        400f, 400f + i * 20f,
-                        new StringFormat() { }
-                    );
-            }
-        }
+            String emString = manager.ReadAbsoluteUTF8String(address + 0x2A0, 0x0C);
+            String name = emTranslate.ContainsKey(emString) ? emTranslate[emString] : emString;
 
-        protected void MonsterWidget ( PaintEventArgs e ) {
-            for (Int64 i = 0; i < 3; i++) {
-                UInt64 address = manager.ReadRelative<UInt64>(0x5074180, 0xE58 + (Int64)i*0x50);
-                if ( address == 0 )
-                    continue;
+            UInt64 HPComponent = manager.ReadAbsolute<UInt64>(address + 0x7670);
+                Single MAX_HP = manager.ReadAbsolute<Single>(HPComponent + 0x60);
+                Single HP = manager.ReadAbsolute<Single>(HPComponent + 0x64);
 
-                String emString = manager.ReadAbsoluteUTF8String(address + 0x2A0, 0x0C);
-                String name = emTranslate.ContainsKey(emString) ? emTranslate[emString] : emString;
+            Single size = manager.ReadAbsolute<Single>(address + 0x188);
+            Single sizeModifier = manager.ReadAbsolute<Single>(address + 0x7730);
 
-                UInt64 HPComponent = manager.ReadAbsolute<UInt64>(address + 0x7670);
-                    Single MAX_HP = manager.ReadAbsolute<Single>(HPComponent + 0x60);
-                    Single HP = manager.ReadAbsolute<Single>(HPComponent + 0x64);
+            if ( MAX_HP == 0 )
+                return "";
 
-                Single size = manager.ReadAbsolute<Single>(address + 0x188);
-                Single sizeModifier = manager.ReadAbsolute<Single>(address + 0x7730);
-
-                if ( MAX_HP > 0 )
-                    e.Graphics.DrawString(
-                        $"{name}:\n" +
-                        $"{HP}/{MAX_HP} ({HP * 100 / MAX_HP}%)\n" +
-                        $"{sizeModifier}|{size}",
-                        new Font("Consolas", 12),
-                        new SolidBrush(Color.White),
-                        700f + i * 200f, 100f,
-                        new StringFormat() { } );
-            }
-        }
-
-        protected override void OnPaint ( PaintEventArgs e ) {
-            base.OnPaint(e);
-            if ( !manager.CheckConnected() )
-                return;
-
-            e.Graphics.DrawString($"Process; {manager.ProcessName}", new Font("Consolas", 12), new SolidBrush(Color.White), 0, 12);
-
-            try {
-                DamageWidget(e);
-                MonsterWidget(e);
-            } catch ( Exception ) {
-                Console.WriteLine($"Lost process during paint event.");
-            }
+            return $"{name} ({size} | {sizeModifier}) {HP}/{MAX_HP} ({HP * 100 / MAX_HP}%)";
         }
     }
 }

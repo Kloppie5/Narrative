@@ -4,8 +4,9 @@ using Mono;
 
 namespace GTFO {
 
-    class GTFOProcessManager : MonoProcessManager {
-        public GTFOProcessManager ( ) : base("GTFO") {
+    class ProcessManager : MonoProcessManager {
+        public ProcessManager ( ) : base("GTFO") {
+            /**
             Dictionary<String, UInt64> modules = GetModules64();
             UInt64 BaseAddress = 0;
             foreach ( KeyValuePair<String, UInt64> module in modules ) {
@@ -17,6 +18,7 @@ namespace GTFO {
                     Console.WriteLine($"{exportedFunction.Key} {exportedFunction.Value:X}");
                 }
             }
+            */
         }
     }
 }

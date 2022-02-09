@@ -16,38 +16,20 @@ namespace Narrative {
                 return;
             }
             switch ( args[0] ) {
-                case "--cotn":
-                    CryptOfTheNecroDancerProcessManager cotndpm = new CryptOfTheNecroDancerProcessManager();
-                    cotndpm.Dump();
-                    break;
-                case "--cultist":
-                    CultistSimulatorProcessManager cspm = new CultistSimulatorProcessManager();
-                    UInt32 unityRootDomain = cspm.GetUnityRootDomain();
-                    Console.WriteLine($"Unity Root Domain: {unityRootDomain:X}");
-                    UInt32 assembly = cspm.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
-                    Console.WriteLine($"Assembly: {assembly:X}");
-                    UInt32 image = cspm.ReadAbsolute<UInt32>(assembly + 0x44);
-                    Console.WriteLine($"Image: {image:X8}");
-                    cspm.EnumImageClassCache(image);
-                    break;
-                case "--gtfo":
-                    GTFOProcessManager gpm = new GTFOProcessManager();
-                    break;
-                case "--mhw-memory-manager":
-                    MonsterHunterWorld.ProcessManager mhw = new MonsterHunterWorld.ProcessManager ();
-                    break;
-                case "--mhw-overlay":
+                case "--overlay":
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
                     Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                    MonsterHunterWorld.Overlay overlay = new MonsterHunterWorld.Overlay();
+                    Overlay overlay = new Overlay();
+                    Orchestrator orchestrator = new Orchestrator(overlay);
                     Application.Run(overlay);
+                    Console.ReadLine();
                     break;
                 case "--mhw-dumpsaves":
                     String path = Directory.GetCurrentDirectory();
-                    (new MonsterHunterWorld.Character(Path.Combine(path, "saves", "character_0.backup"))).Dump();
-                    (new MonsterHunterWorld.Character(Path.Combine(path, "saves", "character_1.backup"))).Dump();
-                    (new MonsterHunterWorld.Character(Path.Combine(path, "saves", "character_p25_mjurder.sav"))).Dump();
+                    (new MonsterHunterWorld.Character(Path.Combine(path, "Monster Hunter World", "saves", "character_0.backup"))).Dump();
+                    (new MonsterHunterWorld.Character(Path.Combine(path, "Monster Hunter World", "saves", "character_1.backup"))).Dump();
+                    (new MonsterHunterWorld.Character(Path.Combine(path, "Monster Hunter World", "saves", "character_p25_mjurder.sav"))).Dump();
                     break;
                 case "--mhw-live":
                     SaveFile mhwsf = new SaveFile(@"C:\Program Files (x86)\Steam\userdata\49682378\582010\remote\SAVEDATA1000");

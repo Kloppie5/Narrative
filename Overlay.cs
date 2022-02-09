@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -12,6 +13,8 @@ namespace Narrative {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowLong( IntPtr hWnd, int nIndex );
 
+        HashSet<Widget> widgets;
+
         public Overlay() {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
             TransparencyKey = Color.Turquoise;
@@ -24,14 +27,25 @@ namespace Narrative {
             TopMost = true;
             SetForegroundWindow(Handle);
 
+            widgets = new HashSet<Widget>();
+
             Console.WriteLine($"Initialized Overlay");
+        }
+
+        public void AddWidget( Widget widget ) {
+            widgets.Add(widget);
+            Console.WriteLine($"Added widget {widget}");
+        }
+        public void RemoveWidget( Widget widget ) {
+            widgets.Remove(widget);
+            Console.WriteLine($"Removed widget {widget}");
         }
 
         protected override void OnPaint( PaintEventArgs e ) {
             base.OnPaint(e);
 
-            e.Graphics.DrawRectangle(new Pen(Color.White, 2), 0, 0, Width - 1, Height - 1);
-            e.Graphics.DrawString(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), new Font("Consolas", 12), new SolidBrush(Color.White), 0, 0);
+            foreach (Widget widget in widgets)
+                widget.Paint(e);
         }
 
         protected override void OnLoad ( EventArgs e ) {
