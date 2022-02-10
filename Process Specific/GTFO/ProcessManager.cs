@@ -4,7 +4,7 @@ using Mono;
 
 namespace GTFO {
 
-    class ProcessManager : MonoProcessManager {
+    class ProcessManager : Unity.ProcessManager {
         public ProcessManager ( ) : base("GTFO") {
             /**
             Dictionary<String, UInt64> modules = GetModules64();

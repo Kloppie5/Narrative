@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Narrative {
 
@@ -15,6 +16,7 @@ namespace Narrative {
             CultistSimulatorOverlay();
             GTFOOverlay();
             MonsterHunterWorldOverlay();
+            // TimeClickersOverlay();
         }
 
         CryptOfTheNecroDancer.ProcessManager cotnProcessManager;
@@ -56,6 +58,18 @@ namespace Narrative {
 
             MonsterHunterWorld.DamageWidget mhwDamageWidget = new MonsterHunterWorld.DamageWidget(overlay, mhwProcessManager);
             MonsterHunterWorld.MonsterWidget mhwMonsterWidget = new MonsterHunterWorld.MonsterWidget(overlay, mhwProcessManager);
+        }
+
+        Unity.ProcessManager tcProcessManager;
+        public void TimeClickersOverlay () {
+            tcProcessManager = new Unity.ProcessManager("TimeClickers");
+            UInt32 unityRootDomain = tcProcessManager.GetUnityRootDomain();
+            Console.WriteLine($"Mono Base Address: {unityRootDomain:X}");
+            UInt32 assembly = tcProcessManager.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
+            Console.WriteLine($"Assembly: {assembly:X}");
+            UInt32 image = tcProcessManager.ReadAbsolute<UInt32>(assembly + 0x40);
+            Console.WriteLine($"Image: {image:X8}");
+            tcProcessManager.EnumImageClassCache(image);
         }
     }
 }
