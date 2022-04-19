@@ -265,104 +265,43 @@ namespace CryptOfTheNecroDancer {
             Init_Mapping();
         }
 
+        public T Get<T> (String name) where T : struct { // TODO: consider promoting to base class
+            return ReadRelative<T>(mapping.GetNamed(name, "Memory").start);
+        }
+
         public void PrintCamera ( ) {
             Single camera_y = ReadRelative<Single>(mapping.GetNamed("camera_y", "Memory").start);
             Single camera_x = ReadRelative<Single>(mapping.GetNamed("camera_x", "Memory").start);
 
-            Int32 currentScaleYOff = ReadRelative<Int32>(mapping.GetNamed("currentScaleYOff", "Memory").start);
-            Int32 currentScaleXOff = ReadRelative<Int32>(mapping.GetNamed("currentScaleXOff", "Memory").start);
             Single currentScaleFactor = ReadRelative<Single>(mapping.GetNamed("currentScaleFactor", "Memory").start);
 
             Console.WriteLine($"Camera: {camera_x}, {camera_y}");
             Console.WriteLine($"Scale: {currentScaleFactor}");
-            Console.WriteLine($"Scale Offset: {currentScaleXOff}, {currentScaleYOff}");
         }
 
-        public void MarkAllEnemiesAsVisible ( ) {
+        public void ForEachEntity ( Action<Entity> action ) {
+            for (
+              UInt32 current = ReadRelative<UInt32>(mapping.GetNamed("EntityList", "Memory").start, 0x10, 0x10), entity ;
+              ( entity = ReadAbsolute<UInt32>(current + 0x18) ) != 0 ;
+              current = ReadAbsolute<UInt32>(current + 0x10)
+            )
+                action(new Entity(entity, this));
+        }
+        public void ForEachEnemy ( Action<Enemy> action ) {
             for (
               UInt32 current = ReadRelative<UInt32>(mapping.GetNamed("EnemyList", "Memory").start, 0x10, 0x10), entity ;
               ( entity = ReadAbsolute<UInt32>(current + 0x18) ) != 0 ;
               current = ReadAbsolute<UInt32>(current + 0x10)
-            ) {
-                Int32 enemyX = ReadAbsolute<Int32>(entity + 0x14);
-                Int32 enemyY = ReadAbsolute<Int32>(entity + 0x18);
-                Console.WriteLine($"Entity at ({enemyX}, {enemyY})");
-                WriteAbsolute<Byte>(entity + 0x7C, 0x1);
-            }
+            )
+                action(new Enemy(entity, this));
         }
-
-        public void PrintBooleanArray (UInt32 address) {
-            Console.WriteLine($"Array address: {address:X}");
-            // 0x10: count = 4
-            UInt32 count = ReadAbsolute<UInt32>(address + 0x10);
-            Console.WriteLine($"Array count: {count}");
-            for (UInt32 i = 0; i < count; ++i) {
-                Byte b = ReadAbsolute<Byte>(address + 0x14 + i);
-                Console.WriteLine($"{i}: {b}");
-            }
-        }
-        public void PrintUInt32Array ( UInt32 address) {
-
-            Console.WriteLine($"Array address: {address:X}");
-            // 0x10: count = 4
-            UInt32 count = ReadAbsolute<UInt32>(address + 0x10);
-            Console.WriteLine($"Array count: {count}");
-            for (UInt32 i = 0; i < count; i++) {
-                UInt32 element = ReadAbsolute<UInt32>(address + 0x14 + (i * 4));
-                Console.WriteLine($"Array element {i}: {element:X}");
-            }
-        }
-
-        public void PrintEntityList ( ) {
-            UInt32 entityCount = ReadRelative<UInt32>(mapping.GetNamed("EntityCount", "Memory").start);
-            UInt32 entityList = ReadRelative<UInt32>(mapping.GetNamed("EntityList", "Memory").start);
-            UInt32 deadEntityList = ReadRelative<UInt32>(mapping.GetNamed("DeadEntityList", "Memory").start);
-            // Headnode is a zero node used to track the "end" of the cyclic list
-            UInt32 head = ReadAbsolute<UInt32>(entityList + 0x10);
-
-            UInt32 current = ReadAbsolute<UInt32>(head + 0x10);
-            for ( Int32 i = 0 ; i < entityCount+1000 ; ++i ) {
-              // 10 dll-L
-              // 14 dll-R
-              // 18 dll-C
-              UInt32 next = ReadAbsolute<UInt32>(current + 0x10);
-              UInt32 prev = ReadAbsolute<UInt32>(current + 0x14);
-              UInt32 entity = ReadAbsolute<UInt32>(current + 0x18);
-              if ( entity == 0 ) {
-                Console.WriteLine($"Encountered {i} entities");
-                // TODO: Figure out why entityCount is significantly higher than the length of the list
-                break;
-              }
-
-              Int32 X = ReadAbsolute<Int32>(entity + 0x014);
-              Int32 Y = ReadAbsolute<Int32>(entity + 0x018);
-              Console.WriteLine($"At ({X}, {Y})");
-
-              current = next;
-            }
-            head = ReadAbsolute<UInt32>(deadEntityList + 0x10);
-
-            current = ReadAbsolute<UInt32>(head + 0x10);
-            for ( Int32 i = 0 ; i < entityCount+1000 ; ++i ) {
-              // 10 dll-L
-              // 14 dll-R
-              // 18 dll-C
-              UInt32 next = ReadAbsolute<UInt32>(current + 0x10);
-              UInt32 prev = ReadAbsolute<UInt32>(current + 0x14);
-              UInt32 entity = ReadAbsolute<UInt32>(current + 0x18);
-              if ( entity == 0 ) {
-                Console.WriteLine($"Encountered {i} dead entities");
-                // TODO: Figure out why entityCount is significantly higher than the length of the list
-                break;
-              }
-
-              Int32 X = ReadAbsolute<Int32>(entity + 0x014);
-              Int32 Y = ReadAbsolute<Int32>(entity + 0x018);
-              Console.WriteLine($"Dead at ({X}, {Y})");
-
-              current = next;
-            }
-
+        public void ForEachRenderableObject ( Action<RenderableObject> action ) {
+            for (
+              UInt32 current = ReadRelative<UInt32>(mapping.GetNamed("RenderableObjectList", "Memory").start, 0x10, 0x10), entity ;
+              ( entity = ReadAbsolute<UInt32>(current + 0x18) ) != 0 ;
+              current = ReadAbsolute<UInt32>(current + 0x10)
+            )
+                action(new RenderableObject(entity, this));
         }
 
         public enum COMMAND {

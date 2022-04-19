@@ -22,7 +22,7 @@ namespace Narrative {
         CryptOfTheNecroDancer.ProcessManager cotnProcessManager;
         public void CryptOfTheNecroDancerOverlay () {
             cotnProcessManager = new CryptOfTheNecroDancer.ProcessManager();
-
+            CryptOfTheNecroDancer.ProvidenceWidget cotnWidget = new CryptOfTheNecroDancer.ProvidenceWidget(overlay, cotnProcessManager);
         }
 
         CultistSimulator.ProcessManager csProcessManager;

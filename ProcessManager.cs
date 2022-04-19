@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Narrative {
     public class ProcessManager {
-        protected Process process;
+        public Process process;
 
         public String ProcessName;
         public UInt64 BaseAddress => (UInt64) process.MainModule.BaseAddress;
@@ -57,6 +57,13 @@ namespace Narrative {
             public UInt32 Type;
             public UInt32 __alignment2;
         }
+        public struct Rect {
+            public int Left { get; set; }
+            public int Top { get; set; }
+            public int Right { get; set; }
+            public int Bottom { get; set; }
+        }
+
         #endregion
         #region Imports
         [DllImport("user32.dll")]
@@ -65,6 +72,9 @@ namespace Narrative {
         public static extern Int32 SetWindowLong( IntPtr hWnd, Int32 nIndex, Int32 dwNewLong );
         [DllImport("user32.dll", SetLastError = true)]
         public static extern Int32 GetWindowLong( IntPtr hWnd, Int32 nIndex );
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
+
 
         [DllImport("kernel32.dll")]
         public static extern Boolean ReadProcessMemory( IntPtr hProcess, IntPtr lpBaseAddress, Byte[] lpBuffer, Int32 dwSize, ref Int32 lpNumberOfBytesRead );

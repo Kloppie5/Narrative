@@ -54,7 +54,7 @@ namespace Narrative {
             SetWindowLong(Handle, -20, style | 0x80020); // WS_EX_LAYERED, WS_EX_TRANSPARENT
 
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
-            timer.Interval = 5000;
+            timer.Interval = 1000;
             timer.Tick += new System.EventHandler((sender, ee) => {
                 Invalidate();
             });
