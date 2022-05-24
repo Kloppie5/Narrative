@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Narrative {
-    public class ProcessManager {
+    public class ProcessManager64 {
         public Process process;
 
         public String ProcessName;
         public UInt64 BaseAddress => (UInt64) process.MainModule.BaseAddress;
 
-        public ProcessManager ( String processName ) {
+        public ProcessManager64 ( String processName ) {
             ProcessName = processName;
             CheckConnected();
         }
@@ -105,76 +105,6 @@ namespace Narrative {
             }
 
             return modules;
-        }
-        public Dictionary<String, UInt64> GetExportedFunctions32 ( UInt64 baseAddress ) {
-            UInt16 MZ = ReadAbsolute<UInt16>(baseAddress);
-            if ( MZ != 0x5A4D ) {
-                Console.WriteLine("Invalid MZ signature");
-                return null;
-            }
-            UInt32 PESignatureOffset = ReadAbsolute<UInt32>(baseAddress + 0x3C);
-            UInt32 PE = ReadAbsolute<UInt32>(baseAddress + PESignatureOffset);
-            if ( PE != 0x00004550 ) {
-                Console.WriteLine("Invalid PE signature");
-                return null;
-            }
-            UInt64 OptionalHeaderAddress = baseAddress + PESignatureOffset + 0x18;
-            UInt16 magic = ReadAbsolute<UInt16>(OptionalHeaderAddress);
-            if ( magic != 0x010B ) {
-                Console.WriteLine($"Invalid PE32 magic, found {magic:X}");
-                return null;
-            }
-            UInt64 ExportedFunctionsOffset = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x60);
-
-            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x14);
-            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x18);
-            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x1C);
-            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x20);
-
-            Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
-            for ( UInt64 i = 0; i < IMAGE_EXPORT_DIRECTORY_NumberOfFunctions; ++i ) {
-                UInt64 FunctionNameOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfNames + i * 8);
-                String FunctionName = ReadAbsoluteUTF8String(baseAddress + FunctionNameOffset);
-                UInt64 FunctionOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 8);
-                exportedFunctions.Add(FunctionName, FunctionOffset);
-            }
-
-            return exportedFunctions;
-        }
-        public Dictionary<String, UInt64> GetExportedFunctions64 ( UInt64 baseAddress ) {
-            UInt16 MZ = ReadAbsolute<UInt16>(baseAddress);
-            if ( MZ != 0x5A4D ) {
-                Console.WriteLine("Invalid MZ signature");
-                return null;
-            }
-            UInt32 PESignatureOffset = ReadAbsolute<UInt32>(baseAddress + 0x3C);
-            UInt32 PE = ReadAbsolute<UInt32>(baseAddress + PESignatureOffset);
-            if ( PE != 0x00004550 ) {
-                Console.WriteLine("Invalid PE signature");
-                return null;
-            }
-            UInt64 OptionalHeaderAddress = baseAddress + PESignatureOffset + 0x18;
-            UInt16 magic = ReadAbsolute<UInt16>(OptionalHeaderAddress);
-            if ( magic != 0x020B ) {
-                Console.WriteLine($"Invalid PE32+ magic, found {magic:X}");
-                return null;
-            }
-            UInt64 ExportedFunctionsOffset = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x70);
-
-            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x14);
-            UInt64 IMAGE_EXPORT_DIRECTORY_NumberOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x18);
-            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfFunctions = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x1C);
-            UInt64 IMAGE_EXPORT_DIRECTORY_AddressOfNames = ReadAbsolute<UInt64>(baseAddress + ExportedFunctionsOffset + 0x20);
-
-            Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
-            for ( UInt64 i = 0; i < IMAGE_EXPORT_DIRECTORY_NumberOfFunctions; ++i ) {
-                UInt64 FunctionNameOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfNames + i * 8);
-                String FunctionName = ReadAbsoluteUTF8String(baseAddress + FunctionNameOffset);
-                UInt64 FunctionOffset = ReadAbsolute<UInt64>(baseAddress + IMAGE_EXPORT_DIRECTORY_AddressOfFunctions + i * 8);
-                exportedFunctions.Add(FunctionName, FunctionOffset);
-            }
-
-            return exportedFunctions;
         }
         #endregion
         #region Memory Scanning

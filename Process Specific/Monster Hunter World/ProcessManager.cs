@@ -1,7 +1,7 @@
 using System;
 
 namespace MonsterHunterWorld {
-    public class ProcessManager : Narrative.ProcessManager {
+    public class ProcessManager : Narrative.ProcessManager64 {
         /**
         public static UInt64 QuestPointer = 0x506F240;
         public static UInt64 HunterBasePointer = 0x5073E80;

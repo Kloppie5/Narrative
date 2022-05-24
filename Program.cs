@@ -4,16 +4,14 @@ using System.IO;
 using System.Windows.Forms;
 
 using CryptOfTheNecroDancer;
-using CultistSimulator;
-using GTFO;
 using MonsterHunterWorld;
 
 namespace Narrative {
     class Program {
         static void Main ( String[] args ) {
             if ( args.Length == 0 ) {
-                Console.WriteLine ( "Usage: exe <flag>" );
-                return;
+                Console.WriteLine ( "Usage: exe <flag>; defaulting to --overlay" );
+                args = new String[] { "--overlay" };
             }
             switch ( args[0] ) {
                 case "--overlay":

@@ -3,7 +3,7 @@ using System;
 using Narrative;
 
 namespace CryptOfTheNecroDancer {
-    public class ProcessManager : Narrative.ProcessManager {
+    public class ProcessManager : Narrative.ProcessManager64 {
 
         /*
             Crypt of the NecroDancer v2.59
