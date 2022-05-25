@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Mono {
+namespace Mono32 {
 
     public class ProcessManager32 : Narrative.ProcessManager64 {
 
@@ -80,26 +80,6 @@ namespace Mono {
                 UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
                 return MonoVTable;
                 // pointer = Read<Int32>(pointer + 0xA8);
-            }
-            return 0;
-        }
-    }
-    public class ProcessManager64 : Narrative.ProcessManager64 {
-
-        public ProcessManager64 ( String processName ) : base( processName ) {
-            // TODO
-        }
-
-        public UInt64 GetAssemblyInDomain ( UInt64 domain, String name ) {
-            UInt32 it = ReadAbsolute<UInt32>(domain + 0x6C);
-            while ( it != 0 ) {
-                UInt64 assembly = ReadAbsolute<UInt64>(it);
-                UInt64 assemblyNameAddress = ReadAbsolute<UInt64>(assembly + 0x08);
-                String assemblyName = ReadAbsoluteUTF8String(assemblyNameAddress);
-                if ( assemblyName.Equals(name) )
-                    return assembly;
-
-                it = ReadAbsolute<UInt32>(it + 0x4);
             }
             return 0;
         }

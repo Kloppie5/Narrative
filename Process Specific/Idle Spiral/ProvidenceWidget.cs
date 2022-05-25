@@ -9,8 +9,8 @@ namespace IdleSpiral {
 
     public class ProvidenceWidget : Widget {
 
-        ProcessManager manager;
-        public ProvidenceWidget ( Overlay overlay, ProcessManager manager ) : base(overlay) {
+        ProcessManager64 manager;
+        public ProvidenceWidget ( Overlay overlay, ProcessManager64 manager ) : base(overlay) {
             this.manager = manager;
         }
 
@@ -19,9 +19,14 @@ namespace IdleSpiral {
                 return;
 
             IntPtr ptr = manager.process.MainWindowHandle;
-            ProcessManager.Rect windowRect = new ProcessManager.Rect();
-            ProcessManager.GetWindowRect(ptr, ref windowRect);
+            ProcessManager64.Rect windowRect = new ProcessManager64.Rect();
+            ProcessManager64.GetWindowRect(ptr, ref windowRect);
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), windowRect.Left, windowRect.Top, windowRect.Right - windowRect.Left, windowRect.Bottom - windowRect.Top);
+
+            UInt64 unityRootDomain = manager.GetUnityRootDomain();
+            UInt64 assembly = manager.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
+            UInt64 image = manager.ReadAbsolute<UInt64>(assembly + 0x60);
+            manager.EnumImageClassCache(image);
         }
     }
 }

@@ -1,8 +1,8 @@
 using System;
 
-namespace Mono {
+namespace Mono32 {
 
-    class MonoAssembly {
+    class MonoAssembly32 {
 
         UInt32 /* gint32 */ ref_count; // 0x00
         UInt32 /* char* */ basedir; // 0x04

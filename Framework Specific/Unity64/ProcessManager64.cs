@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 using UInt8 = System.Byte;
 
-namespace Unity {
-    public class ProcessManager64 : Mono.ProcessManager64 {
+namespace Unity64 {
+    public class ProcessManager64 : Mono64.ProcessManager64 {
 
         public ProcessManager64 ( String processName ) : base( processName ) {
             // TODO
@@ -17,12 +17,12 @@ namespace Unity {
             bool PE32plus = false;
             foreach ( KeyValuePair<String, UInt64> module in modules ) {
                 if ( module.Key.Contains("mono-2.0-bdwgc.dll") ) {
-                    Console.WriteLine($"Found mono-2.0-bdwgc.dll at {module.Value:X}");
+                    // Console.WriteLine($"Found mono-2.0-bdwgc.dll at {module.Value:X}");
                     ImageBase = module.Value;
                     break;
                 }
                 if ( module.Key.Contains("mono.dll") ) {
-                    Console.WriteLine($"Found mono.dll at {module.Value:X}");
+                    // Console.WriteLine($"Found mono.dll at {module.Value:X}");
                     ImageBase = module.Value;
                     break;
                 }
@@ -43,10 +43,8 @@ namespace Unity {
             UInt16 Magic = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x0);
             if ( Magic == 0x10B ) {
                 PE32 = true;
-                Console.WriteLine("PE32");
             } else if ( Magic == 0x20B ) {
                 PE32plus = true;
-                Console.WriteLine("PE32plus");
             } else {
                 Console.WriteLine($"Unknown Magic: {Magic:X}");
                 return UInt64.MaxValue;
@@ -163,11 +161,9 @@ namespace Unity {
                 String FunctionName = ReadAbsoluteUTF8String(ImageBase + FunctionNameOffset);
                 UInt32 FunctionOffset = ReadAbsolute<UInt32>(ImageBase + ExportTableExportAddressTableRva + i * 4);
                 exportedFunctions.Add(FunctionName, FunctionOffset);
-                Console.WriteLine($"{FunctionName} {FunctionOffset:X}");
             }
 
             UInt32 MonoGetRootDomainOffset = exportedFunctions["mono_get_root_domain"];
-            Console.WriteLine($"mono_get_root_domain: {MonoGetRootDomainOffset:X}");
             // mono-2.0-bdwgc.mono_get_root_domain
             // mono.mono_get_root_domain
             UInt8 MonoGetRootDomainOpcode = ReadAbsolute<UInt8>(ImageBase + MonoGetRootDomainOffset);

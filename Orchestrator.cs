@@ -23,9 +23,9 @@ namespace Narrative {
             CryptOfTheNecroDancer.ProvidenceWidget cotnWidget = new CryptOfTheNecroDancer.ProvidenceWidget(overlay, cotnProcessManager);
         }
 
-        IdleSpiral.ProcessManager isProcessManager;
+        IdleSpiral.ProcessManager64 isProcessManager;
         public void IdleSpiralOverlay () {
-            isProcessManager = new IdleSpiral.ProcessManager();
+            isProcessManager = new IdleSpiral.ProcessManager64();
             IdleSpiral.ProvidenceWidget isWidget = new IdleSpiral.ProvidenceWidget(overlay, isProcessManager);
         }
 
