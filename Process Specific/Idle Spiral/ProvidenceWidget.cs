@@ -24,9 +24,12 @@ namespace IdleSpiral {
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), windowRect.Left, windowRect.Top, windowRect.Right - windowRect.Left, windowRect.Bottom - windowRect.Top);
 
             UInt64 unityRootDomain = manager.GetUnityRootDomain();
-            UInt64 assembly = manager.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
-            UInt64 image = manager.ReadAbsolute<UInt64>(assembly + 0x60);
-            manager.EnumImageClassCache(image);
+            // UInt64 assembly = manager.GetAssemblyInDomain(unityRootDomain, "Assembly-CSharp");
+            UInt64 IdleSpiralDomainAssembly = manager.GetAssemblyInDomain(unityRootDomain, "IdleSpiralDomain");
+            Console.WriteLine($"Assembly: {IdleSpiralDomainAssembly:X}");
+            UInt64 IdleSpiralDomainImage = manager.ReadAbsolute<UInt64>(IdleSpiralDomainAssembly + 0x60);
+            Console.WriteLine($"Image: {IdleSpiralDomainImage:X}");
+            manager.EnumImageClassCache(IdleSpiralDomainImage);
         }
     }
 }

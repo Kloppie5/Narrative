@@ -22,40 +22,44 @@ namespace Mono64 {
         public List<UInt64> EnumImageClassCache ( UInt64 image ) {
             List<UInt64> entries = new List<UInt64>();
             Console.WriteLine($"Enumerating class cache for image {image:X}");
-            /*
-            UInt32 class_cache_size = ReadAbsolute<UInt32>(image + 0x360);
-            UInt32 class_cache_table = ReadAbsolute<UInt32>(image + 0x368);
+            UInt32 class_cache_size = ReadAbsolute<UInt32>(image + 0x4D8);
+            UInt32 class_cache_num_entries = ReadAbsolute<UInt32>(image + 0x4DC);
+            UInt64 class_cache_table = ReadAbsolute<UInt64>(image + 0x4E0);
             Console.WriteLine($"Class Cache Size: {class_cache_size}");
             Console.WriteLine($"Class Cache Table: {class_cache_table:X}");
-            for ( UInt32 i = 0 ; i < class_cache_size ; ++i ) {
-                UInt32 pointer = ReadAbsolute<UInt32>(class_cache_table + i * 4);
-                if ( pointer != 0 ) {
-                    UInt32 klass = ReadAbsolute<UInt32>(pointer);
-                    UInt32 nameAddress = ReadAbsolute<UInt32>(klass + 0x2C);
-                    String name = ReadAbsoluteUTF8String(nameAddress);
-                    UInt32 name_spaceAddress = ReadAbsolute<UInt32>(klass + 0x30);
-                    String name_space = ReadAbsoluteUTF8String(name_spaceAddress);
-                    UInt32 type_token = ReadAbsolute<UInt32>(klass + 0x34);
-                    // Print all fields
-                    UInt32 fields = ReadAbsolute<UInt32>(klass + 0x60);
-                    UInt32 num_fields = ReadAbsolute<UInt32>(klass + 0xA4);
-                    for ( UInt32 j = 0 ; j < num_fields ; ++j ) {
-                        UInt32 field_type = ReadAbsolute<UInt32>(fields + j * 16);
-                        UInt32 field_nameAddress = ReadAbsolute<UInt32>(fields + j * 16 + 0x4);
-                        String field_name = ReadAbsoluteUTF8String(field_nameAddress);
-                        UInt32 field_parent = ReadAbsolute<UInt32>(fields + j * 16 + 0x8);
-                        UInt32 field_offset = ReadAbsolute<UInt32>(fields + j * 16 + 0xC);
-                        Console.WriteLine($"  {field_name} {field_offset:X}");
-                    }
 
-                    UInt32 MonoMethodArray = ReadAbsolute<UInt32>(klass + 0x64);
-                    UInt32 MonoClassRuntimeInfo = ReadAbsolute<UInt32>(klass + 0x84);
-                    UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
-                    Console.WriteLine($"Found class {type_token:X8}:\"{name_space}.{name}\" ({klass:X8}) with Vtable at {MonoVTable:X8}");
-                    entries.Add(klass);
+            for ( UInt32 i = 0 ; i < class_cache_size ; ++i ) {
+                UInt64 pointer = ReadAbsolute<UInt64>(class_cache_table + i * 8);
+                if ( pointer == 0 )
+                    continue;
+                UInt64 klass = ReadAbsolute<UInt64>(pointer);
+                if ( klass == 0 )
+                    continue;
+                UInt64 nameAddress = ReadAbsolute<UInt64>(klass + 0x48);
+                String name = ReadAbsoluteUTF8String(nameAddress);
+                UInt64 name_spaceAddress = ReadAbsolute<UInt64>(klass + 0x50);
+                String name_space = ReadAbsoluteUTF8String(name_spaceAddress);
+                UInt64 type_token = ReadAbsolute<UInt32>(klass + 0x58);
+                Console.WriteLine($"Class {klass:X} Name: {name}{name_space}");
+
+                // Print all fields
+                UInt64 fields = ReadAbsolute<UInt64>(klass + 0x98);
+                for ( UInt64 offset = 0 ; ReadAbsolute<UInt64>(fields + offset + 0x10) == klass ; offset += 0x20 ) {
+                    UInt64 field_type = ReadAbsolute<UInt64>(fields + offset);
+                    UInt64 field_nameAddress = ReadAbsolute<UInt64>(fields + offset + 0x8);
+                    String field_name = ReadAbsoluteUTF8String(field_nameAddress);
+                    UInt64 field_parent = ReadAbsolute<UInt64>(fields + offset + 0x10);
+                    UInt64 field_offset = ReadAbsolute<UInt64>(fields + offset + 0x18);
+                    Console.WriteLine($" {field_offset:X03}: {field_name}");
                 }
+                /*
+                UInt32 MonoMethodArray = ReadAbsolute<UInt32>(klass + 0x64);
+                UInt32 MonoClassRuntimeInfo = ReadAbsolute<UInt32>(klass + 0x84);
+                UInt32 MonoVTable = ReadAbsolute<UInt32>(MonoClassRuntimeInfo + 0x04);
+                Console.WriteLine($"Found class {type_token:X8}:\"{name_space}.{name}\" ({klass:X8}) with Vtable at {MonoVTable:X8}");
+                entries.Add(klass);
+                /**/
             }
-            */
             return entries;
         }
     }
