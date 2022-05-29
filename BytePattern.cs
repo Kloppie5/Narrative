@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Globalization;
 
@@ -20,6 +21,19 @@ namespace Narrative {
                 );
 
             Bytes = ByteList.ToArray();
+        }
+
+        public String PatternString ( ) {
+            StringBuilder ByteString = new StringBuilder();
+            for ( int i = 0; i < Bytes.Length; i++ ) {
+                if ( i > 0 )
+                    ByteString.Append(" ");
+                if ( Bytes[i] == null )
+                    ByteString.Append("??");
+                else
+                    ByteString.Append($"{Bytes[i]:X2}");
+            }
+            return ByteString.ToString();
         }
     }
 }

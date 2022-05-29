@@ -14,9 +14,9 @@ namespace Mono64 {
         UInt32 /* gint32 */ vtable_size; // 0x5C;
 
         UInt64 /* MonoClassField* */ fields; // 0x98
-        UInt64 /* MonoMethod** */ methods;
+        UInt64 /* MonoMethod** */ methods; // 0xA0
 
-        UInt64 /* MonoClassRuntimeInfo* */ runtime_info;
-        UInt64 /* MonoMethod** */ vtable;
+        UInt64 /* gc_descr */ gc_descr; // 0xC8
+        UInt64 /* MonoClassRuntimeInfo* */ runtime_info; // 0xD0
     }
 }
