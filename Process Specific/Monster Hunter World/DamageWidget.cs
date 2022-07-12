@@ -6,11 +6,8 @@ namespace MonsterHunterWorld {
     public class DamageWidget : TextWidget {
 
         ProcessManager manager;
-        public DamageWidget ( Overlay overlay, ProcessManager manager ) : base(
-            overlay,
-            0, 700
-        ) {
-            this.manager = manager;
+        public DamageWidget ( ) {
+            manager = new ProcessManager();
 
             AddLine(() => DamageString(0));
             AddLine(() => DamageString(1));

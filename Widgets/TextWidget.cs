@@ -14,13 +14,16 @@ namespace Narrative {
         Single lineSpacing;
         Int32 maxLines;
         List<Func<String>> lines;
-        public TextWidget (
-            Overlay overlay,
+        public TextWidget ( ) : base ( ) {
+            lines = new List<Func<String>>();
+            ChangeSettings();
+        }
+
+        public void ChangeSettings (
             Single x = 0, Single y = 0,
             Single emSize = 12, Single lineHeight = 12, Single lineSpacing = 2,
             Int32 maxLines = 10
-        ) : base(overlay) {
-            lines = new List<Func<String>>();
+        ) {
             this.x = x;
             this.y = y;
             this.emSize = emSize;

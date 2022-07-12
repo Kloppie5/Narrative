@@ -16,8 +16,8 @@ namespace IdleSpiral {
         bool findingIdleSystem = false;
         UInt64 IdleSystem = 0;
 
-        public ProvidenceWidget ( Overlay overlay, ProcessManager64 manager ) : base(overlay) {
-            this.manager = manager;
+        public ProvidenceWidget ( ) {
+            manager = new ProcessManager64();
         }
 
         private void FindIdleSystem ( ) {

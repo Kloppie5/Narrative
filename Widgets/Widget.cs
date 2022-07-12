@@ -7,16 +7,16 @@ namespace Narrative {
 
         Overlay overlay;
 
-        public Widget ( Overlay overlay ) {
-            this.overlay = overlay;
-            overlay.AddWidget(this);
-        }
+        public Widget ( ) { }
 
-        public void Remove () {
-            overlay.RemoveWidget(this);
+        public void Bind ( Overlay overlay ) {
+            this.overlay = overlay;
         }
 
         public virtual void Paint ( PaintEventArgs e ) {
+            if ( overlay == null )
+                return;
+            
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), 0, 0, overlay.Width - 1, overlay.Height - 1);
         }
     }

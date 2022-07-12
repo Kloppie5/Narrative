@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -32,13 +33,21 @@ namespace Narrative {
             Console.WriteLine($"Initialized Overlay");
         }
 
-        public void AddWidget( Widget widget ) {
+        public void AddWidget( Type widgetType ) {
+            ConstructorInfo constructorInfo = widgetType.GetConstructor(new Type[] { }); 
+            if (constructorInfo == null) 
+                throw new InvalidOperationException($"Tried to add widget of type {widgetType}, but could not find valid constructor.");
+            Widget widget = (Widget) constructorInfo.Invoke(new Object[] { });
+            widget.Bind(this);
             widgets.Add(widget);
-            Console.WriteLine($"Added widget {widget}");
         }
-        public void RemoveWidget( Widget widget ) {
-            widgets.Remove(widget);
-            Console.WriteLine($"Removed widget {widget}");
+
+        public Boolean HasWidget ( Type widgetType ) {
+            foreach ( Widget widget in widgets ) {
+                if ( widget.GetType() == widgetType )
+                    return true;
+            }
+            return false;
         }
 
         protected override void OnPaint( PaintEventArgs e ) {

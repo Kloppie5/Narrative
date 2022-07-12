@@ -82,11 +82,8 @@ namespace MonsterHunterWorld {
         };
 
         ProcessManager manager;
-        public MonsterWidget ( Overlay overlay, ProcessManager manager ) : base(
-            overlay,
-            0, 500
-        ) {
-            this.manager = manager;
+        public MonsterWidget ( ) {
+            manager = new ProcessManager();
 
             AddLine(() => MonsterString(0));
             AddLine(() => MonsterString(1));

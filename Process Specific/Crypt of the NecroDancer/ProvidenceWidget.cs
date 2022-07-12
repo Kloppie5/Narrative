@@ -10,8 +10,8 @@ namespace CryptOfTheNecroDancer {
     public class ProvidenceWidget : Widget {
 
         ProcessManager manager;
-        public ProvidenceWidget ( Overlay overlay, ProcessManager manager ) : base(overlay) {
-            this.manager = manager;
+        public ProvidenceWidget ( ) {
+            manager = new ProcessManager();
         }
 
         public override void Paint ( PaintEventArgs e ) {
