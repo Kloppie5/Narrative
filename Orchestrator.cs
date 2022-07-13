@@ -19,8 +19,7 @@ namespace Narrative {
 
             console.AddLine(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            RegisterWidget("Leaf Blower Revolution", typeof(Widget));
-            RegisterWidget("The Perfect Tower II", typeof(Widget));
+            RegisterWidget("Leaf Blower Revolution", typeof(LeafBlowerRevolution.ProvidenceWidget));
 
             CheckProcesses();
         }

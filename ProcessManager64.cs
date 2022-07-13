@@ -30,12 +30,13 @@ namespace Narrative {
             return true;
         }
         public Boolean TryConnect ( ) {
-            try {
-                process = Process.GetProcessesByName(ProcessName).First();
-                return true;
-            } catch ( Exception ) {
-                return false;
+            foreach ( var process in Process.GetProcesses() ) {
+                if ( process.MainWindowTitle == ProcessName ) {
+                    this.process = process;
+                    return true;
+                }
             }
+            return false;
         }
 
         #region Structs
