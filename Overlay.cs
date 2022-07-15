@@ -14,7 +14,7 @@ namespace Narrative {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowLong( IntPtr hWnd, int nIndex );
 
-        HashSet<Widget> widgets;
+        Dictionary<String, Widget> widgets = new Dictionary<String, Widget>();
 
         public Overlay() {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
@@ -28,32 +28,26 @@ namespace Narrative {
             TopMost = true;
             SetForegroundWindow(Handle);
 
-            widgets = new HashSet<Widget>();
-
             Console.WriteLine($"Initialized Overlay");
         }
 
-        public void AddWidget( Type widgetType ) {
+        public void AddWidget( String widgetName, Type widgetType ) {
             ConstructorInfo constructorInfo = widgetType.GetConstructor(new Type[] { }); 
             if (constructorInfo == null) 
                 throw new InvalidOperationException($"Tried to add widget of type {widgetType}, but could not find valid constructor.");
             Widget widget = (Widget) constructorInfo.Invoke(new Object[] { });
             widget.Bind(this);
-            widgets.Add(widget);
+            widgets.Add(widgetName, widget);
         }
 
-        public Boolean HasWidget ( Type widgetType ) {
-            foreach ( Widget widget in widgets ) {
-                if ( widget.GetType() == widgetType )
-                    return true;
-            }
-            return false;
+        public Boolean HasWidget ( String widgetName ) {
+            return widgets.ContainsKey(widgetName);
         }
 
         protected override void OnPaint( PaintEventArgs e ) {
             base.OnPaint(e);
 
-            foreach (Widget widget in widgets)
+            foreach ( var (widgetName, widget) in widgets )
                 widget.Paint(e);
         }
 

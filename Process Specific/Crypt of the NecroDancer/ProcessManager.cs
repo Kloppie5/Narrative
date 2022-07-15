@@ -10,6 +10,7 @@ namespace CryptOfTheNecroDancer {
         */
         Mapping<UInt32> mapping = new Mapping<UInt32>();
         public void Init_Mapping ( ) {
+            /*
             // 433468 Stats
             // 433954 numStats
             // 433958 musicIndex2
@@ -193,13 +194,13 @@ namespace CryptOfTheNecroDancer {
             // 435C20 UInt32 something
             // + 0x18 give management
 
-            /*
+            
             ECX = object
             EAX = vtable
             call EAX + 0xc8
             mov EAX [object + 18]
             mov EAX [eax + esi*4 + 14]
-            */
+            
 
             // 433DE4
             // 433DEC
@@ -223,7 +224,9 @@ namespace CryptOfTheNecroDancer {
             mapping.Add("WallsVisible",         new AddressRange<UInt32>("Memory", 0x43589B, 0x43589C)); // "ReadOnly"
             mapping.Add("SessionMaxGold",       new AddressRange<UInt32>("Memory", 0x4358AC, 0x4358B0));
 			      mapping.Add("CoinXOR",              new AddressRange<UInt32>("Memory", 0x4358B0, 0x4358B4));
-            mapping.Add("Gold",                 new AddressRange<UInt32>("Memory", 0x4358B4, 0x4358B8));
+            */
+            mapping.Add("Gold",                 new AddressRange<UInt32>("Memory", 0x4358B4));
+            /*
             mapping.Add("EnemiesVisible",       new AddressRange<UInt32>("Memory", 0x4358CA, 0x4358CB)); // "ReadOnly"
             mapping.Add("EntityCount",          new AddressRange<UInt32>("Memory", 0x4358CC, 0x4358D0));
             mapping.Add("EntityList",           new AddressRange<UInt32>("Memory", 0x4358D0, 0x4358D4));
@@ -259,10 +262,14 @@ namespace CryptOfTheNecroDancer {
             mapping.Add("MaxLevelX",            new AddressRange<UInt32>("Memory", 0x435BD8, 0x435BDC));
 
             mapping.Add("RenderableObjectList", new AddressRange<UInt32>("Memory", 0x435BEC, 0x435BF0));
+            */
         }
 
-        public ProcessManager ( ) : base("Necrodancer") {
+        public ProcessManager ( ) : base("Crypt of the NecroDancer v3.0.2-b1904") {
             Init_Mapping();
+
+            // ReadPEHeaders(BaseAddress);
+            Dump();
         }
 
         public T Get<T> (String name) where T : struct { // TODO: consider promoting to base class
@@ -335,10 +342,20 @@ namespace CryptOfTheNecroDancer {
         public void Dump ( ) {
             Console.WriteLine("Dumping Crypt of the NecroDancer...");
 
+            Console.WriteLine($"Base: {BaseAddress:X}");
+            UInt64 goldAddress = BaseAddress + mapping.GetNamed("Gold", "Memory").start;
+            Console.WriteLine($"Gold Address: {goldAddress:X}");
+            Console.WriteLine($"Gold: {ReadAbsolute<UInt32>(goldAddress):X}");
+
+            // Gold
+            //UInt32 gold = ReadRelative<UInt32>(mapping.GetNamed("Gold", "Memory").start);
+            //Console.WriteLine($"Gold: {gold}");
+            
+            /*
             // SongTime
             UInt32 songTime = ReadRelative<UInt32>(mapping.GetNamed("SongTime", "Memory").start);
             Console.WriteLine($"SongTime: {songTime / 60000}:{(songTime / 1000) % 60}.{songTime % 1000}");
-
+            
             // PlayerTime
             UInt32 playerTime = ReadRelative<UInt32>(mapping.GetNamed("PlayerTime", "Memory").start);
             Console.WriteLine($"PlayerTime: {playerTime / 60000}:{(playerTime / 1000) % 60}.{playerTime % 1000}");
@@ -380,6 +397,7 @@ namespace CryptOfTheNecroDancer {
 
                 PrintCamera();
             }
+            */
         }
     }
 }

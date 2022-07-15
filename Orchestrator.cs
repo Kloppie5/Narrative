@@ -9,7 +9,7 @@ namespace Narrative {
         Overlay overlay;
         TextWidget console;
 
-        Dictionary<String, List<Type>> widgetRegistry = new Dictionary<String, List<Type>>();
+        Dictionary<String, Dictionary<String, Type>> widgetRegistry = new Dictionary<string, Dictionary<string, Type>>();
 
         public Orchestrator ( Overlay overlay ) {
             this.overlay = overlay;
@@ -19,7 +19,9 @@ namespace Narrative {
 
             console.AddLine(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            RegisterWidget("Leaf Blower Revolution", typeof(LeafBlowerRevolution.ProvidenceWidget));
+            RegisterWidget("Leaf Blower Revolution", "Providence", typeof(LeafBlowerRevolution.ProvidenceWidget));
+            RegisterWidget("The Perfect Tower II", "Placeholder", typeof(ThePerfectTowerII.ProvidenceWidget));
+            RegisterWidget("Crypt of the NecroDancer v3.0.2-b1904", "Providence", typeof(CryptOfTheNecroDancer.ProvidenceWidget));
 
             CheckProcesses();
         }
@@ -29,9 +31,9 @@ namespace Narrative {
                 if ( !widgetRegistry.ContainsKey(process.MainWindowTitle) )
                     continue;
                 Console.WriteLine($"Found process: {process.MainWindowTitle}");
-                foreach ( var widgetType in widgetRegistry[process.MainWindowTitle] ) {
-                    if ( !overlay.HasWidget(widgetType) ) {
-                        overlay.AddWidget(widgetType);
+                foreach ( var (widgetName, widgetType) in widgetRegistry[process.MainWindowTitle] ) {
+                    if ( !overlay.HasWidget(widgetName) ) {
+                        overlay.AddWidget(widgetName, widgetType);
                         Console.WriteLine($"Added widget: {widgetType.Name}");
                     }
                 }
@@ -45,10 +47,10 @@ namespace Narrative {
             return null;
         }
 
-        public void RegisterWidget ( String processName, Type widgetType ) {
+        public void RegisterWidget ( String processName, String widgetName, Type widgetType ) {
             if ( !widgetRegistry.ContainsKey(processName) )
-                widgetRegistry.Add(processName, new List<Type>());
-            widgetRegistry[processName].Add(widgetType);
+                widgetRegistry.Add(processName, new Dictionary<String, Type>());
+            widgetRegistry[processName].Add($"[{processName}]-[{widgetName}]", widgetType);
         }
     	
         /**

@@ -18,6 +18,8 @@ namespace CryptOfTheNecroDancer {
             if (!manager.CheckConnected())
                 return;
 
+            manager.Dump();
+            /*
             IntPtr ptr = manager.process.MainWindowHandle;
             ProcessManager.Rect windowRect = new ProcessManager.Rect();
             ProcessManager.GetWindowRect(ptr, ref windowRect);
@@ -39,7 +41,7 @@ namespace CryptOfTheNecroDancer {
                     24 * currentScaleFactor
                 );
             });
-
+            */
         }
     }
 }

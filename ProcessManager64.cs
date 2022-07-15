@@ -58,6 +58,361 @@ namespace Narrative {
             public int Bottom { get; set; }
         }
 
+        #region PE Structs
+        public struct IMAGE_DOS_HEADER {        // DOS .EXE header
+            public UInt16 e_magic;              // Magic number
+            public UInt16 e_cblp;               // Bytes on last page of file
+            public UInt16 e_cp;                 // Pages in file
+            public UInt16 e_crlc;               // Relocations
+            public UInt16 e_cparhdr;            // Size of header in paragraphs
+            public UInt16 e_minalloc;           // Minimum extra paragraphs needed
+            public UInt16 e_maxalloc;           // Maximum extra paragraphs needed
+            public UInt16 e_ss;                 // Initial (relative) SS value
+            public UInt16 e_sp;                 // Initial SP value
+            public UInt16 e_csum;               // Checksum
+            public UInt16 e_ip;                 // Initial IP value
+            public UInt16 e_cs;                 // Initial (relative) CS value
+            public UInt16 e_lfarlc;             // File address of relocation table
+            public UInt16 e_ovno;               // Overlay number
+            public UInt16 e_res_0;              // Reserved words
+            public UInt16 e_res_1;              // Reserved words
+            public UInt16 e_res_2;              // Reserved words
+            public UInt16 e_res_3;              // Reserved words
+            public UInt16 e_oemid;              // OEM identifier (for e_oeminfo)
+            public UInt16 e_oeminfo;            // OEM information; e_oemid specific
+            public UInt16 e_res2_0;             // Reserved words
+            public UInt16 e_res2_1;             // Reserved words
+            public UInt16 e_res2_2;             // Reserved words
+            public UInt16 e_res2_3;             // Reserved words
+            public UInt16 e_res2_4;             // Reserved words
+            public UInt16 e_res2_5;             // Reserved words
+            public UInt16 e_res2_6;             // Reserved words
+            public UInt16 e_res2_7;             // Reserved words
+            public UInt16 e_res2_8;             // Reserved words
+            public UInt16 e_res2_9;             // Reserved words
+            public UInt32 e_lfanew;             // File address of new exe header
+
+            public void DumpToConsole ( ) {
+                Console.WriteLine("---- IMAGE_DOS_HEADER ----");
+                Console.WriteLine($"e_magic: {e_magic:X4}");
+                Console.WriteLine($"e_cblp: {e_cblp}");
+                Console.WriteLine($"e_cp: {e_cp}");
+                Console.WriteLine($"e_crlc: {e_crlc}");
+                Console.WriteLine($"e_cparhdr: {e_cparhdr}");
+                Console.WriteLine($"e_minalloc: {e_minalloc:X}");
+                Console.WriteLine($"e_maxalloc: {e_maxalloc:X}");
+                Console.WriteLine($"e_sp: {e_sp:X}");
+                Console.WriteLine($"e_lfarlc: {e_lfarlc:X}");
+                Console.WriteLine($"e_lfanew: {e_lfanew:X}");
+                Console.WriteLine("--------------------------");
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct IMAGE_FILE_HEADER {
+            public UInt32 Signature;
+            public UInt16 Machine;
+            public UInt16 NumberOfSections;
+            public UInt32 TimeDateStamp;
+            public UInt32 PointerToSymbolTable;
+            public UInt32 NumberOfSymbols;
+            public UInt16 SizeOfOptionalHeader;
+            public UInt16 Characteristics;
+
+            public void DumpToConsole ( ) {
+                Console.WriteLine("---- IMAGE_FILE_HEADER ----");
+                Console.WriteLine($"Signature: {Signature:X8}");
+                Console.WriteLine($"Machine: {Machine:X4}");
+                Console.WriteLine($"NumberOfSections: {NumberOfSections}");
+                Console.WriteLine($"TimeDateStamp: {TimeDateStamp}");
+                Console.WriteLine($"PointerToSymbolTable: {PointerToSymbolTable:X8}");
+                Console.WriteLine($"NumberOfSymbols: {NumberOfSymbols}");
+                Console.WriteLine($"SizeOfOptionalHeader: {SizeOfOptionalHeader:X4}");
+                Console.WriteLine($"Characteristics: {Characteristics:X4}");
+                Console.WriteLine("--------------------------");
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct IMAGE_OPTIONAL_HEADER32 {
+            public UInt16 Magic;
+            public Byte MajorLinkerVersion;
+            public Byte MinorLinkerVersion;
+            public UInt32 SizeOfCode;
+            public UInt32 SizeOfInitializedData;
+            public UInt32 SizeOfUninitializedData;
+            public UInt32 AddressOfEntryPoint;
+            public UInt32 BaseOfCode;
+            public UInt32 BaseOfData;
+            public UInt32 ImageBase;
+            public UInt32 SectionAlignment;
+            public UInt32 FileAlignment;
+            public UInt16 MajorOperatingSystemVersion;
+            public UInt16 MinorOperatingSystemVersion;
+            public UInt16 MajorImageVersion;
+            public UInt16 MinorImageVersion;
+            public UInt16 MajorSubsystemVersion;
+            public UInt16 MinorSubsystemVersion;
+            public UInt32 Win32VersionValue;
+            public UInt32 SizeOfImage;
+            public UInt32 SizeOfHeaders;
+            public UInt32 CheckSum;
+            public UInt16 Subsystem;
+            public UInt16 DllCharacteristics;
+            public UInt32 SizeOfStackReserve;
+            public UInt32 SizeOfStackCommit;
+            public UInt32 SizeOfHeapReserve;
+            public UInt32 SizeOfHeapCommit;
+            public UInt32 LoaderFlags;
+            public UInt32 NumberOfRvaAndSizes;
+
+            public IMAGE_DATA_DIRECTORY ExportTable;
+            public IMAGE_DATA_DIRECTORY ImportTable;
+            public IMAGE_DATA_DIRECTORY ResourceTable;
+            public IMAGE_DATA_DIRECTORY ExceptionTable;
+            public IMAGE_DATA_DIRECTORY CertificateTable;
+            public IMAGE_DATA_DIRECTORY BaseRelocationTable;
+            public IMAGE_DATA_DIRECTORY Debug;
+            public IMAGE_DATA_DIRECTORY Architecture;
+            public IMAGE_DATA_DIRECTORY GlobalPtr;
+            public IMAGE_DATA_DIRECTORY TLSTable;
+            public IMAGE_DATA_DIRECTORY LoadConfigTable;
+            public IMAGE_DATA_DIRECTORY BoundImport;
+            public IMAGE_DATA_DIRECTORY IAT;
+            public IMAGE_DATA_DIRECTORY DelayImportDescriptor;
+            public IMAGE_DATA_DIRECTORY CLRRuntimeHeader;
+            public IMAGE_DATA_DIRECTORY Reserved;
+
+            public void DumpToConsole ( ) {
+                Console.WriteLine("---- IMAGE_OPTIONAL_HEADER32 ----");
+                Console.WriteLine($"Magic: {Magic:X4}");
+                Console.WriteLine($"MajorLinkerVersion: {MajorLinkerVersion}");
+                Console.WriteLine($"MinorLinkerVersion: {MinorLinkerVersion}");
+                Console.WriteLine($"SizeOfCode: {SizeOfCode:X}");
+                Console.WriteLine($"SizeOfInitializedData: {SizeOfInitializedData:X}");
+                Console.WriteLine($"SizeOfUninitializedData: {SizeOfUninitializedData:X}");
+                Console.WriteLine($"AddressOfEntryPoint: {AddressOfEntryPoint:X}");
+                Console.WriteLine($"BaseOfCode: {BaseOfCode:X}");
+                Console.WriteLine($"BaseOfData: {BaseOfData:X}");
+                Console.WriteLine($"ImageBase: {ImageBase:X}");
+                Console.WriteLine($"SectionAlignment: {SectionAlignment:X}");
+                Console.WriteLine($"FileAlignment: {FileAlignment:X}");
+                Console.WriteLine($"MajorOperatingSystemVersion: {MajorOperatingSystemVersion}");
+                Console.WriteLine($"MinorOperatingSystemVersion: {MinorOperatingSystemVersion}");
+                Console.WriteLine($"MajorImageVersion: {MajorImageVersion}");
+                Console.WriteLine($"MinorImageVersion: {MinorImageVersion}");
+                Console.WriteLine($"MajorSubsystemVersion: {MajorSubsystemVersion}");
+                Console.WriteLine($"MinorSubsystemVersion: {MinorSubsystemVersion}");
+                Console.WriteLine($"Win32VersionValue: {Win32VersionValue:X}");
+                Console.WriteLine($"SizeOfImage: {SizeOfImage:X}");
+                Console.WriteLine($"SizeOfHeaders: {SizeOfHeaders:X}");
+                Console.WriteLine($"CheckSum: {CheckSum:X}");
+                Console.WriteLine($"Subsystem: {Subsystem:X}");
+                Console.WriteLine($"DllCharacteristics: {DllCharacteristics:X}");
+                Console.WriteLine($"SizeOfStackReserve: {SizeOfStackReserve:X}");
+                Console.WriteLine($"SizeOfStackCommit: {SizeOfStackCommit:X}");
+                Console.WriteLine($"SizeOfHeapReserve: {SizeOfHeapReserve:X}");
+                Console.WriteLine($"SizeOfHeapCommit: {SizeOfHeapCommit:X}");
+                Console.WriteLine($"LoaderFlags: {LoaderFlags:X}");
+                Console.WriteLine($"NumberOfRvaAndSizes: {NumberOfRvaAndSizes:X}");
+                Console.WriteLine("--------------------------");
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct IMAGE_OPTIONAL_HEADER64 {
+            public UInt16 Magic;
+            public Byte MajorLinkerVersion;
+            public Byte MinorLinkerVersion;
+            public UInt32 SizeOfCode;
+            public UInt32 SizeOfInitializedData;
+            public UInt32 SizeOfUninitializedData;
+            public UInt32 AddressOfEntryPoint;
+            public UInt32 BaseOfCode;
+            public UInt64 ImageBase;
+            public UInt32 SectionAlignment;
+            public UInt32 FileAlignment;
+            public UInt16 MajorOperatingSystemVersion;
+            public UInt16 MinorOperatingSystemVersion;
+            public UInt16 MajorImageVersion;
+            public UInt16 MinorImageVersion;
+            public UInt16 MajorSubsystemVersion;
+            public UInt16 MinorSubsystemVersion;
+            public UInt32 Win32VersionValue;
+            public UInt32 SizeOfImage;
+            public UInt32 SizeOfHeaders;
+            public UInt32 CheckSum;
+            public UInt16 Subsystem;
+            public UInt16 DllCharacteristics;
+            public UInt64 SizeOfStackReserve;
+            public UInt64 SizeOfStackCommit;
+            public UInt64 SizeOfHeapReserve;
+            public UInt64 SizeOfHeapCommit;
+            public UInt32 LoaderFlags;
+            public UInt32 NumberOfRvaAndSizes;
+
+            public IMAGE_DATA_DIRECTORY ExportTable;
+            public IMAGE_DATA_DIRECTORY ImportTable;
+            public IMAGE_DATA_DIRECTORY ResourceTable;
+            public IMAGE_DATA_DIRECTORY ExceptionTable;
+            public IMAGE_DATA_DIRECTORY CertificateTable;
+            public IMAGE_DATA_DIRECTORY BaseRelocationTable;
+            public IMAGE_DATA_DIRECTORY Debug;
+            public IMAGE_DATA_DIRECTORY Architecture;
+            public IMAGE_DATA_DIRECTORY GlobalPtr;
+            public IMAGE_DATA_DIRECTORY TLSTable;
+            public IMAGE_DATA_DIRECTORY LoadConfigTable;
+            public IMAGE_DATA_DIRECTORY BoundImport;
+            public IMAGE_DATA_DIRECTORY IAT;
+            public IMAGE_DATA_DIRECTORY DelayImportDescriptor;
+            public IMAGE_DATA_DIRECTORY CLRRuntimeHeader;
+            public IMAGE_DATA_DIRECTORY Reserved;
+
+            public void DumpToConsole ( ) {
+                Console.WriteLine("---- IMAGE_OPTIONAL_HEADER64 ----");
+                Console.WriteLine($"Magic: {Magic:X4}");
+                Console.WriteLine($"MajorLinkerVersion: {MajorLinkerVersion}");
+                Console.WriteLine($"MinorLinkerVersion: {MinorLinkerVersion}");
+                Console.WriteLine($"SizeOfCode: {SizeOfCode:X}");
+                Console.WriteLine($"SizeOfInitializedData: {SizeOfInitializedData:X}");
+                Console.WriteLine($"SizeOfUninitializedData: {SizeOfUninitializedData:X}");
+                Console.WriteLine($"AddressOfEntryPoint: {AddressOfEntryPoint:X}");
+                Console.WriteLine($"BaseOfCode: {BaseOfCode:X}");
+                Console.WriteLine($"ImageBase: {ImageBase:X}");
+                Console.WriteLine($"SectionAlignment: {SectionAlignment:X}");
+                Console.WriteLine($"FileAlignment: {FileAlignment:X}");
+                Console.WriteLine($"MajorOperatingSystemVersion: {MajorOperatingSystemVersion}");
+                Console.WriteLine($"MinorOperatingSystemVersion: {MinorOperatingSystemVersion}");
+                Console.WriteLine($"MajorImageVersion: {MajorImageVersion}");
+                Console.WriteLine($"MinorImageVersion: {MinorImageVersion}");
+                Console.WriteLine($"MajorSubsystemVersion: {MajorSubsystemVersion}");
+                Console.WriteLine($"MinorSubsystemVersion: {MinorSubsystemVersion}");
+                Console.WriteLine($"SizeOfImage: {SizeOfImage:X}");
+                Console.WriteLine($"SizeOfHeaders: {SizeOfHeaders:X}");
+                Console.WriteLine($"CheckSum: {CheckSum:X}");
+                Console.WriteLine($"Subsystem: {Subsystem:X}");
+                Console.WriteLine($"DllCharacteristics: {DllCharacteristics:X}");
+                Console.WriteLine($"SizeOfStackReserve: {SizeOfStackReserve:X}");
+                Console.WriteLine($"SizeOfStackCommit: {SizeOfStackCommit:X}");
+                Console.WriteLine($"SizeOfHeapReserve: {SizeOfHeapReserve:X}");
+                Console.WriteLine($"SizeOfHeapCommit: {SizeOfHeapCommit:X}");
+                Console.WriteLine($"NumberOfRvaAndSizes: {NumberOfRvaAndSizes:X}");
+                Console.WriteLine("--------------------------");
+            }
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct IMAGE_SECTION_HEADER {
+            [FieldOffset(0)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+            public char[] Name;
+            [FieldOffset(8)]
+            public UInt32 VirtualSize;
+            [FieldOffset(12)]
+            public UInt32 VirtualAddress;
+            [FieldOffset(16)]
+            public UInt32 SizeOfRawData;
+            [FieldOffset(20)]
+            public UInt32 PointerToRawData;
+            [FieldOffset(24)]
+            public UInt32 PointerToRelocations;
+            [FieldOffset(28)]
+            public UInt32 PointerToLinenumbers;
+            [FieldOffset(32)]
+            public UInt16 NumberOfRelocations;
+            [FieldOffset(34)]
+            public UInt16 NumberOfLinenumbers;
+            [FieldOffset(36)]
+            public DataSectionFlags Characteristics;
+
+            public String Section {
+                get { return new String(Name); }
+            }
+
+            public void DumpToConsole ( ) {
+                Console.WriteLine("---- IMAGE_SECTION_HEADER ----");
+                Console.WriteLine($"Name: {Section}");
+                Console.WriteLine($"VirtualSize: {VirtualSize:X}");
+                Console.WriteLine($"VirtualAddress: {VirtualAddress:X}");
+                Console.WriteLine($"SizeOfRawData: {SizeOfRawData:X}");
+                Console.WriteLine($"PointerToRawData: {PointerToRawData:X}");
+                Console.WriteLine($"PointerToRelocations: {PointerToRelocations:X}");
+                Console.WriteLine($"PointerToLinenumbers: {PointerToLinenumbers:X}");
+                Console.WriteLine($"NumberOfRelocations: {NumberOfRelocations}");
+                Console.WriteLine($"NumberOfLinenumbers: {NumberOfLinenumbers}");
+                Console.WriteLine($"Characteristics: {Characteristics:X}");
+                Console.WriteLine("--------------------------");
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct IMAGE_DATA_DIRECTORY {
+            public UInt32 VirtualAddress;
+            public UInt32 Size;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct IMAGE_EXPORT_DIRECTORY_TABLE {
+            public UInt32 ExportFlags;
+            public UInt32 TimeDateStamp;
+            public UInt16 MajorVersion;
+            public UInt16 MinorVersion;
+            public UInt32 NameRva;
+            public UInt32 OrdinalBase;
+            public UInt32 AddressTableEntries;
+            public UInt32 NumberOfNamePointers;
+            public UInt32 ExportAddressTableRva;
+            public UInt32 NamePointerRva;
+            public UInt32 OrdinalTableRva;
+        }
+
+        [Flags]
+        public enum DataSectionFlags : uint {
+            TypeReg = 0x00000000,
+            TypeDsect = 0x00000001,
+            TypeNoLoad = 0x00000002,
+            TypeGroup = 0x00000004,
+            TypeNoPadded = 0x00000008,
+            TypeCopy = 0x00000010,
+            ContentCode = 0x00000020,
+            ContentInitializedData = 0x00000040,
+            ContentUninitializedData = 0x00000080,
+            LinkOther = 0x00000100,
+            LinkInfo = 0x00000200,
+            TypeOver = 0x00000400,
+            LinkRemove = 0x00000800,
+            LinkComDat = 0x00001000,
+            NoDeferSpecExceptions = 0x00004000,
+            RelativeGP = 0x00008000,
+            MemPurgeable = 0x00020000,
+            Memory16Bit = 0x00020000,
+            MemoryLocked = 0x00040000,
+            MemoryPreload = 0x00080000,
+            Align1Bytes = 0x00100000,
+            Align2Bytes = 0x00200000,
+            Align4Bytes = 0x00300000,
+            Align8Bytes = 0x00400000,
+            Align16Bytes = 0x00500000,
+            Align32Bytes = 0x00600000,
+            Align64Bytes = 0x00700000,
+            Align128Bytes = 0x00800000,
+            Align256Bytes = 0x00900000,
+            Align512Bytes = 0x00A00000,
+            Align1024Bytes = 0x00B00000,
+            Align2048Bytes = 0x00C00000,
+            Align4096Bytes = 0x00D00000,
+            Align8192Bytes = 0x00E00000,
+            LinkExtendedRelocationOverflow = 0x01000000,
+            MemoryDiscardable = 0x02000000,
+            MemoryNotCached = 0x04000000,
+            MemoryNotPaged = 0x08000000,
+            MemoryShared = 0x10000000,
+            MemoryExecute = 0x20000000,
+            MemoryRead = 0x40000000,
+            MemoryWrite = 0x80000000
+        }
+        #endregion
+
         #endregion
         #region Imports
         [DllImport("user32.dll")]
@@ -83,154 +438,33 @@ namespace Narrative {
         #endregion
         #region DLLs
 
-        public UInt64 GetModule ( params String[] moduleNames ) {
-            Dictionary<String, UInt64> modules = GetModules64();
-            foreach ( KeyValuePair<String, UInt64> module in modules )
-                foreach ( String moduleName in moduleNames )
-                    if ( module.Key.Contains(moduleName) )
-                        return module.Value;
-            return 0;
-        }
-
-        public Dictionary<String, UInt64> GetExportedFunctions(UInt64 ImageBase) {
-            bool PE32 = false;
-            bool PE32plus = false;
-            UInt32 PESignatureOffset = ReadAbsolute<UInt32>(ImageBase + 0x3C);
-            UInt64 COFFFileHeaderAddress = ImageBase + PESignatureOffset + 0x4;
-            // COFF File Header
-            UInt16 Machine = ReadAbsolute<UInt16>(COFFFileHeaderAddress + 0x0);
-            UInt16 NumberOfSections = ReadAbsolute<UInt16>(COFFFileHeaderAddress + 0x2);
-            UInt32 TimeDateStamp = ReadAbsolute<UInt32>(COFFFileHeaderAddress + 0x4);
-            UInt32 PointerToSymbolTable = ReadAbsolute<UInt32>(COFFFileHeaderAddress + 0x8);
-            UInt32 NumberOfSymbols = ReadAbsolute<UInt32>(COFFFileHeaderAddress + 0xC);
-            UInt16 SizeOfOptionalHeader = ReadAbsolute<UInt16>(COFFFileHeaderAddress + 0x10);
-            UInt16 Characteristics = ReadAbsolute<UInt16>(COFFFileHeaderAddress + 0x12);
-            // Optional Header
-            UInt64 OptionalHeaderAddress = COFFFileHeaderAddress + 0x14;
-            UInt16 Magic = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x0);
-            if ( Magic == 0x10B ) {
-                PE32 = true;
-            } else if ( Magic == 0x20B ) {
-                PE32plus = true;
-            } else {
-                Console.WriteLine($"Unknown Magic: {Magic:X}");
-                return null;
+        public void ReadPEHeaders (
+            UInt64 imageBase,
+            out IMAGE_DOS_HEADER dosHeader,
+            out IMAGE_FILE_HEADER fileHeader,
+            out IMAGE_OPTIONAL_HEADER32 optionalHeader32,
+            out IMAGE_OPTIONAL_HEADER64 optionalHeader64,
+            out IMAGE_SECTION_HEADER[] imageSectionHeaders
+        ) {
+            dosHeader = ReadAbsolute<IMAGE_DOS_HEADER>( imageBase );
+            fileHeader = ReadAbsolute<IMAGE_FILE_HEADER>( imageBase + dosHeader.e_lfanew );
+            
+            optionalHeader32 = ReadAbsolute<IMAGE_OPTIONAL_HEADER32>( imageBase + dosHeader.e_lfanew + 0x18 );
+            optionalHeader64 = ReadAbsolute<IMAGE_OPTIONAL_HEADER64>( imageBase + dosHeader.e_lfanew + 0x18 );
+            
+            UInt16 optionalHeaderMagic = ReadAbsolute<UInt16>( imageBase + dosHeader.e_lfanew + 0x18 );
+            UInt64 imageSectionHeadersAddress = 0;
+            if ( optionalHeaderMagic == 0x10B ) {
+                imageSectionHeadersAddress = imageBase + dosHeader.e_lfanew + 0xF8;
             }
-            UInt8 MajorLinkerVersion = ReadAbsolute<UInt8>(OptionalHeaderAddress + 0x2);
-            UInt8 MinorLinkerVersion = ReadAbsolute<UInt8>(OptionalHeaderAddress + 0x3);
-            UInt32 SizeOfCode = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x4);
-            UInt32 SizeOfInitializedData = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x8);
-            UInt32 SizeOfUninitializedData = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0xC);
-            UInt32 AddressOfEntryPoint = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x10);
-            UInt32 BaseOfCode = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x14);
-            // Extended Optional Header
-            UInt32 BaseOfData = 0;
-            UInt64 ImageBaseAddress = 0;
-            if ( PE32 ) {
-                BaseOfData = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x18);
-                ImageBaseAddress = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x1C);
+            if ( optionalHeaderMagic == 0x20B ) {
+                imageSectionHeadersAddress = imageBase + dosHeader.e_lfanew + 0x108;
             }
-            if ( PE32plus ) {
-                ImageBaseAddress = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x18);
+            
+            imageSectionHeaders = new IMAGE_SECTION_HEADER[fileHeader.NumberOfSections];
+            for ( UInt32 i = 0; i < fileHeader.NumberOfSections; i++ ) {
+                imageSectionHeaders[i] = ReadAbsolute<IMAGE_SECTION_HEADER>( imageSectionHeadersAddress + ( 0x28 * i ) );
             }
-            UInt32 SectionAlignment = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x20);
-            UInt32 FileAlignment = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x24);
-            UInt16 MajorOperatingSystemVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x28);
-            UInt16 MinorOperatingSystemVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x2A);
-            UInt16 MajorImageVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x2C);
-            UInt16 MinorImageVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x2E);
-            UInt16 MajorSubsystemVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x30);
-            UInt16 MinorSubsystemVersion = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x32);
-            UInt32 Win32VersionValue = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x34);
-            UInt32 SizeOfImage = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x38);
-            UInt32 SizeOfHeaders = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x3C);
-            UInt32 CheckSum = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x40);
-            UInt16 Subsystem = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x44);
-            UInt16 DllCharacteristics = ReadAbsolute<UInt16>(OptionalHeaderAddress + 0x46);
-            UInt64 SizeOfStackReserve = 0;
-            UInt64 SizeOfStackCommit = 0;
-            UInt64 SizeOfHeapReserve = 0;
-            UInt64 SizeOfHeapCommit = 0;
-            UInt32 LoaderFlags = 0;
-            UInt32 NumberOfRvaAndSizes = 0;
-            if ( PE32 ) {
-                SizeOfStackReserve = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x48);
-                SizeOfStackCommit = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x4C);
-                SizeOfHeapReserve = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x50);
-                SizeOfHeapCommit = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x54);
-                LoaderFlags = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x58);
-                NumberOfRvaAndSizes = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x5C);
-            }
-            if ( PE32plus ) {
-                SizeOfStackReserve = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x48);
-                SizeOfStackCommit = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x50);
-                SizeOfHeapReserve = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x58);
-                SizeOfHeapCommit = ReadAbsolute<UInt64>(OptionalHeaderAddress + 0x60);
-                LoaderFlags = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x68);
-                NumberOfRvaAndSizes = ReadAbsolute<UInt32>(OptionalHeaderAddress + 0x6C);
-            }
-            // Data Directories
-            UInt64 DataDirectoryAddress = 0;
-            if ( PE32 ) {
-                DataDirectoryAddress = OptionalHeaderAddress + 0x60;
-            }
-            if ( PE32plus ) {
-                DataDirectoryAddress = OptionalHeaderAddress + 0x70;
-            }
-            UInt32 ExportTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x0);
-            UInt32 ExportTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x4);
-            UInt32 ImportTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x8);
-            UInt32 ImportTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0xC);
-            UInt32 ResourceTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x10);
-            UInt32 ResourceTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x14);
-            UInt32 ExceptionTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x18);
-            UInt32 ExceptionTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x1C);
-            UInt32 CertificateTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x20);
-            UInt32 CertificateTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x24);
-            UInt32 BaseRelocationTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x28);
-            UInt32 BaseRelocationTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x2C);
-            UInt32 DebugOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x30);
-            UInt32 DebugSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x34);
-            UInt32 ArchitectureOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x38);
-            UInt32 ArchitectureSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x3C);
-            UInt32 GlobalPointerTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x40);
-            UInt32 GlobalPointerTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x44);
-            UInt32 ThreadLocalStorageTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x48);
-            UInt32 ThreadLocalStorageTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x4C);
-            UInt32 LoadConfigTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x50);
-            UInt32 LoadConfigTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x54);
-            UInt32 BoundImportOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x58);
-            UInt32 BoundImportSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x5C);
-            UInt32 ImportAddressTableOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x60);
-            UInt32 ImportAddressTableSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x64);
-            UInt32 DelayImportDescriptorOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x68);
-            UInt32 DelayImportDescriptorSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x6C);
-            UInt32 ClrRuntimeHeaderOffset = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x70);
-            UInt32 ClrRuntimeHeaderSize = ReadAbsolute<UInt32>(DataDirectoryAddress + 0x74);
-
-            // Export Table Header
-            UInt64 ExportTableAddress = ImageBase + ExportTableOffset;
-            UInt32 ExportTableExportFlags = ReadAbsolute<UInt32>(ExportTableAddress + 0x0);
-            UInt32 ExportTableTimeDateStamp = ReadAbsolute<UInt32>(ExportTableAddress + 0x4);
-            UInt16 ExportTableMajorVersion = ReadAbsolute<UInt16>(ExportTableAddress + 0x8);
-            UInt16 ExportTableMinorVersion = ReadAbsolute<UInt16>(ExportTableAddress + 0xA);
-            UInt32 ExportTableNameRva = ReadAbsolute<UInt32>(ExportTableAddress + 0xC);
-            UInt32 ExportTableOrdinalBase = ReadAbsolute<UInt32>(ExportTableAddress + 0x10);
-            UInt32 ExportTableAddressTableEntries = ReadAbsolute<UInt32>(ExportTableAddress + 0x14);
-            UInt32 ExportTableNumberOfNamePointers = ReadAbsolute<UInt32>(ExportTableAddress + 0x18);
-            UInt32 ExportTableExportAddressTableRva = ReadAbsolute<UInt32>(ExportTableAddress + 0x1C);
-            UInt32 ExportTableNamePointerRva = ReadAbsolute<UInt32>(ExportTableAddress + 0x20);
-            UInt32 ExportTableOrdinalTableRva = ReadAbsolute<UInt32>(ExportTableAddress + 0x24);
-
-            Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
-            for ( UInt32 i = 0; i < ExportTableAddressTableEntries; ++i ) {
-                UInt32 FunctionNameOffset = ReadAbsolute<UInt32>(ImageBase + ExportTableNamePointerRva + i * 4);
-                String FunctionName = ReadAbsoluteUTF8String(ImageBase + FunctionNameOffset);
-                UInt32 FunctionOffset = ReadAbsolute<UInt32>(ImageBase + ExportTableExportAddressTableRva + i * 4);
-                exportedFunctions.Add(FunctionName, ImageBase + FunctionOffset);
-            }
-
-            return exportedFunctions;
         }
 
         public Dictionary<String, UInt64> GetModules64 ( ) {
@@ -248,6 +482,52 @@ namespace Narrative {
             }
 
             return modules;
+        }
+        public void DumpModules64 ( ) {
+            Dictionary<String, UInt64> modules = GetModules64();
+            foreach ( var (moduleName, moduleBase) in modules ) {
+                Console.WriteLine($"{moduleName} @ {moduleBase:X}");
+            }
+        }
+        public UInt64 GetModule ( params String[] moduleNames ) {
+            Dictionary<String, UInt64> modules = GetModules64();
+            foreach ( KeyValuePair<String, UInt64> module in modules )
+                foreach ( String moduleName in moduleNames )
+                    if ( module.Key.Contains(moduleName) )
+                        return module.Value;
+            return 0;
+        }
+        public void DumpModule ( UInt64 moduleBase ) {
+            ReadPEHeaders(moduleBase, out IMAGE_DOS_HEADER dosHeader, out IMAGE_FILE_HEADER fileHeader, out IMAGE_OPTIONAL_HEADER32 optionalHeader32, out IMAGE_OPTIONAL_HEADER64 optionalHeader64, out IMAGE_SECTION_HEADER[] sectionHeaders);
+            dosHeader.DumpToConsole();
+            fileHeader.DumpToConsole();
+            optionalHeader32.DumpToConsole();
+            optionalHeader64.DumpToConsole();
+            foreach ( IMAGE_SECTION_HEADER sectionHeader in sectionHeaders ) {
+                sectionHeader.DumpToConsole();
+            }
+        }
+
+        public Dictionary<String, UInt64> GetExportedFunctions ( UInt64 ImageBase ) {
+            ReadPEHeaders(ImageBase, out IMAGE_DOS_HEADER dosHeader, out IMAGE_FILE_HEADER fileHeader, out IMAGE_OPTIONAL_HEADER32 optionalHeader32, out IMAGE_OPTIONAL_HEADER64 optionalHeader64, out IMAGE_SECTION_HEADER[] sectionHeaders);
+
+            IMAGE_EXPORT_DIRECTORY_TABLE ExportTable = ReadAbsolute<IMAGE_EXPORT_DIRECTORY_TABLE>(ImageBase + optionalHeader64.ExportTable.VirtualAddress);
+
+            Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
+            for ( UInt32 i = 0; i < ExportTable.AddressTableEntries; ++i ) {
+                UInt32 FunctionNameOffset = ReadAbsolute<UInt32>(ImageBase + ExportTable.NamePointerRva + i * 4);
+                String FunctionName = ReadAbsoluteUTF8String(ImageBase + FunctionNameOffset);
+                UInt32 FunctionOffset = ReadAbsolute<UInt32>(ImageBase + ExportTable.ExportAddressTableRva + i * 4);
+                exportedFunctions.Add(FunctionName, ImageBase + FunctionOffset);
+            }
+
+            return exportedFunctions;
+        }
+        public void DumpExportedFunctions ( UInt64 imageBase ) {
+            Dictionary<String, UInt64> exportedFunctions = GetExportedFunctions(imageBase);
+            foreach ( var (exportedFunctionName, exportedFunctionAddress) in exportedFunctions ) {
+                Console.WriteLine($"{exportedFunctionName} = {exportedFunctionAddress:X}");
+            }
         }
         #endregion
         #region Memory Scanning
@@ -416,6 +696,9 @@ namespace Narrative {
             Int32 lpNumberOfBytesWritten = 0;
             WriteProcessMemory(process.Handle, (IntPtr) address, Bytes, Bytes.Length, ref lpNumberOfBytesWritten);
         }
+        #endregion
+        #region Disassembly
+        
         #endregion
     }
 }
