@@ -28,9 +28,9 @@ namespace IdleSpiral {
             findingIdleSystem = true;
 
             new Thread(() => {
-                UInt64 monoModule = manager.GetModule("mono.dll", "mono-2.0-bdwgc.dll");
+                UInt64 monoModule = PEHelper.GetModule(manager, "mono.dll", "mono-2.0-bdwgc.dll");
                 Console.WriteLine($"monoModule: {monoModule:X}");
-                Dictionary<String, UInt64> exportedFunctions = manager.GetExportedFunctions(monoModule);
+                Dictionary<String, UInt64> exportedFunctions = PEHelper.GetExportedFunctions(manager, monoModule);
                 foreach ( KeyValuePair<String, UInt64> exportedFunction in exportedFunctions ) {
                     if ( exportedFunction.Key.Contains("get") )
                         Console.WriteLine($"{exportedFunction.Key} {exportedFunction.Value:X}");
@@ -72,11 +72,10 @@ namespace IdleSpiral {
                 return;
 
             IntPtr ptr = manager.process.MainWindowHandle;
-            ProcessManager64.Rect windowRect = new ProcessManager64.Rect();
+            Rect windowRect = new Rect();
             ProcessManager64.GetWindowRect(ptr, ref windowRect);
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), windowRect.Left, windowRect.Top, windowRect.Right - windowRect.Left, windowRect.Bottom - windowRect.Top);
 
-            IdleSystem = 0x1B94214F480;
             if ( IdleSystem == 0 ) {
                 FindIdleSystem();
                 Console.WriteLine("Scanning for IdleSystem...");

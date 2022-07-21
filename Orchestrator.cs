@@ -19,9 +19,10 @@ namespace Narrative {
 
             console.AddLine(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
-            RegisterWidget("Leaf Blower Revolution", "Providence", typeof(LeafBlowerRevolution.ProvidenceWidget));
-            RegisterWidget("The Perfect Tower II", "Placeholder", typeof(ThePerfectTowerII.ProvidenceWidget));
-            RegisterWidget("Crypt of the NecroDancer v3.0.2-b1904", "Providence", typeof(CryptOfTheNecroDancer.ProvidenceWidget));
+            //RegisterWidget("Leaf Blower Revolution", "Providence", typeof(LeafBlowerRevolution.ProvidenceWidget));
+            //RegisterWidget("The Perfect Tower II", "Placeholder", typeof(ThePerfectTowerII.ProvidenceWidget));
+            //RegisterWidget("Crypt of the NecroDancer v3.0.2-b1904", "Providence", typeof(CryptOfTheNecroDancer.ProvidenceWidget));
+            RegisterWidget("Cultist Simulator", "Providence", typeof(CultistSimulator.ProvidenceWidget));
 
             CheckProcesses();
         }

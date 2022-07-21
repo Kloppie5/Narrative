@@ -22,7 +22,7 @@ namespace LeafBlowerRevolution {
                 return;
 
             IntPtr ptr = manager.process.MainWindowHandle;
-            ProcessManager64.Rect windowRect = new ProcessManager64.Rect();
+            Rect windowRect = new Rect();
             ProcessManager64.GetWindowRect(ptr, ref windowRect);
             e.Graphics.DrawRectangle(new Pen(Color.White, 2), windowRect.Left, windowRect.Top, windowRect.Right - windowRect.Left, windowRect.Bottom - windowRect.Top);
 

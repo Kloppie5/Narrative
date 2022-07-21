@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
+using Narrative;
+
 using UInt8 = System.Byte;
 
 namespace ThePerfectTowerII {
@@ -14,21 +16,18 @@ namespace ThePerfectTowerII {
         public ProvidenceWidget ( ) {
             manager = new ProcessManager();
 
-            UInt64 gameAssembly = manager.GetModule("GameAssembly.dll");
+            UInt64 gameAssembly = PEHelper.GetModule(manager, "GameAssembly.dll");
 
-            manager.DumpExportedFunctions(gameAssembly);
-
+            // manager.DumpExportedFunctions(gameAssembly);
+            /*
             UInt64 domain_assemblies_pointer = manager.ReadAbsolute<UInt64>(gameAssembly + 0x1C22E68);
             Console.WriteLine($"domain_assemblies_pointer: {domain_assemblies_pointer:X}");
-            for (
-                UInt64 assembly_pointer = domain_assemblies_pointer ;
-                manager.ReadAbsolute<UInt64>(assembly_pointer) != 0 ;
-                assembly_pointer += 8
-            ) {
-                UInt64 assembly = manager.ReadAbsolute<UInt64>(assembly_pointer);
+            for ( UInt64 i = 0 ; manager.ReadAbsolute<UInt64>(domain_assemblies_pointer + 0x8 * i) != 0 ; ++i ) {
+                UInt64 assembly = manager.ReadAbsolute<UInt64>(domain_assemblies_pointer + 0x8 * i);
                 String assembly_name = manager.ReadAbsoluteUTF8String(assembly + 0x18, 0);
-                Console.WriteLine($"assembly_name: {assembly_name} @ {assembly:X}");
+                Console.WriteLine($"assembly {i}: {assembly_name} @ {assembly:X}");
             }
+            */
         }
     }
 }
