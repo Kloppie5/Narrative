@@ -32,29 +32,26 @@ namespace Narrative {
 
     [FieldOffset(0x58)]
     public UInt32 /* GSList32* */ domain_assemblies;
+    public List<MonoAssembly32> GetAssemblies ( ProcessManager64 manager ) {
+      List<MonoAssembly32> assemblies = new List<MonoAssembly32>();
+      UInt32 it = domain_assemblies;
+      while ( it != 0 ) {
+        GSList32 list = MemoryHelper.ReadAbsolute<GSList32>(manager, it);
+        MonoAssembly32 assembly = MemoryHelper.ReadAbsolute<MonoAssembly32>(manager, list.data);
+        assemblies.Add(assembly);
+        it = list.next;
+      }
+      return assemblies;
+    }
     [FieldOffset(0x60)]
     public UInt32 /* char* */ friendly_name;
-
     public String GetFriendlyName ( ProcessManager64 manager ) {
       return MemoryHelper.ReadAbsoluteUTF8String(manager, friendly_name);
     }
 
-    public Dictionary<String, MonoAssembly32> GetAssemblies ( ProcessManager64 manager ) {
-      Dictionary<String, MonoAssembly32> assemblies = new Dictionary<String, MonoAssembly32>();
-      UInt32 it = domain_assemblies;
-      while ( it != 0 ) {
-        UInt32 assemblyPointer = MemoryHelper.ReadAbsolute<UInt32>(manager, it);
-        MonoAssembly32 assembly = MemoryHelper.ReadAbsolute<MonoAssembly32>(manager, assemblyPointer);
-        assemblies.Add(assembly.GetAssemblyName(manager), assembly);
-
-        it = MemoryHelper.ReadAbsolute<UInt32>(manager, it + 0x4);
-      }
-      return assemblies;
-    }
-
     public void DumpToConsole ( ProcessManager64 manager ) {
       Console.WriteLine($"friendly_name: {GetFriendlyName(manager)}");
-      foreach ( var (assemblyName, assembly) in GetAssemblies(manager) ) {
+      foreach ( var assembly in GetAssemblies(manager) ) {
         assembly.DumpToConsole(manager);
       }
     }

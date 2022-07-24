@@ -9,20 +9,6 @@
 //             // TODO
 //         }
 
-//         public UInt32 GetAssemblyInDomain ( UInt32 domain, String name ) {
-//             UInt32 it = ReadAbsolute<UInt32>(domain + 0x6C);
-//             while ( it != 0 ) {
-//                 UInt32 assembly = ReadAbsolute<UInt32>(it);
-//                 UInt32 assemblyNameAddress = ReadAbsolute<UInt32>(assembly + 0x08);
-//                 String assemblyName = ReadAbsoluteUTF8String(assemblyNameAddress);
-//                 if ( assemblyName.Equals(name) )
-//                     return assembly;
-
-//                 it = ReadAbsolute<UInt32>(it + 0x4);
-//             }
-//             return 0;
-//         }
-
 //         public List<UInt32> EnumImageClassCache ( UInt32 image ) {
 //             List<UInt32> entries = new List<UInt32>();
 
