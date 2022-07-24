@@ -26,13 +26,14 @@ namespace Narrative {
     [FieldOffset(0x14)]
     public UInt32 /* gpointer* */ table;
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"hash_func: {hash_func:X}");
-      Console.WriteLine($"key_extract: {key_extract:X}");
-      Console.WriteLine($"next_value: {next_value:X}");
-      Console.WriteLine($"size: {size}");
-      Console.WriteLine($"num_entries: {num_entries}");
-      Console.WriteLine($"table: {table:X}");
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoInternalHashTable;");
+      Console.WriteLine($"{prefix}  hash_func: {hash_func:X}");
+      Console.WriteLine($"{prefix}  key_extract: {key_extract:X}");
+      Console.WriteLine($"{prefix}  next_value: {next_value:X}");
+      Console.WriteLine($"{prefix}  size: {size}");
+      Console.WriteLine($"{prefix}  num_entries: {num_entries}");
+      Console.WriteLine($"{prefix}  table: {table:X}");
     }
   }
 }

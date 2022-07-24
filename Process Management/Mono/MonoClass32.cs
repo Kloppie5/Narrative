@@ -48,24 +48,25 @@ namespace Narrative {
     // UInt32 min_align; // 0xA0
     // UInt32 num_fields; // 0xA4
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"element_class: {element_class:X}");
-      Console.WriteLine($"cast_class: {cast_class:X}");
-      Console.WriteLine($"supertypes: {supertypes:X}");
-      Console.WriteLine($"idepth: {idepth}");
-      Console.WriteLine($"rank: {rank}");
-      Console.WriteLine($"child_class: {child_class}");
-      Console.WriteLine($"instance_size: {instance_size}");
-      Console.WriteLine($"parent: {parent:X}");
-      Console.WriteLine($"nested_in: {nested_in:X}");
-      Console.WriteLine($"image: {image:X}");
-      Console.WriteLine($"name: {MemoryHelper.ReadAbsoluteUTF8String(manager, name)}");
-      Console.WriteLine($"name_space: {MemoryHelper.ReadAbsoluteUTF8String(manager, name_space)}");
-      Console.WriteLine($"type_token: {type_token:X}");
-      Console.WriteLine($"vtable_size: {vtable_size}");
-      Console.WriteLine($"fields: {fields:X}");
-      Console.WriteLine($"methods: {methods:X}");
-      Console.WriteLine($"runtime_info: {runtime_info:X}");
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoClass32;");
+      Console.WriteLine($"{prefix}  element_class: {element_class:X}");
+      Console.WriteLine($"{prefix}  cast_class: {cast_class:X}");
+      Console.WriteLine($"{prefix}  supertypes: {supertypes:X}");
+      Console.WriteLine($"{prefix}  idepth: {idepth}");
+      Console.WriteLine($"{prefix}  rank: {rank}");
+      Console.WriteLine($"{prefix}  child_class: {child_class}");
+      Console.WriteLine($"{prefix}  instance_size: {instance_size}");
+      Console.WriteLine($"{prefix}  parent: {parent:X}");
+      Console.WriteLine($"{prefix}  nested_in: {nested_in:X}");
+      Console.WriteLine($"{prefix}  image: {image:X}");
+      Console.WriteLine($"{prefix}  name: {MemoryHelper.ReadAbsoluteUTF8String(manager, name)}");
+      Console.WriteLine($"{prefix}  name_space: {MemoryHelper.ReadAbsoluteUTF8String(manager, name_space)}");
+      Console.WriteLine($"{prefix}  type_token: {type_token:X}");
+      Console.WriteLine($"{prefix}  vtable_size: {vtable_size}");
+      Console.WriteLine($"{prefix}  fields: {fields:X}");
+      Console.WriteLine($"{prefix}  methods: {methods:X}");
+      Console.WriteLine($"{prefix}  runtime_info: {runtime_info:X}");
     }
   }
 }

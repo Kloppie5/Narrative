@@ -14,11 +14,12 @@ namespace Narrative {
     [FieldOffset(0x0C)]
     public Int32 offset;
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"type: {type:X}");
-      Console.WriteLine($"name: {MemoryHelper.ReadAbsoluteUTF8String(manager, name)}");
-      Console.WriteLine($"parent: {parent:X}");
-      Console.WriteLine($"offset: {offset}");
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoClassField32;");
+      Console.WriteLine($"{prefix}  type: {type:X}");
+      Console.WriteLine($"{prefix}  name: {MemoryHelper.ReadAbsoluteUTF8String(manager, name)}");
+      Console.WriteLine($"{prefix}  parent: {parent:X}");
+      Console.WriteLine($"{prefix}  offset: {offset}");
     }
   }
 }

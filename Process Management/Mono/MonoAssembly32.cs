@@ -20,9 +20,10 @@ namespace Narrative {
       return MemoryHelper.ReadAbsolute<MonoImage32>(manager, image);
     }
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"assembly: {GetAssemblyName(manager)}");
-      GetImage(manager).DumpToConsole(manager);
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoAssembly32;");
+      Console.WriteLine($"{prefix}  name: {GetAssemblyName(manager)}");
+      GetImage(manager).DumpToConsole(manager, prefix+"  ");
     }
   }
 }

@@ -32,13 +32,14 @@ namespace Narrative {
     public List<MonoClass32> GetClasses ( ProcessManager64 manager ) {
       List<MonoClass32> classes = new List<MonoClass32>();
       for ( UInt32 i = 0 ; i < class_cache.size ; ++i ) {
-        // TODO: figure out what it means when the num_entries is bigger than the size
         UInt32 pointer = MemoryHelper.ReadAbsolute<UInt32>(manager, class_cache.table + i * 4);
         if ( pointer == 0 )
           continue;
-        Console.WriteLine($"class_cache[{i}] @ {pointer:X}");
-        MonoClass32 klass = MemoryHelper.ReadAbsolute<MonoClass32>(manager, pointer);
-        classes.Add(klass);
+        while ( pointer == MemoryHelper.ReadAbsolute<UInt32>(manager, pointer) ) {
+          MonoClass32 klass = MemoryHelper.ReadAbsolute<MonoClass32>(manager, pointer);
+          classes.Add(klass);
+          pointer += 0xA0;
+        }
       }
       return classes;
     }
@@ -81,12 +82,13 @@ namespace Narrative {
 //             return entries;
 //         }
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"assembly_name: {MemoryHelper.ReadAbsoluteUTF8String(manager, assembly_name)}");
-      class_cache.DumpToConsole(manager);
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoImage32;");
+      Console.WriteLine($"{prefix}  assembly_name: {MemoryHelper.ReadAbsoluteUTF8String(manager, assembly_name)}");
+      class_cache.DumpToConsole(manager, prefix + "  ");
       List<MonoClass32> classes = GetClasses(manager);
       foreach ( MonoClass32 klass in classes ) {
-        klass.DumpToConsole(manager);
+        Console.WriteLine($"{prefix}  {MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name_space)}.{MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name)}");
       }
     }
   }

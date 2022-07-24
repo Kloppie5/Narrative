@@ -49,10 +49,11 @@ namespace Narrative {
       return MemoryHelper.ReadAbsoluteUTF8String(manager, friendly_name);
     }
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"friendly_name: {GetFriendlyName(manager)}");
+    public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
+      Console.WriteLine($"{prefix}MonoDomain32;");
+      Console.WriteLine($"{prefix}  friendly_name: {GetFriendlyName(manager)}");
       foreach ( var assembly in GetAssemblies(manager) ) {
-        assembly.DumpToConsole(manager);
+        assembly.DumpToConsole(manager, prefix+"  ");
       }
     }
   }
