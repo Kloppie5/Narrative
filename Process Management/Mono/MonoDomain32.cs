@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -38,18 +39,23 @@ namespace Narrative {
       return MemoryHelper.ReadAbsoluteUTF8String(manager, friendly_name);
     }
 
-    public void DumpToConsole ( ProcessManager64 manager ) {
-      Console.WriteLine($"friendly_name: {GetFriendlyName(manager)}");
-      
+    public Dictionary<String, MonoAssembly32> GetAssemblies ( ProcessManager64 manager ) {
+      Dictionary<String, MonoAssembly32> assemblies = new Dictionary<String, MonoAssembly32>();
       UInt32 it = domain_assemblies;
       while ( it != 0 ) {
-        UInt32 assembly = MemoryHelper.ReadAbsolute<UInt32>(manager, it);
-        UInt32 assemblyNameAddress = MemoryHelper.ReadAbsolute<UInt32>(manager, assembly + 0x08);
-        String assemblyName = MemoryHelper.ReadAbsoluteUTF8String(manager, assemblyNameAddress);
-          
-        Console.WriteLine($"  assembly: {assemblyName}");
+        UInt32 assemblyPointer = MemoryHelper.ReadAbsolute<UInt32>(manager, it);
+        MonoAssembly32 assembly = MemoryHelper.ReadAbsolute<MonoAssembly32>(manager, assemblyPointer);
+        assemblies.Add(assembly.GetAssemblyName(manager), assembly);
 
         it = MemoryHelper.ReadAbsolute<UInt32>(manager, it + 0x4);
+      }
+      return assemblies;
+    }
+
+    public void DumpToConsole ( ProcessManager64 manager ) {
+      Console.WriteLine($"friendly_name: {GetFriendlyName(manager)}");
+      foreach ( var (assemblyName, assembly) in GetAssemblies(manager) ) {
+        assembly.DumpToConsole(manager);
       }
     }
   }

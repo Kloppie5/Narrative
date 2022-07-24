@@ -1,10 +1,10 @@
-using System;
+// using System;
 
-namespace CryptOfTheNecroDancer {
+// namespace CryptOfTheNecroDancer {
 
-    public class Entity : RenderableObject {
+//     public class Entity : RenderableObject {
 
-        public Entity ( UInt32 address, ProcessManager manager ) : base(address, manager) { }
+//         public Entity ( UInt32 address, ProcessManager manager ) : base(address, manager) { }
 
-    }
-}
+//     }
+// }

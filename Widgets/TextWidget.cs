@@ -49,7 +49,7 @@ namespace Narrative {
             lines[index] = () => "";
         }
 
-        public override void Paint ( PaintEventArgs e ) {
+        public override void Render ( PaintEventArgs e ) {
             Single lineY = y;
             foreach ( var line in lines ) {
                 e.Graphics.DrawString(line.Invoke(), new Font("Consolas", emSize), new SolidBrush(Color.White), x, lineY);

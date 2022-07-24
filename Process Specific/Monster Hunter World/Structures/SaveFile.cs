@@ -8,7 +8,7 @@ namespace MonsterHunterWorld {
         // Save file header [0x0 - 0x60]
         // Byte[] magic; // [0x0 - 0x4] 01 00 00 00
         // Byte[] UNKNOWN_4_C; // [0x4 - 0xC]
-        Byte[] dataHash; // [0xC - 0x20]
+        // Byte[] dataHash; // [0xC - 0x20]
         // UInt64 dataSize; // [0x20 - 0x28]
         // Byte[] steamID; // [0x28 - 0x30]
         // Byte[] PADDING_30_40; // [0x30 - 0x40]
@@ -36,7 +36,7 @@ namespace MonsterHunterWorld {
         // Byte[] section2Data; // [0x301090 - 0x3010C8]
 
         // CharactersRegion [0x3010C8 - 0xAC30E0]
-        Byte[] charactersSignature; // [0x3010C8 - 0x3010CC]
+        // Byte[] charactersSignature; // [0x3010C8 - 0x3010CC]
         // Byte[] charactersUnknown; // [0x3010CC - 0x3010D0]
         // UInt64 charactersSize; // [0x3010D0 - 0x3010D8]
 

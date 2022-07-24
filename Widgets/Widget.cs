@@ -1,23 +1,55 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace Narrative {
 
-    public class Widget {
+  public abstract class Widget : IDisposable {
 
-        Overlay overlay;
+    Overlay overlay;
+    Boolean enabled = false;
 
-        public Widget ( ) { }
+    public Widget ( ) { }
 
-        public void Bind ( Overlay overlay ) {
-            this.overlay = overlay;
-        }
-
-        public virtual void Paint ( PaintEventArgs e ) {
-            if ( overlay == null )
-                return;
-            
-            e.Graphics.DrawRectangle(new Pen(Color.White, 2), 0, 0, overlay.Width - 1, overlay.Height - 1);
-        }
+    public void Bind ( Overlay overlay ) {
+      this.overlay = overlay;
     }
+
+    public void Enable ( ) {
+      if ( enabled )
+        return;
+      enabled = true;
+      OnEnable();
+    }
+    public virtual void OnEnable ( ) { }
+    public void Disable ( ) {
+      if ( !enabled )
+        return;
+      enabled = false;
+      OnDisable();
+    }
+    public virtual void OnDisable ( ) { }
+        
+    public virtual void Update ( ) { }
+    public virtual void Render ( PaintEventArgs e ) { }
+
+    private bool disposed = false;
+    public void Dispose ( ) {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+    protected virtual void Dispose ( bool disposing = false ) {
+      if ( disposed )
+        return;
+            
+      if ( disposing ) {
+        Console.WriteLine($"Disposed {GetType().Name}");
+      }
+
+      disposed = true;
+    }
+    ~Widget() {
+      Dispose();
+    }
+  }
 }

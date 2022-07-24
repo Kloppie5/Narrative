@@ -13,10 +13,12 @@ namespace CultistSimulator {
       manager = new ProcessManager();
     }
 
-    public override void Paint ( PaintEventArgs e ) {
-      if (!manager.CheckConnected())
-        return;
+    public override void OnEnable() {
+      base.OnEnable();
 
+      if ( !manager.CheckConnected() )
+        return;
+      
       manager.Dump();
     }
   }

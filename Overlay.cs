@@ -33,10 +33,11 @@ namespace Narrative {
 
         public void AddWidget( String widgetName, Type widgetType ) {
             ConstructorInfo constructorInfo = widgetType.GetConstructor(new Type[] { }); 
-            if (constructorInfo == null) 
+            if ( constructorInfo == null )
                 throw new InvalidOperationException($"Tried to add widget of type {widgetType}, but could not find valid constructor.");
             Widget widget = (Widget) constructorInfo.Invoke(new Object[] { });
             widget.Bind(this);
+            widget.Enable();
             widgets.Add(widgetName, widget);
         }
 
@@ -48,7 +49,7 @@ namespace Narrative {
             base.OnPaint(e);
 
             foreach ( var (widgetName, widget) in widgets )
-                widget.Paint(e);
+                widget.Render(e);
         }
 
         protected override void OnLoad ( EventArgs e ) {
@@ -59,6 +60,8 @@ namespace Narrative {
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
             timer.Tick += new System.EventHandler((sender, ee) => {
+                foreach ( var (widgetName, widget) in widgets )
+                    widget.Update();
                 Invalidate();
             });
             timer.Start();

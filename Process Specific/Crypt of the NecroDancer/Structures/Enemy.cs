@@ -1,9 +1,9 @@
-using System;
+// using System;
 
-namespace CryptOfTheNecroDancer {
+// namespace CryptOfTheNecroDancer {
 
-    public class Enemy : Entity {
+//     public class Enemy : Entity {
 
-        public Enemy ( UInt32 address, ProcessManager manager ) : base(address, manager) { }
-    }
-}
+//         public Enemy ( UInt32 address, ProcessManager manager ) : base(address, manager) { }
+//     }
+// }
