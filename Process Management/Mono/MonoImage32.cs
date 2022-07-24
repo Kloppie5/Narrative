@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Narrative {
@@ -28,6 +29,19 @@ namespace Narrative {
 
     [FieldOffset(0x35C)]
     public MonoInternalHashTable class_cache;
+    public List<MonoClass32> GetClasses ( ProcessManager64 manager ) {
+      List<MonoClass32> classes = new List<MonoClass32>();
+      for ( UInt32 i = 0 ; i < class_cache.size ; ++i ) {
+        // TODO: figure out what it means when the num_entries is bigger than the size
+        UInt32 pointer = MemoryHelper.ReadAbsolute<UInt32>(manager, class_cache.table + i * 4);
+        if ( pointer == 0 )
+          continue;
+        Console.WriteLine($"class_cache[{i}] @ {pointer:X}");
+        MonoClass32 klass = MemoryHelper.ReadAbsolute<MonoClass32>(manager, pointer);
+        classes.Add(klass);
+      }
+      return classes;
+    }
 
 //         public List<UInt32> EnumImageClassCache ( UInt32 image ) {
 //             List<UInt32> entries = new List<UInt32>();
@@ -67,15 +81,12 @@ namespace Narrative {
 //             return entries;
 //         }
 
-
     public void DumpToConsole ( ProcessManager64 manager ) {
       Console.WriteLine($"assembly_name: {MemoryHelper.ReadAbsoluteUTF8String(manager, assembly_name)}");
       class_cache.DumpToConsole(manager);
-      for ( UInt32 i = 0 ; i < class_cache.size ; ++i ) {
-        // TODO: figure out what it means when the num_entries is bigger than the size
-        UInt32 pointer = class_cache.table + i * 0x4;
-        UInt32 data = MemoryHelper.ReadAbsolute<UInt32>(manager, pointer);
-        Console.WriteLine($"class_cache[{i}]: {pointer:X} {data:X}");
+      List<MonoClass32> classes = GetClasses(manager);
+      foreach ( MonoClass32 klass in classes ) {
+        klass.DumpToConsole(manager);
       }
     }
   }
