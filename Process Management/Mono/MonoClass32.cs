@@ -36,13 +36,18 @@ namespace Narrative {
     [FieldOffset(0x38)]
     public Int32 vtable_size;
     
+    [FieldOffset(0x5C)]
+    public Int32 sizes;
     [FieldOffset(0x60)]
     public UInt32 /* MonoClassField32*  */ fields;
     [FieldOffset(0x64)]
     public UInt32 /* MonoMethod32**  */ methods;
-    
-    [FieldOffset(0x84)]
+  
+    [FieldOffset(0x7C)]
     public UInt32 /* MonoClassRuntimeInfo32* */ runtime_info;
+    public MonoClassRuntimeInfo32 GetRuntimeInfo32 ( ProcessManager64 manager ) {
+      return MemoryHelper.ReadAbsolute<MonoClassRuntimeInfo32>(manager, runtime_info);
+    }
 
     // UInt32 native_size; // 0x9C
     // UInt32 min_align; // 0xA0
@@ -64,9 +69,10 @@ namespace Narrative {
       Console.WriteLine($"{prefix}  name_space: {MemoryHelper.ReadAbsoluteUTF8String(manager, name_space)}");
       Console.WriteLine($"{prefix}  type_token: {type_token:X}");
       Console.WriteLine($"{prefix}  vtable_size: {vtable_size}");
+      Console.WriteLine($"{prefix}  sizes: {sizes}");
       Console.WriteLine($"{prefix}  fields: {fields:X}");
       Console.WriteLine($"{prefix}  methods: {methods:X}");
-      Console.WriteLine($"{prefix}  runtime_info: {runtime_info:X}");
+      GetRuntimeInfo32(manager).DumpToConsole(manager, $"{prefix}  ");
     }
   }
 }

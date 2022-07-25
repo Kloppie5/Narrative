@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-
 namespace Narrative {
   [StructLayout(LayoutKind.Explicit)]
   public struct MonoClassField32 {
