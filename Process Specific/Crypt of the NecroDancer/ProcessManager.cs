@@ -1,9 +1,10 @@
-// using System;
+using System;
 
-// using Narrative;
+using Narrative;
 
-// namespace CryptOfTheNecroDancer {
-//     public class ProcessManager : Narrative.ProcessManager64 {
+namespace CryptOfTheNecroDancer {
+
+  public class ProcessManager : Narrative.ProcessManager64 {
 
 //         /*
 //             Crypt of the NecroDancer v2.59
@@ -194,13 +195,13 @@
 //             // 435C20 UInt32 something
 //             // + 0x18 give management
 
-            
+
 //             ECX = object
 //             EAX = vtable
 //             call EAX + 0xc8
 //             mov EAX [object + 18]
 //             mov EAX [eax + esi*4 + 14]
-            
+
 
 //             // 433DE4
 //             // 433DEC
@@ -265,12 +266,12 @@
 //             */
 //         }
 
-//         public ProcessManager ( ) : base("Crypt of the NecroDancer v3.0.2-b1904") {
+    public ProcessManager ( ) : base("Crypt of the NecroDancer v3.1.2-b2834") {
 //             Init_Mapping();
 
 //             // ReadPEHeaders(BaseAddress);
 //             Dump();
-//         }
+    }
 
 //         public T Get<T> (String name) where T : struct { // TODO: consider promoting to base class
 //             return ReadRelative<T>(mapping.GetNamed(name, "Memory").start);
@@ -339,10 +340,11 @@
 //                     break;
 //             }
 //         }
-//         public void Dump ( ) {
-//             Console.WriteLine("Dumping Crypt of the NecroDancer...");
+    public void Dump ( ) {
+      Console.WriteLine("Dumping Crypt of the NecroDancer...");
 
-//             Console.WriteLine($"Base: {BaseAddress:X}");
+      Console.WriteLine($"Base: {BaseAddress:X}");
+
 //             UInt64 goldAddress = BaseAddress + mapping.GetNamed("Gold", "Memory").start;
 //             Console.WriteLine($"Gold Address: {goldAddress:X}");
 //             Console.WriteLine($"Gold: {ReadAbsolute<UInt32>(goldAddress):X}");
@@ -350,12 +352,12 @@
 //             // Gold
 //             //UInt32 gold = ReadRelative<UInt32>(mapping.GetNamed("Gold", "Memory").start);
 //             //Console.WriteLine($"Gold: {gold}");
-            
+
 //             /*
 //             // SongTime
 //             UInt32 songTime = ReadRelative<UInt32>(mapping.GetNamed("SongTime", "Memory").start);
 //             Console.WriteLine($"SongTime: {songTime / 60000}:{(songTime / 1000) % 60}.{songTime % 1000}");
-            
+
 //             // PlayerTime
 //             UInt32 playerTime = ReadRelative<UInt32>(mapping.GetNamed("PlayerTime", "Memory").start);
 //             Console.WriteLine($"PlayerTime: {playerTime / 60000}:{(playerTime / 1000) % 60}.{playerTime % 1000}");
@@ -398,6 +400,6 @@
 //                 PrintCamera();
 //             }
 //             */
-//         }
-//     }
-// }
+    }
+  }
+}
