@@ -156,6 +156,18 @@ namespace Narrative {
 
       return Encoding.UTF8.GetString(bytes.ToArray());
     }
+    public static String ReadAbsoluteMonoWideString ( ProcessManager64 manager, Int64 address, params Int64[] offsets ) {
+      List<Byte> bytes = new List<Byte>();
+
+      foreach ( Int64 offset in offsets )
+        address = ReadAbsolute<Int64>(manager, address) + (Int64) offset;
+
+      Int32 length = ReadAbsolute<Int32>(manager, address + 0x8);
+      for ( Int32 i = 0; i < length; i++ )
+        bytes.Add(ReadAbsolute<Byte>(manager, address + 0xC + i*2));
+
+      return Encoding.UTF8.GetString(bytes.ToArray());
+    }
     public static String ReadString ( ProcessManager64 manager, Int64 address, Int32 length ) {
       Byte[] Bytes = new Byte[length];
 

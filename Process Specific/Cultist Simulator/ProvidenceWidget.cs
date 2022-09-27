@@ -27,13 +27,51 @@ namespace CultistSimulator {
       var y = 30;
       var dy = 24;
 
-      g.DrawString($"Process: {manager.process.ProcessName}", font, brush, x, y);
-      y += dy;
+      // HornedAxe
+      //   Hour
+      // Config
+      // Concursum
+      // MetaInfo
+      // StageHand
+      //   Scene changes
+      // Limbo
+      // Notifier
+      // Dice
+      //   RNG
+      // StorfrontServicesProvider
+      // AchievementsChronicler
+      // ModManager
+      // Compendium
+      //   Dictionary<Type, EntityStore> entityStores;
+      //     Recipe, Element, Verb, Legacy
+      // LanguageManager
+      // PrefabFactory
+      // Stable
+      //   Player
+      // ScreenResolutionAdapter
+      // HintPanel
+      // SecretHistory
+      //   Debug output
+      // UIController
+      // BackgroundMusic
+      // CamOperator
+      //   Camera movements
+      // TabletopBackground
+      // DebugTools
+      // Heart
+      // Meniscate
+      //   Dragging tokens
+      // TabletopImageBurner
+      // CSChronicler
+      // Xamanek
+      // StatusBar
+      // TabletopFadeOverlay
+      // Autosaver
+      // DealersTable
+      // GameGateway
+      // Numa
 
-      foreach ( KeyValuePair<String, Int32> pair in manager.dict ) {
-        g.DrawString($"{pair.Value:X08}: {pair.Key}", font, brush, x, y);
-        y += dy;
-      }
+
     }
   }
 }
