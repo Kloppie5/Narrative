@@ -20,6 +20,7 @@ namespace Narrative {
         // mov eax, [...]; ret
         UInt32 rootDomainAddress = MemoryHelper.ReadAbsolute<UInt32>(manager, mono_get_root_domain + 1);
         UInt32 rootDomain = MemoryHelper.ReadAbsolute<UInt32>(manager, rootDomainAddress);
+        Console.WriteLine($"rootDomain: {rootDomain:X}");
         return MemoryHelper.ReadAbsolute<MonoDomain32>(manager, rootDomain);
       }
       throw new Exception("Could not match mono_get_root_domain");

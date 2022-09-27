@@ -29,20 +29,28 @@ namespace Narrative {
     public UInt32 /* MonoImage32* */ image;
     [FieldOffset(0x2C)]
     public UInt32 /* char* */ name;
+    public string GetName (ProcessManager64 manager) {
+      return MemoryHelper.ReadAbsoluteUTF8String(manager, name);
+    }
+
     [FieldOffset(0x30)]
     public UInt32 /* char* */ name_space;
+    public string GetNamespace (ProcessManager64 manager) {
+      return MemoryHelper.ReadAbsoluteUTF8String(manager, name_space);
+    }
+
     [FieldOffset(0x34)]
     public UInt32 type_token;
     [FieldOffset(0x38)]
     public Int32 vtable_size;
-    
+
     [FieldOffset(0x5C)]
     public Int32 sizes;
     [FieldOffset(0x60)]
     public UInt32 /* MonoClassField32*  */ fields;
     [FieldOffset(0x64)]
     public UInt32 /* MonoMethod32**  */ methods;
-  
+
     [FieldOffset(0x7C)]
     public UInt32 /* MonoClassRuntimeInfo32* */ runtime_info;
     public MonoClassRuntimeInfo32 GetRuntimeInfo32 ( ProcessManager64 manager ) {

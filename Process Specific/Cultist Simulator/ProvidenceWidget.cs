@@ -18,7 +18,7 @@ namespace CultistSimulator {
 
       if ( !manager.CheckConnected() )
         return;
-      
+
       manager.Dump();
     }
   }

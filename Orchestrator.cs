@@ -21,8 +21,8 @@ namespace Narrative {
 
             //RegisterWidget("Leaf Blower Revolution", "Providence", typeof(LeafBlowerRevolution.ProvidenceWidget));
             //RegisterWidget("The Perfect Tower II", "Placeholder", typeof(ThePerfectTowerII.ProvidenceWidget));
-            RegisterWidget("Crypt of the NecroDancer v3.1.2-b2834", "Providence", typeof(CryptOfTheNecroDancer.ProvidenceWidget));
-            //RegisterWidget("Cultist Simulator", "Providence", typeof(CultistSimulator.ProvidenceWidget));
+            //RegisterWidget("Crypt of the NecroDancer v3.1.2-b2834", "Providence", typeof(CryptOfTheNecroDancer.ProvidenceWidget));
+            RegisterWidget("Cultist Simulator", "Providence", typeof(CultistSimulator.ProvidenceWidget));
 
             CheckProcesses();
         }

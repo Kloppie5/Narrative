@@ -14,9 +14,7 @@ namespace CryptOfTheNecroDancer {
       manager = new ProcessManager();
     }
 
-    public override void OnEnable() {
-      base.OnEnable();
-
+    public override void Render ( PaintEventArgs e ) {
       if ( !manager.CheckConnected() )
         return;
 
