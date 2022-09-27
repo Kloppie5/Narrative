@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Int8 = System.SByte;
 using UInt8 = System.Byte;
 
 namespace Narrative {
@@ -59,6 +60,15 @@ namespace Narrative {
             List<UInt8> line = new List<UInt8>();
             line.Add(0xA3); // o243 + r0
             line.AddRange(BitConverter.GetBytes(address));
+            code.Add(line);
+        }
+
+        public void ADDi8r ( UInt8 r, Int8 imm ) {
+            if ( debug ) Console.WriteLine($"ADDi32r {r} {imm:X}");
+            List<UInt8> line = new List<UInt8>();
+            line.Add(0x83); // o203
+            line.Add((UInt8)(0xC0 + (UInt8)r)); // o300 + r
+            line.Add((UInt8)imm);
             code.Add(line);
         }
 

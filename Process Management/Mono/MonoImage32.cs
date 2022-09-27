@@ -88,7 +88,7 @@ namespace Narrative {
       class_cache.DumpToConsole(manager, prefix + "  ");
       List<MonoClass32> classes = GetClasses(manager);
       foreach ( MonoClass32 klass in classes ) {
-        Console.WriteLine($"{prefix}  {MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name_space)}.{MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name)}");
+        Console.WriteLine($"{prefix}  {MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name_space)} | {MemoryHelper.ReadAbsoluteUTF8String(manager, klass.name)}");
       }
     }
   }

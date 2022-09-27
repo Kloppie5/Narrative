@@ -28,16 +28,16 @@ namespace CultistSimulator {
       Int32 injRootDomain = injector.GetRootDomain();
       Dictionary<String, Int32> assemblies = injector.DomainGetAssembliesByName(injRootDomain, new List<String>() {
         "Assembly-CSharp",
-        "SecretHistories.Enums",
         "SecretHistories.Main",
-        "SecretHistories.Interfaces",
-        "SecretHistories.Constants",
-        "OrbCreations"
       });
       Console.WriteLine($"assemblies: {assemblies.Count}");
-      foreach ( KeyValuePair<String, Int32> assembly in assemblies ) {
-        Console.WriteLine($"  {assembly.Key}: {assembly.Value:X}");
-      }
+
+      Int32 image = injector.AssemblyGetImage(assemblies["SecretHistories.Main"]);
+
+      Int32 watchman = injector.ImageGetClassByName(image, "SecretHistories.UI", "Watchman");
+      Console.WriteLine($"watchman: {watchman:X}");
+
+      // Watchman.Get<StageHand>
     }
   }
 }

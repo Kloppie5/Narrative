@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+using Int8 = System.SByte;
 using UInt8 = System.Byte;
 
 namespace Narrative {
@@ -43,6 +44,8 @@ namespace Narrative {
         Int32 dataSpace = 0;
         Int64 codeSpace = 0;
 
+        Int32 _rootDomain = 0;
+
         Dictionary<String, Int64> exportedFunctions = new Dictionary<String, Int64>();
 
         public MonoInjector32 ( ProcessManager64 manager ) {
@@ -52,6 +55,7 @@ namespace Narrative {
             dataSpace = (Int32)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
             codeSpace = (Int64)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
             exportedFunctions = PEHelper.GetExportedFunctions(manager, monoModule);
+            _rootDomain = CallFunction<Int32>("mono_get_root_domain");
         }
         public void Execute ( byte[] code ) {
             Int64 bytesWritten;
@@ -59,32 +63,51 @@ namespace Narrative {
             Int64 thread = CreateRemoteThread(hProcess, 0, 0, codeSpace, 0, 0, 0);
             WaitForSingleObject(thread, 0xFFFFFFFF);
         }
-        public T CallFunction<T> ( String functionName, params Int32[] args ) where T : struct {
+        public T CallFunction<T> ( String functionName, params object[] args ) where T : struct {
             // TODO: some complicated design to deal with different argument handling
             if ( !exportedFunctions.ContainsKey(functionName) )
                 throw new Exception($"Could not find exported function {functionName}");
             Int32 functionAddress = (Int32)exportedFunctions[functionName];
+            Int32 mono_thread_attach = (Int32)exportedFunctions["mono_thread_attach"];
 
             Assembler assembler = new Assembler();
+            assembler.debug = true;
+
+
+            if ( functionName != "mono_get_root_domain" ) {
+                assembler.PUSHi32(_rootDomain);
+                assembler.MOVi32r(0, mono_thread_attach);
+                assembler.CALLr(0);
+                assembler.ADDi8r(4, 4);
+            }
+
+
             assembler.MOVi32r(0, functionAddress);
-
-            for ( int i = args.Length - 1; i >= 0; --i )
-                assembler.PUSHi32(args[i]);
-                // TODO: bounds checking, restoring stack pointer, etc.
-
+            for ( int i = args.Length - 1; i >= 0; --i ) {
+                if ( args[i] is Int32 ) {
+                    assembler.PUSHi32((Int32)args[i]);
+                } else if ( args[i] is String ) {
+                    Int32 stringAddress = (Int32)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
+                    Int64 bytesWritten;
+                    WriteProcessMemory(hProcess, stringAddress, Encoding.UTF8.GetBytes((String)args[i]), ((String)args[i]).Length, out bytesWritten);
+                    assembler.PUSHi32(stringAddress);
+                } else {
+                    throw new Exception($"Unsupported argument type {args[i].GetType()}");
+                }
+            }
             assembler.CALLr(0);
             assembler.MOVr0m32(dataSpace);
+            assembler.ADDi8r(4, (Int8) (4 * args.Length));
+
+
             assembler.RET();
-
             byte[] code = assembler.finalize();
-
             Execute(code);
-
             return MemoryHelper.ReadAbsolute<T>(_manager, dataSpace);
         }
 
         public Int32 GetRootDomain ( ) { // -> MonoDomain*
-            return CallFunction<Int32>("mono_get_root_domain");
+            return _rootDomain;
         }
         public List<Int32> DomainGetAssemblies ( Int32 domain ) { // MonoDomain* -> List<MonoAssembly*>
             MonoDomain32 domainStruct = MemoryHelper.ReadAbsolute<MonoDomain32>(_manager, domain);
@@ -113,6 +136,9 @@ namespace Narrative {
         public Int32 AssemblyGetImage ( Int32 assembly ) { // MonoAssembly* -> MonoImage*
             MonoAssembly32 assemblyStruct = MemoryHelper.ReadAbsolute<MonoAssembly32>(_manager, assembly);
             return assemblyStruct.image;
+        }
+        public Int32 ImageGetClassByName ( Int32 image, String @namespace, String className ) { // MonoImage*, String, String -> MonoClass*
+            return CallFunction<Int32>("mono_class_from_name", image, @namespace, className);
         }
     }
 }
