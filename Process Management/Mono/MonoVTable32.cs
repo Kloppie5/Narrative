@@ -5,11 +5,11 @@ namespace Narrative {
     [StructLayout(LayoutKind.Explicit)]
     public struct MonoVTable32 {
         [FieldOffset(0x00)]
-        public UInt32 /* MonoClass* */ klass;
+        public Int32 /* MonoClass* */ klass;
         [FieldOffset(0x04)]
-        public UInt32 /* void* */ gc_descr;
+        public Int32 /* void* */ gc_descr;
         [FieldOffset(0x08)]
-        public UInt32 /* MonoDomain* */ domain;
+        public Int32 /* MonoDomain* */ domain;
 
         public void DumpToConsole ( ProcessManager64 manager, String prefix = "" ) {
             Console.WriteLine($"{prefix}MonoVTable32;");

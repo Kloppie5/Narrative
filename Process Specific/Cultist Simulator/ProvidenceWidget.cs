@@ -13,13 +13,27 @@ namespace CultistSimulator {
       manager = new ProcessManager();
     }
 
-    public override void OnEnable() {
-      base.OnEnable();
+    public override void Render ( PaintEventArgs e ) {
+      base.Render(e);
 
       if ( !manager.CheckConnected() )
         return;
 
-      manager.Dump();
+      var g = e.Graphics;
+      var font = new Font("Consolas", 18);
+      var brush = new SolidBrush(Color.White);
+
+      var x = 30;
+      var y = 30;
+      var dy = 24;
+
+      g.DrawString($"Process: {manager.process.ProcessName}", font, brush, x, y);
+      y += dy;
+
+      foreach ( KeyValuePair<String, Int32> pair in manager.dict ) {
+        g.DrawString($"{pair.Value:X08}: {pair.Key}", font, brush, x, y);
+        y += dy;
+      }
     }
   }
 }

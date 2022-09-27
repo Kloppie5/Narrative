@@ -7,37 +7,44 @@ using Narrative;
 namespace CultistSimulator {
   public class ProcessManager : Narrative.ProcessManager64 {
 
-    public ProcessManager ( ) : base("Cultist Simulator") { }
+    public Dictionary<String, Int32> dict = new Dictionary<String, Int32>();
 
-    public void Dump ( ) {
-      Int64 monomodule = MonoHelper32.FindMonoModule(this);
-      Console.WriteLine($"mono-2.0-bdwgc.dll: {monomodule:X}");
-      MonoDomain32 rootDomain = MonoHelper32.GetRootDomain(this);
-      /*
-      rootDomain
-       .GetAssemblies(this)
-       .Find(assembly => "SecretHistories.Main" == assembly.GetAssemblyName(this))
-       .GetImage(this)
-       .GetClasses(this)
-       .ForEach(klass => {
-        Console.WriteLine($"  {klass.GetNamespace(this)}.{klass.GetName(this)}");
-       });
-       */
-
+    public ProcessManager ( ) : base("Cultist Simulator") {
       MonoInjector32 injector = new MonoInjector32(this);
-      Int32 injRootDomain = injector.GetRootDomain();
-      Dictionary<String, Int32> assemblies = injector.DomainGetAssembliesByName(injRootDomain, new List<String>() {
+      Int32 rootDomain = injector.GetRootDomain();
+      Dictionary<String, Int32> assemblies = injector.DomainGetAssembliesByName(rootDomain, new List<String>() {
         "Assembly-CSharp",
         "SecretHistories.Main",
       });
-      Console.WriteLine($"assemblies: {assemblies.Count}");
 
       Int32 image = injector.AssemblyGetImage(assemblies["SecretHistories.Main"]);
-
       Int32 watchman = injector.ImageGetClassByName(image, "SecretHistories.UI", "Watchman");
-      Console.WriteLine($"watchman: {watchman:X}");
+      Int32 vtable = injector.ClassGetVTable(watchman);
 
-      // Watchman.Get<StageHand>
+      Int32 staticFieldData = injector.VTableGetStaticFieldData(vtable);
+
+      Int32 registered = MemoryHelper.ReadAbsolute<Int32>(this, staticFieldData);
+      Int32 entries = MemoryHelper.ReadAbsolute<Int32>(this, registered + 0xC);
+      Int32 count = MemoryHelper.ReadAbsolute<Int32>(this, entries + 0xC);
+
+      for ( Int64 i = 0; i < count; ++i ) {
+        Int32 hashcode = MemoryHelper.ReadAbsolute<Int32>(this, entries + 0x10 + i * 0x10);
+        Int32 next = MemoryHelper.ReadAbsolute<Int32>(this, entries + 0x14 + i * 0x10);
+        Int32 key = MemoryHelper.ReadAbsolute<Int32>(this, entries + 0x18 + i * 0x10);
+        Int32 value = MemoryHelper.ReadAbsolute<Int32>(this, entries + 0x1C + i * 0x10);
+        if ( value == 0 )
+          continue;
+        Int32 valueVTable = MemoryHelper.ReadAbsolute<Int32>(this, value);
+        Int32 valueClass = MemoryHelper.ReadAbsolute<Int32>(this, valueVTable);
+        String valueClassName = MemoryHelper.ReadAbsoluteUTF8String(this, MemoryHelper.ReadAbsolute<Int32>(this, valueClass + 0x2C));
+        dict.Add(valueClassName, value);
+      }
+    }
+
+    public void Dump ( ) {
+      foreach ( KeyValuePair<String, Int32> pair in dict ) {
+        Console.WriteLine($"  {pair.Key}: {pair.Value:X}");
+      }
     }
   }
 }

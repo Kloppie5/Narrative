@@ -7,11 +7,11 @@ namespace Narrative {
   [StructLayout(LayoutKind.Explicit)]
   public struct MonoClass32 {
     [FieldOffset(0x00)]
-    public UInt32 /* MonoClass* */ element_class;
+    public Int32 /* MonoClass* */ element_class;
     [FieldOffset(0x04)]
-    public UInt32 /* MonoClass* */ cast_class;
+    public Int32 /* MonoClass* */ cast_class;
     [FieldOffset(0x08)]
-    public UInt32 /* MonoClass** */ supertypes;
+    public Int32 /* MonoClass** */ supertypes;
     [FieldOffset(0x0C)]
     public UInt16 idepth;
     [FieldOffset(0x0E)]
@@ -22,13 +22,13 @@ namespace Narrative {
     public Int32 instance_size;
 
     [FieldOffset(0x20)]
-    public UInt32 /* MonoClass32* */ parent;
+    public Int32 /* MonoClass32* */ parent;
     [FieldOffset(0x24)]
-    public UInt32 /* MonoClass32* */ nested_in;
+    public Int32 /* MonoClass32* */ nested_in;
     [FieldOffset(0x28)]
-    public UInt32 /* MonoImage32* */ image;
+    public Int32 /* MonoImage32* */ image;
     [FieldOffset(0x2C)]
-    public UInt32 /* char* */ name;
+    public Int32 /* char* */ name;
     public string GetName (ProcessManager64 manager) {
       return MemoryHelper.ReadAbsoluteUTF8String(manager, name);
     }
@@ -47,12 +47,12 @@ namespace Narrative {
     [FieldOffset(0x5C)]
     public Int32 sizes;
     [FieldOffset(0x60)]
-    public UInt32 /* MonoClassField32*  */ fields;
+    public Int32 /* MonoClassField32*  */ fields;
     [FieldOffset(0x64)]
-    public UInt32 /* MonoMethod32**  */ methods;
+    public Int32 /* MonoMethod32**  */ methods;
 
     [FieldOffset(0x7C)]
-    public UInt32 /* MonoClassRuntimeInfo32* */ runtime_info;
+    public Int32 /* MonoClassRuntimeInfo32* */ runtime_info;
     public MonoClassRuntimeInfo32 GetRuntimeInfo32 ( ProcessManager64 manager ) {
       return MemoryHelper.ReadAbsolute<MonoClassRuntimeInfo32>(manager, runtime_info);
     }

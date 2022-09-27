@@ -106,6 +106,7 @@ namespace Narrative {
             return MemoryHelper.ReadAbsolute<T>(_manager, dataSpace);
         }
 
+        #region Domain
         public Int32 GetRootDomain ( ) { // -> MonoDomain*
             return _rootDomain;
         }
@@ -129,6 +130,8 @@ namespace Narrative {
             }
             return assemblies;
         }
+        #endregion
+        #region Assembly
         public String AssemblyGetName ( Int32 assembly ) { // MonoAssembly* -> String
             MonoAssembly32 assemblyStruct = MemoryHelper.ReadAbsolute<MonoAssembly32>(_manager, assembly);
             return MemoryHelper.ReadAbsoluteUTF8String(_manager, assemblyStruct.monoAssemblyNameDOTname);
@@ -137,8 +140,46 @@ namespace Narrative {
             MonoAssembly32 assemblyStruct = MemoryHelper.ReadAbsolute<MonoAssembly32>(_manager, assembly);
             return assemblyStruct.image;
         }
+        #endregion
+        #region Image
         public Int32 ImageGetClassByName ( Int32 image, String @namespace, String className ) { // MonoImage*, String, String -> MonoClass*
             return CallFunction<Int32>("mono_class_from_name", image, @namespace, className);
         }
+        #endregion
+        #region Class
+        public String ClassGetName ( Int32 @class ) { // MonoClass* -> String
+            MonoClass32 classStruct = MemoryHelper.ReadAbsolute<MonoClass32>(_manager, @class);
+            return MemoryHelper.ReadAbsoluteUTF8String(_manager, classStruct.name);
+        }
+        public List<Int32> ClassGetMethods ( Int32 @class ) { // MonoClass* -> List<MonoMethod*>
+            MonoClass32 classStruct = MemoryHelper.ReadAbsolute<MonoClass32>(_manager, @class);
+            List<Int32> methods = new List<Int32>();
+            Int32 it = classStruct.methods;
+            while ( true ) {
+                Console.WriteLine(it);
+                Int32 method = MemoryHelper.ReadAbsolute<Int32>(_manager, it);
+                if ( method == 0 )
+                    break;
+                methods.Add(method);
+                it += 4;
+            }
+            return methods;
+        }
+        public Int32 ClassGetVTable ( Int32 @class ) { // MonoClass* -> MonoVTable*
+            return CallFunction<Int32>("mono_class_vtable", _rootDomain, @class);
+        }
+        #endregion
+        #region VTable
+        public Int32 VTableGetStaticFieldData ( Int32 vtable ) { // MonoVTable* -> MonoObject*
+            Int32 staticFieldData = CallFunction<Int32>("mono_vtable_get_static_field_data", vtable);
+            return staticFieldData;
+        }
+        #endregion
+        #region Method
+        public String MethodGetName ( Int32 method ) { // MonoMethod* -> String
+            Int32 name = CallFunction<Int32>("mono_method_get_name", method);
+            return MemoryHelper.ReadAbsoluteUTF8String(_manager, name);
+        }
+        #endregion
     }
 }
