@@ -7,7 +7,7 @@ using UInt8 = System.Byte;
 namespace Narrative {
     public class Assembler {
 
-        public bool debug = true;
+        public bool debug = false;
         public List<List<UInt8>> code = new List<List<UInt8>>();
         public UInt8[] finalize ( ) {
             UInt8[] result = code.SelectMany(x => x).ToArray();
@@ -59,6 +59,14 @@ namespace Narrative {
             List<UInt8> line = new List<UInt8>();
             line.Add(0xA3); // o243 + r0
             line.AddRange(BitConverter.GetBytes(address));
+            code.Add(line);
+        }
+
+        public void PUSHi32 ( Int32 imm ) {
+            if ( debug ) Console.WriteLine($"PUSHi32 {imm:X}");
+            List<UInt8> line = new List<UInt8>();
+            line.Add(0x68); // o150
+            line.AddRange(BitConverter.GetBytes(imm));
             code.Add(line);
         }
 

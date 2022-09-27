@@ -9,7 +9,7 @@ namespace Narrative {
         public Process process;
 
         public String ProcessName;
-        public UInt64 BaseAddress => (UInt64) process.MainModule.BaseAddress;
+        public Int64 BaseAddress => (Int64) process.MainModule.BaseAddress;
 
         public ProcessManager64 ( String processName ) {
             ProcessName = processName;
@@ -45,7 +45,7 @@ namespace Narrative {
         public static extern Int32 GetWindowLong( IntPtr hWnd, Int32 nIndex );
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
-     
+
         #endregion
 
     }

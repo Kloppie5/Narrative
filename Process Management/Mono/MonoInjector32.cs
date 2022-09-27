@@ -37,13 +37,13 @@ namespace Narrative {
 
 
         ProcessManager64 _manager;
-        UInt64 monoModule;
+        Int64 monoModule;
         Int64 hProcess = 0;
 
         Int32 dataSpace = 0;
         Int64 codeSpace = 0;
 
-        Dictionary<String, UInt64> exportedFunctions = new Dictionary<String, UInt64>();
+        Dictionary<String, Int64> exportedFunctions = new Dictionary<String, Int64>();
 
         public MonoInjector32 ( ProcessManager64 manager ) {
             _manager = manager;
@@ -51,9 +51,7 @@ namespace Narrative {
             hProcess = OpenProcess(0x1F0FFF, false, manager.process.Id);
             dataSpace = (Int32)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
             codeSpace = (Int64)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
-            Console.WriteLine($"Allocated codeSpace: {codeSpace:X}");
             exportedFunctions = PEHelper.GetExportedFunctions(manager, monoModule);
-            Console.WriteLine($"Found {exportedFunctions.Count} exported functions");
         }
         public void Execute ( byte[] code ) {
             Int64 bytesWritten;
@@ -61,27 +59,60 @@ namespace Narrative {
             Int64 thread = CreateRemoteThread(hProcess, 0, 0, codeSpace, 0, 0, 0);
             WaitForSingleObject(thread, 0xFFFFFFFF);
         }
-        public T CallFunction<T> ( String functionName, params object[] args ) where T : struct {
+        public T CallFunction<T> ( String functionName, params Int32[] args ) where T : struct {
+            // TODO: some complicated design to deal with different argument handling
             if ( !exportedFunctions.ContainsKey(functionName) )
                 throw new Exception($"Could not find exported function {functionName}");
             Int32 functionAddress = (Int32)exportedFunctions[functionName];
 
             Assembler assembler = new Assembler();
             assembler.MOVi32r(0, functionAddress);
+
+            for ( int i = args.Length - 1; i >= 0; --i )
+                assembler.PUSHi32(args[i]);
+                // TODO: bounds checking, restoring stack pointer, etc.
+
             assembler.CALLr(0);
             assembler.MOVr0m32(dataSpace);
             assembler.RET();
 
-            assembler.PrettyPrint();
             byte[] code = assembler.finalize();
 
             Execute(code);
 
-            return MemoryHelper.ReadAbsolute<T>(_manager, (UInt64) dataSpace);
+            return MemoryHelper.ReadAbsolute<T>(_manager, dataSpace);
         }
 
-        public Int32 GetRootDomain ( ) {
+        public Int32 GetRootDomain ( ) { // -> MonoDomain*
             return CallFunction<Int32>("mono_get_root_domain");
+        }
+        public List<Int32> DomainGetAssemblies ( Int32 domain ) { // MonoDomain* -> List<MonoAssembly*>
+            MonoDomain32 domainStruct = MemoryHelper.ReadAbsolute<MonoDomain32>(_manager, domain);
+            List<Int32> assemblies = new List<Int32>();
+            Int32 it = domainStruct.domain_assemblies;
+            while ( it != 0 ) {
+                GSList32 list = MemoryHelper.ReadAbsolute<GSList32>(_manager, it);
+                assemblies.Add(list.data);
+                it = list.next;
+            }
+            return assemblies;
+        }
+        public Dictionary<String, Int32> DomainGetAssembliesByName ( Int32 domain, List<String> assemblyNames = null ) { // MonoDomain*, List<String> -> Dictionary<String, MonoAssembly*>
+            Dictionary<String, Int32> assemblies = new Dictionary<String, Int32>();
+            foreach ( Int32 assembly in DomainGetAssemblies(domain) ) {
+                String assemblyName = AssemblyGetName(assembly);
+                if ( assemblyNames == null || assemblyNames.Contains(assemblyName) )
+                    assemblies[assemblyName] = assembly;
+            }
+            return assemblies;
+        }
+        public String AssemblyGetName ( Int32 assembly ) { // MonoAssembly* -> String
+            MonoAssembly32 assemblyStruct = MemoryHelper.ReadAbsolute<MonoAssembly32>(_manager, assembly);
+            return MemoryHelper.ReadAbsoluteUTF8String(_manager, assemblyStruct.monoAssemblyNameDOTname);
+        }
+        public Int32 AssemblyGetImage ( Int32 assembly ) { // MonoAssembly* -> MonoImage*
+            MonoAssembly32 assemblyStruct = MemoryHelper.ReadAbsolute<MonoAssembly32>(_manager, assembly);
+            return assemblyStruct.image;
         }
     }
 }
