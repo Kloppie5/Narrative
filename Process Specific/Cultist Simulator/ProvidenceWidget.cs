@@ -71,7 +71,10 @@ namespace CultistSimulator {
       // GameGateway
       // Numa
 
-
+      foreach ( var pair in manager.dict ) {
+        g.DrawString($"{pair.Key}: {pair.Value:X}", font, brush, x, y);
+        y += dy;
+      }
     }
   }
 }
