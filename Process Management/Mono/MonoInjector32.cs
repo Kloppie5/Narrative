@@ -71,8 +71,6 @@ namespace Narrative {
             Int32 mono_thread_attach = (Int32)exportedFunctions["mono_thread_attach"];
 
             Assembler assembler = new Assembler();
-            assembler.debug = true;
-
 
             if ( functionName != "mono_get_root_domain" ) {
                 assembler.PUSHi32(_rootDomain);
@@ -156,7 +154,6 @@ namespace Narrative {
             List<Int32> methods = new List<Int32>();
             Int32 it = classStruct.methods;
             while ( true ) {
-                Console.WriteLine(it);
                 Int32 method = MemoryHelper.ReadAbsolute<Int32>(_manager, it);
                 if ( method == 0 )
                     break;
@@ -164,6 +161,13 @@ namespace Narrative {
                 it += 4;
             }
             return methods;
+        }
+        public Int32 ClassGetMethodByName ( Int32 @class, String methodName ) { // MonoClass*, String -> MonoMethod*
+            foreach ( Int32 method in ClassGetMethods(@class) ) {
+                if ( MethodGetName(method) == methodName )
+                    return method;
+            }
+            return 0;
         }
         public Int32 ClassGetVTable ( Int32 @class ) { // MonoClass* -> MonoVTable*
             return CallFunction<Int32>("mono_class_vtable", _rootDomain, @class);
@@ -179,6 +183,40 @@ namespace Narrative {
         public String MethodGetName ( Int32 method ) { // MonoMethod* -> String
             Int32 name = CallFunction<Int32>("mono_method_get_name", method);
             return MemoryHelper.ReadAbsoluteUTF8String(_manager, name);
+        }
+        public T InvokeMethod<T> ( Int32 method, Int32 instance, params object[] args ) where T : struct { // MonoMethod*, MonoObject*, ... -> void
+            Console.WriteLine($"Invoking {MethodGetName(method)}");
+            Assembler assembler = new Assembler();
+            assembler.debug = true;
+
+            Int32 mono_thread_attach = (Int32)exportedFunctions["mono_thread_attach"];
+            assembler.MOVi32r(0, mono_thread_attach);
+            assembler.PUSHi32(_rootDomain);
+            assembler.CALLr(0);
+            assembler.ADDi8r(4, 4);
+
+            Int32 mono_runtime_invoke = (Int32)exportedFunctions["mono_runtime_invoke"];
+            assembler.MOVi32r(0, mono_runtime_invoke);
+            assembler.PUSHi32(0); // exception handler
+            Int32 argspace = (Int32)VirtualAllocEx(hProcess, 0, 0x1000, 0x3000, 0x40);
+            for ( int i = 0; i < args.Length; i++ ) {
+                if ( args[i] is Int32 )
+                    MemoryHelper.WriteAbsolute(_manager, argspace + 4 * i, (Int32)args[i]);
+                else
+                    throw new Exception($"Unsupported argument type {args[i].GetType()}");
+            }
+            assembler.PUSHi32(argspace);
+            assembler.PUSHi32(instance);
+            assembler.PUSHi32(method);
+            assembler.CALLr(0);
+            assembler.MOVr0m32(dataSpace);
+            assembler.ADDi8r(4, 16);
+
+            assembler.RET();
+            byte[] code = assembler.finalize();
+            Execute(code);
+            VirtualFreeEx(hProcess, argspace, 0, 0x8000);
+            return MemoryHelper.ReadAbsolute<T>(_manager, dataSpace);
         }
         #endregion
     }
