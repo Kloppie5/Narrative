@@ -14,9 +14,7 @@ namespace Narrative {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowLong( IntPtr hWnd, int nIndex );
 
-        Dictionary<String, Widget> widgets = new Dictionary<String, Widget>();
-
-        public Overlay() {
+        public Overlay ( ) {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
             TransparencyKey = Color.Turquoise;
             BackColor = Color.Turquoise;
@@ -28,28 +26,29 @@ namespace Narrative {
             TopMost = true;
             SetForegroundWindow(Handle);
 
-            Console.WriteLine($"Initialized Overlay");
+            ConsoleWidget.PermanentLine(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            ConsoleWidget.TemporaryLine(() => $"Initialized Overlay", 2000);
         }
 
-        public void AddWidget( String widgetName, Type widgetType ) {
-            ConstructorInfo constructorInfo = widgetType.GetConstructor(new Type[] { }); 
-            if ( constructorInfo == null )
-                throw new InvalidOperationException($"Tried to add widget of type {widgetType}, but could not find valid constructor.");
-            Widget widget = (Widget) constructorInfo.Invoke(new Object[] { });
-            widget.Bind(this);
-            widget.Enable();
-            widgets.Add(widgetName, widget);
-        }
+        Dictionary<String, Widget> widgets = new Dictionary<String, Widget>() {
+            { "IncrementalAdventures", new IncrementalAdventuresWidget() }
+        };
 
-        public Boolean HasWidget ( String widgetName ) {
-            return widgets.ContainsKey(widgetName);
+        protected void OnTick ( ) {
+            foreach ( var (widgetName, widget) in widgets ) {
+                if ( !widget.enabled )
+                    widget.TryEnable();
+                else
+                    widget.Update();
+            }
+            Invalidate();
         }
-
         protected override void OnPaint( PaintEventArgs e ) {
             base.OnPaint(e);
 
             foreach ( var (widgetName, widget) in widgets )
                 widget.Render(e);
+            ConsoleWidget.Render(e);
         }
 
         protected override void OnLoad ( EventArgs e ) {
@@ -57,13 +56,9 @@ namespace Narrative {
             var style = GetWindowLong(Handle, -20); // GWL_EXSTYLE
             SetWindowLong(Handle, -20, style | 0x80020); // WS_EX_LAYERED, WS_EX_TRANSPARENT
 
-            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            Timer timer = new Timer();
             timer.Interval = 1000;
-            timer.Tick += new System.EventHandler((sender, ee) => {
-                foreach ( var (widgetName, widget) in widgets )
-                    widget.Update();
-                Invalidate();
-            });
+            timer.Tick += ( sender, e ) => OnTick();
             timer.Start();
         }
     }

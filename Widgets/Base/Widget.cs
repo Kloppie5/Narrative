@@ -6,15 +6,18 @@ namespace Narrative {
 
   public abstract class Widget : IDisposable {
 
-    Overlay overlay;
-    Boolean enabled = false;
-
     public Widget ( ) { }
 
-    public void Bind ( Overlay overlay ) {
-      this.overlay = overlay;
+    public Boolean enabled { get; protected set; } = false;
+    public virtual Boolean EnableCondition ( ) {
+      return true;
     }
-
+    public Boolean TryEnable ( ) {
+      if ( !EnableCondition() )
+        return false;
+      Enable();
+      return true;
+    }
     public void Enable ( ) {
       if ( enabled )
         return;
@@ -22,6 +25,10 @@ namespace Narrative {
       OnEnable();
     }
     public virtual void OnEnable ( ) { }
+
+    public virtual Boolean DisableCondition ( ) {
+      return false;
+    }
     public void Disable ( ) {
       if ( !enabled )
         return;
@@ -29,8 +36,9 @@ namespace Narrative {
       OnDisable();
     }
     public virtual void OnDisable ( ) { }
-        
+
     public virtual void Update ( ) { }
+
     public virtual void Render ( PaintEventArgs e ) { }
 
     private bool disposed = false;
@@ -41,7 +49,7 @@ namespace Narrative {
     protected virtual void Dispose ( bool disposing = false ) {
       if ( disposed )
         return;
-            
+
       if ( disposing ) {
         Console.WriteLine($"Disposed {GetType().Name}");
       }

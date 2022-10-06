@@ -7,11 +7,7 @@ namespace Narrative {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Overlay overlay = new Overlay();
-            
-            Orchestrator orchestrator = new Orchestrator(overlay);
-            Application.Run(overlay);
-            Console.ReadLine();
+            Application.Run(new Overlay());
         }
     }
 }
