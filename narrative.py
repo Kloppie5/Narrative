@@ -12,7 +12,11 @@ class CLI :
 
     def run ( self ) :
         while True :
-            line = input(">> ")
+            try :
+                line = input(">> ")
+            except KeyboardInterrupt:
+                print("")
+                self.quit()
             parts = line.split(" ")
             command = parts[0]
             args = parts[1:]
@@ -26,6 +30,41 @@ class CLI :
         import sys
         sys.exit(0)
 
+def read_mrc ( filename ) :
+    with open(filename, "rb") as f :
+        data = f.read()
+    print(f"Read {len(data)} bytes from {filename}")
+    return data
+
+def hex_dump_file ( filename ) :
+    data = read_mrc(filename)
+    hex_dump(data)
+
+def hex_dump ( data, offset=0, width=16 ) :
+    """
+        address | hex dump, bars every 4 bytes | ascii dump (non-printable chars replaced with dots)
+    """
+    for i in range(0, len(data), width) :
+        hexdump = ""
+        asciidump = ""
+        for j in range(width) :
+            if i+j < len(data) :
+                hexdump += f"{data[i+j]:02x} "
+                if j % 4 == 3 :
+                    hexdump += "| "
+                if data[i+j] < 32 or data[i+j] > 126 :
+                    asciidump += "."
+                else :
+                    asciidump += chr(data[i+j])
+            else :
+                hexdump += "   "
+                if j % 4 == 3 :
+                    hexdump += "| "
+                asciidump += " "
+        print(f"{i+offset:08x} | {hexdump}{asciidump}")
+
 if __name__ == "__main__" :
     cli = CLI()
+    cli.add_command("read", read_mrc)
+    cli.add_command("hexfile", hex_dump_file)
     cli.run()
