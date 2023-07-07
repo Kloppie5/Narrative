@@ -14,6 +14,14 @@ namespace Narrative {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetWindowLong( IntPtr hWnd, int nIndex );
 
+        protected override CreateParams CreateParams {
+            get {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x80020; // WS_EX_LAYERED, WS_EX_TRANSPARENT
+                return cp;
+            }
+        }
+
         public Overlay ( ) {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
             TransparencyKey = Color.Turquoise;
@@ -53,11 +61,8 @@ namespace Narrative {
 
         protected override void OnLoad ( EventArgs e ) {
             base.OnLoad(e);
-            var style = GetWindowLong(Handle, -20); // GWL_EXSTYLE
-            SetWindowLong(Handle, -20, style | 0x80020); // WS_EX_LAYERED, WS_EX_TRANSPARENT
 
-            Timer timer = new Timer();
-            timer.Interval = 1000;
+            Timer timer = new Timer { Interval = 1000 };
             timer.Tick += ( sender, e ) => OnTick();
             timer.Start();
         }

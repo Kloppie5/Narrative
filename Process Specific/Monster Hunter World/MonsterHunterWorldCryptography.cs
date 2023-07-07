@@ -230,6 +230,8 @@ namespace MonsterHunterWorld {
 				}
 			}
 
+      Console.WriteLine("Salt: " + BitConverter.ToString(salt));
+
 			Byte ks1 = (Byte) keySalt;
 			Byte ks2 = (Byte) (keySalt >> 0x8);
 			Byte ks3 = (Byte) (keySalt >> 0x10);
@@ -261,6 +263,9 @@ namespace MonsterHunterWorld {
 					roundKey[15] = (Byte) (e4 ^ 0x94 ^ ks4);
 				}
 				aes.Key = roundKey;
+
+        Console.WriteLine("Round Key: " + BitConverter.ToString(roundKey));
+
 				ICryptoTransform decryptor = aes.CreateDecryptor();
 
 				UInt32 roundThreshold = (UInt32) ((r + 1) * 0x104C6 + (Int32) (0x104C6 * (CONST_TABLE_SINGLE[CONST_TABLE_UINT32[(keySalt + r) & 0xFFF ^ 0x5d7] & 0xFFF ^ 0x885] - 0.5F)) + 0xF & 0xFFFFFFF0);

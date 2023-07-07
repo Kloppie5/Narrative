@@ -19,14 +19,14 @@ class CLI :
                 self.quit()
             parts = line.split(" ")
             command = parts[0]
-            args = parts[1:]
+            args = " ".join(parts[1:])
 
             if command in self.commands :
-                self.commands[command](*args)
+                self.commands[command](args)
             else :
                 print(f"Unknown command: {command}")
 
-    def quit ( self ) :
+    def quit ( args ) :
         import sys
         sys.exit(0)
 
@@ -38,12 +38,14 @@ def read_mrc ( filename ) :
 
 def hex_dump_file ( filename ) :
     data = read_mrc(filename)
-    hex_dump(data)
+    hex_dump(data, 0, 0x100)
 
-def hex_dump ( data, offset=0, width=16 ) :
+def hex_dump ( data, offset=0, length=None, width=32 ) :
     """
         address | hex dump, bars every 4 bytes | ascii dump (non-printable chars replaced with dots)
     """
+    if length is not None :
+        data = data[offset:offset+length]
     for i in range(0, len(data), width) :
         hexdump = ""
         asciidump = ""
@@ -61,7 +63,7 @@ def hex_dump ( data, offset=0, width=16 ) :
                 if j % 4 == 3 :
                     hexdump += "| "
                 asciidump += " "
-        print(f"{i+offset:08x} | {hexdump}{asciidump}")
+        print(f"{i:08x} | {hexdump}{asciidump}")
 
 if __name__ == "__main__" :
     cli = CLI()

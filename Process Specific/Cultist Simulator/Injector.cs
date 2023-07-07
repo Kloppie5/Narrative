@@ -30,7 +30,7 @@ namespace CultistSimulator {
       Int32 watchman = ImageGetClassByName(mainImage, "SecretHistories.UI", "Watchman");
       Int32 vtable = ClassGetVTable(watchman);
       Int32 staticFieldData = VTableGetStaticFieldData(vtable);
-      Int32 registered = MemoryHelper.ReadAbsolute<Int32>(_manager, staticFieldData);
+     Int32 registered = MemoryHelper.ReadAbsolute<Int32>(_manager, staticFieldData);
       watchmanDict = ReadDictionaryTypeObject(registered);
     }
     public void ExtractCompendium ( ) {
