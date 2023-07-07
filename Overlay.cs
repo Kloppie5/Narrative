@@ -22,6 +22,8 @@ namespace Narrative {
             }
         }
 
+        private SettingsForm settingsForm = new SettingsForm();
+
         public Overlay ( ) {
             Rectangle rect = Screen.PrimaryScreen.Bounds;
             TransparencyKey = Color.Turquoise;
@@ -36,6 +38,9 @@ namespace Narrative {
 
             ConsoleWidget.PermanentLine(() => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             ConsoleWidget.TemporaryLine(() => $"Initialized Overlay", 2000);
+
+            settingsForm.Show();
+            settingsForm.AddBooleanSetting("ShowConsole", "Show Console");
         }
 
         Dictionary<String, Widget> widgets = new Dictionary<String, Widget>() {
