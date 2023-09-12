@@ -26,8 +26,8 @@ namespace Narrative {
             return settings.ContainsKey(key);
         }
 
-        public void AddBooleanSetting ( String key, String text ) {
-            Ensure(key, false);
+        public void AddBooleanSetting ( String key, String text, Boolean defaultValue ) {
+            Ensure(key, defaultValue);
             CheckBox checkBox = new CheckBox();
             checkBox.Text = text;
             checkBox.Checked = Get<Boolean>(key);

@@ -40,11 +40,14 @@ namespace Narrative {
             ConsoleWidget.TemporaryLine(() => $"Initialized Overlay", 2000);
 
             settingsForm.Show();
-            settingsForm.AddBooleanSetting("ShowConsole", "Show Console");
+            settingsForm.AddBooleanSetting("ShowConsole", "Show Console", true);
         }
 
         Dictionary<String, Widget> widgets = new Dictionary<String, Widget>() {
-            { "IncrementalAdventures", new IncrementalAdventuresWidget() }
+            { "MonsterHunterWorld", new ProcessLinkedWidget("MonsterHunterWorld") },
+            { "Neurodancer", new ProcessLinkedWidget("Crypt of the NecroDancer") },
+            { "Golemancy", new ProcessLinkedWidget("Cultist Simulator") },
+            { "FactorAI", new ProcessLinkedWidget("factorio") }
         };
 
         protected void OnTick ( ) {
@@ -66,7 +69,6 @@ namespace Narrative {
 
         protected override void OnLoad ( EventArgs e ) {
             base.OnLoad(e);
-
             Timer timer = new Timer { Interval = 1000 };
             timer.Tick += ( sender, e ) => OnTick();
             timer.Start();
